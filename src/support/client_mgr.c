@@ -1549,14 +1549,16 @@ out:
 /**
  * @brief Match a specific client in a client list
  *
- * @param[in]  hostaddr      Host to search for
- * @param[in]  clients       Client list to search
+ * @param[in]  hostaddr          Host to search for
+ * @param[in]  clients           Client list to search
+ * @param[in]  client_predicate  A callback predicate the client must match
  *
  * @return the client entry or NULL if failure.
  */
-struct base_client_entry *client_match(enum log_components component,
-				       const char *str, sockaddr_t *clientaddr,
-				       struct glist_head *clients)
+struct base_client_entry *
+client_match(enum log_components component, const char *str,
+	     sockaddr_t *clientaddr, struct glist_head *clients,
+	     client_list_entry_predicate_t client_predicate)
 {
 	struct glist_head *glist;
 	int rc;
@@ -1585,6 +1587,12 @@ struct base_client_entry *client_match(enum log_components component,
 	{
 		client = glist_entry(glist, struct base_client_entry, cle_list);
 		LogMidDebug_ClientListEntry(component, "Match V4: ", client);
+		if (client_predicate != NULL && !client_predicate(client)) {
+			LogMidDebug_ClientListEntry(
+				component,
+				"Client does not match predicate: ", client);
+			continue;
+		}
 
 		switch (client->type) {
 		case NETWORK_CLIENT:
@@ -1704,7 +1712,7 @@ bool haproxy_match(SVCXPRT *xprt)
 	/* Does the host match anyone on the host list? */
 	host = client_match(COMPONENT_DISPATCH, " for HAProxy",
 			    &xprt->xp_proxy.ss,
-			    &nfs_param.core_param.haproxy_hosts);
+			    &nfs_param.core_param.haproxy_hosts, NULL);
 
 	return host != NULL;
 }

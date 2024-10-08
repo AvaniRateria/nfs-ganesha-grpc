@@ -365,6 +365,8 @@ EXPORT_DEFAULTS { CLIENT  {} }
 
 	* The client lists are dynamically updateable.
 
+	HA_Proxy_Protocol(enum list, values [with_ha_proxy, without_ha_proxy, any], default [any])
+
 	Clients(client list, empty)
 
 	* Client list entries can take on one of the following forms. This
@@ -676,6 +678,8 @@ PSEUDOFS { CLIENT  {} }
 	        default [none, sys, krb5, krb5i, krb5p])
 
 	PrivilegedPort(bool, default false)
+
+	HA_Proxy_Protocol(enum list, values [with_ha_proxy, without_ha_proxy, any], default [any])
 
 	Clients(client list, empty)
 

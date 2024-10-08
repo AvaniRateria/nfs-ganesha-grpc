@@ -60,15 +60,16 @@
  */
 pthread_rwlock_t export_opt_lock;
 
-#define GLOBAL_EXPORT_PERMS_INITIALIZER(self)                                                                                                                                                                        \
-	.def.anonymous_uid = ANON_UID, .def.anonymous_gid = ANON_GID,                                                                                                                                                \
-	.def.expire_time_attr =                                                                                                                                                                                      \
-		EXPORT_DEFAULT_CACHE_EXPIRY, /* Note: Access_Type defaults to None on purpose     */ /*       And no PROTO is included - that is filled   */ /*       from nfs_param.core_param.core_options.     */ \
-		.def.options = EXPORT_OPTION_ROOT_SQUASH |                                                                                                                                                           \
-			       EXPORT_OPTION_NO_ACCESS |                                                                                                                                                             \
-			       EXPORT_OPTION_AUTH_DEFAULTS |                                                                                                                                                         \
-			       EXPORT_OPTION_XPORT_DEFAULTS |                                                                                                                                                        \
-			       EXPORT_OPTION_NO_DELEGATIONS,                                                                                                                                                         \
+/* Note: Access_Type defaults to None on purpose     */
+/*       And no PROTO is included - that is filled   */
+/*       from nfs_param.core_param.core_options.     */
+#define GLOBAL_EXPORT_PERMS_INITIALIZER(self)                                \
+	.def.anonymous_uid = ANON_UID, .def.anonymous_gid = ANON_GID,        \
+	.def.expire_time_attr = EXPORT_DEFAULT_CACHE_EXPIRY,                 \
+	.def.options = EXPORT_OPTION_ROOT_SQUASH | EXPORT_OPTION_NO_ACCESS | \
+		       EXPORT_OPTION_AUTH_DEFAULTS |                         \
+		       EXPORT_OPTION_XPORT_DEFAULTS |                        \
+		       EXPORT_OPTION_NO_DELEGATIONS,                         \
 	.def.set = UINT32_MAX, .clients = { &self.clients, &self.clients },
 
 struct global_export_perms export_opt = { GLOBAL_EXPORT_PERMS_INITIALIZER(
@@ -317,6 +318,15 @@ void LogExportClientListEntry(log_levels_t level, int line, const char *func,
 
 	if (b_left > 0)
 		b_left = StrClient(&dspbuf, &entry->client_entry);
+
+	if (b_left > 0) {
+		if (entry->ha_proxy_protocol_type ==
+		    CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITH)
+			b_left = display_cat(&dspbuf, " ha-proxy-protocol");
+		else if (entry->ha_proxy_protocol_type ==
+			 CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITHOUT)
+			b_left = display_cat(&dspbuf, " non-ha-proxy-protocol");
+	}
 
 	if (b_left > 0)
 		b_left = display_cat(&dspbuf, " (");
@@ -1861,15 +1871,17 @@ void *export_client_allocator(void)
 	return &expcli->client_entry;
 }
 
-void export_client_filler(struct base_client_entry *client, void *private_data)
+static void export_client_filler(struct base_client_entry *client,
+				 void *private_data)
 {
 	struct exportlist_client_entry *expcli;
-	struct export_perms *perms = private_data;
+	struct exportlist_client_entry *proto_expcli = private_data;
 
 	expcli = container_of(client, struct exportlist_client_entry,
 			      client_entry);
 
-	expcli->client_perms = *perms;
+	expcli->client_perms = proto_expcli->client_perms;
+	expcli->ha_proxy_protocol_type = proto_expcli->ha_proxy_protocol_type;
 
 	LogMidDebug_ExportClientListEntry("", expcli);
 }
@@ -1911,9 +1923,21 @@ static int client_adder(const char *token, enum term_type type_hint,
 
 	rc = add_client(COMPONENT_EXPORT, &client->cle_list, token, type_hint,
 			cnode, err_type, export_client_allocator,
-			export_client_filler, &proto_cli->client_perms);
+			export_client_filler, proto_cli);
 	return rc;
 }
+
+/**
+ * @brief Enumerated time and date format parameters
+ */
+
+static struct config_item_list export_client_ha_proxy_protocol[] = {
+	CONFIG_LIST_TOK("with_ha_proxy", CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITH),
+	CONFIG_LIST_TOK("without_ha_proxy",
+			CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITHOUT),
+	CONFIG_LIST_TOK("any", CLIENT_ENTRY_HA_PROXY_PROTOCOL_ANY),
+	CONFIG_LIST_EOL
+};
 
 /**
  * @brief Table of client sub-block parameters
@@ -1925,6 +1949,9 @@ static int client_adder(const char *token, enum term_type type_hint,
 
 static struct config_item client_params[] = {
 	CONF_EXPORT_PERMS(exportlist_client_entry, client_perms),
+	CONF_ITEM_TOKEN("HA_Proxy_Protocol", CLIENT_ENTRY_HA_PROXY_PROTOCOL_ANY,
+			export_client_ha_proxy_protocol,
+			exportlist_client_entry, ha_proxy_protocol_type),
 	CONF_ITEM_PROC_MULT("Clients", noop_conf_init, client_adder,
 			    base_client_entry, cle_list),
 	CONFIG_EOL
@@ -1940,6 +1967,9 @@ static struct config_item client_params[] = {
 
 static struct config_item pseudo_fs_client_params[] = {
 	CONF_PSEUDOFS_PERMS(exportlist_client_entry, client_perms),
+	CONF_ITEM_TOKEN("HA_Proxy_Protocol", CLIENT_ENTRY_HA_PROXY_PROTOCOL_ANY,
+			export_client_ha_proxy_protocol,
+			exportlist_client_entry, ha_proxy_protocol_type),
 	CONF_ITEM_PROC_MULT("Clients", noop_conf_init, client_adder,
 			    base_client_entry, cle_list),
 	CONFIG_EOL
@@ -3179,6 +3209,42 @@ gid_t get_anonymous_gid(void)
 	return anon_gid;
 }
 
+static inline bool is_ha_proxy_protocol_connection(const SVCXPRT *const xprt)
+{
+	return xprt->xp_proxy.ss.ss_family != 0;
+}
+
+/**
+ * @brief Check if an export client entry should apply to current request
+ *
+ * Given an export client entry check, if the current request is from
+ * HA PROXY protocol client and the export client entry applies to HA PROXY
+ * protocol clients or the current client is not a PROXY protocol client and
+ * the client entry applies to non-PROXY protocol clients.
+ */
+
+static bool client_entry_match_op_ha_proxy_protocol(
+	const struct base_client_entry *const client)
+{
+	struct exportlist_client_entry *expclient = container_of(
+		client, struct exportlist_client_entry, client_entry);
+
+	LogMidDebug_ExportClientListEntry("Check HA PROXY match: ", expclient);
+	if (expclient->ha_proxy_protocol_type ==
+	    CLIENT_ENTRY_HA_PROXY_PROTOCOL_ANY) {
+		LogMidDebug(COMPONENT_EXPORT,
+			    "client_entry_match is ANY - returning true");
+		return true;
+	}
+
+	if (is_ha_proxy_protocol_connection(op_ctx->nfs_reqdata->svc.rq_xprt))
+		return expclient->ha_proxy_protocol_type ==
+		       CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITH;
+
+	return expclient->ha_proxy_protocol_type ==
+	       CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITHOUT;
+}
+
 /**
  * @brief Checks if a machine is authorized to access an export entry
  *
@@ -3225,12 +3291,14 @@ void export_check_access(void)
 		 * see if there's a match.
 		 */
 		client = client_match(COMPONENT_EXPORT, exp_str,
-				      op_ctx->caller_addr, &export_opt.clients);
+				      op_ctx->caller_addr, &export_opt.clients,
+				      client_entry_match_op_ha_proxy_protocol);
 	} else {
 		/* Does the client match anyone on the client list? */
 		client = client_match(COMPONENT_EXPORT, exp_str,
 				      op_ctx->caller_addr,
-				      &op_ctx->ctx_export->clients);
+				      &op_ctx->ctx_export->clients,
+				      client_entry_match_op_ha_proxy_protocol);
 	}
 
 	if (client != NULL) {

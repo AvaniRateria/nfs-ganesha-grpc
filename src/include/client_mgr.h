@@ -130,9 +130,13 @@ typedef void(client_free_func)(struct base_client_entry *client);
 
 void FreeClientList(struct glist_head *clients, client_free_func free_func);
 
-struct base_client_entry *client_match(enum log_components component,
-				       const char *str, sockaddr_t *hostaddr,
-				       struct glist_head *clients);
+typedef bool(client_list_entry_predicate_t)(
+	const struct base_client_entry *const client);
+
+struct base_client_entry *
+client_match(enum log_components component, const char *str,
+	     sockaddr_t *hostaddr, struct glist_head *clients,
+	     client_list_entry_predicate_t client_predicate);
 
 typedef void *(client_list_entry_allocator_t)(void);
 

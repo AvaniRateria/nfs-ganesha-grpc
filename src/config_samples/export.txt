@@ -182,6 +182,9 @@ EXPORT
 	# All export permissions options are available, as well as the
 	# following:
 	#
+	# HA_Proxy_Protocol (with_ha_proxy, without_ha_proxy, any) Constraints
+	#                        Clients by usage of HA PROXY protocol
+	#
 	# Clients (required)	The list of clients these export permissions
 	#			apply to. Clients may be specified by hostname,
 	#			ip address, netgroup, CIDR network address,

@@ -100,6 +100,10 @@ CLIENT blocks use all the EXPORT PERMISSIONS options (except PSEUDOFS CLIENT
 blocks which are limited to the same options the PSEUDOFS block is allowed)
 plus:
 
+HA_Proxy_Protocol(enum, default any)
+    Possible values:
+        with_ha_proxy, without_ha_proxy, any
+
 Clients(client list, empty)
     Client list entries can take on one of the following forms. This parameter
     may be repeated to extend the list.
@@ -370,9 +374,9 @@ UseCookieVerifier(bool, default true)
 
 PSEUDOFS { CLIENT {} }
 --------------------------------------------------------------------------------
-See the ``CLIENT  {}`` block description but note that beyond the Clients
-options that works as described, the other options available are as for the
-PSEUDOFS {} block.
+See the ``CLIENT  {}`` block description but note that beyond the Clients and
+HA_Proxy_Protocol options that works as described, the other options available
+are as for the PSEUDOFS {} block.
 
 If it is desired to override a restrictive CLIENT list in EXPORT_DEFAULTS,
 the following PSEUDOFS could be defined that will give all clients the

@@ -72,9 +72,16 @@ extern struct global_export_perms export_opt;
 
 #define GSS_DEFINE_LEN_TEMP 255
 
+enum client_ha_proxy_protocol_type {
+	CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITHOUT = 0,
+	CLIENT_ENTRY_HA_PROXY_PROTOCOL_WITH = 1,
+	CLIENT_ENTRY_HA_PROXY_PROTOCOL_ANY = 2
+};
+
 struct exportlist_client_entry {
 	struct base_client_entry client_entry;
 	struct export_perms client_perms; /*< Available mount options */
+	enum client_ha_proxy_protocol_type ha_proxy_protocol_type;
 };
 
 /* Constants for export options masks */
