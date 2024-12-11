@@ -50,9 +50,11 @@
 /* defined the set of attributes supported with POSIX */
 #ifndef ENABLE_VFS_ACL
 #define VFS_SUPPORTED_ATTRIBUTES ((const attrmask_t) (ATTRS_POSIX | \
+						      ATTR4_XATTR | \
 						      ATTR4_FS_LOCATIONS))
 #else
 #define VFS_SUPPORTED_ATTRIBUTES ((const attrmask_t) (ATTRS_POSIX | ATTR_ACL | \
+						      ATTR4_XATTR | \
 						      ATTR4_FS_LOCATIONS))
 #endif
 
@@ -83,6 +85,7 @@ static struct vfs_fsal_module VFS = {
 			.maxwrite = FSAL_MAXIOSIZE,
 			.link_supports_permission_checks = false,
 			.expire_time_parent = -1,
+			.xattr_support = true,
 		}
 	},
 	.only_one_user = false

@@ -48,6 +48,7 @@
 #include "FSAL/fsal_localfs.h"
 #include "vfs_methods.h"
 #include <os/subr.h>
+#include "os/xattr.h"
 #include "subfsal.h"
 #include "city.h"
 #include "nfs_core.h"
@@ -1721,6 +1722,182 @@ static void release(struct fsal_obj_handle *obj_hdl)
 	free_vfs_fsal_obj_handle(&myself);
 }
 
+static fsal_status_t vfs_getxattrs(struct fsal_obj_handle *obj_hdl,
+				   xattrkey4 *xa_name, xattrvalue4 *xa_value)
+{
+	struct vfs_fsal_obj_handle *myself =
+		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
+	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
+	char name[sizeof("user.") + NAME_MAX];
+	int fd = -1;
+	int rc = 0;
+	int err = 0;
+
+	rc = snprintf(name, sizeof(name), "user.%.*s", xa_name->utf8string_len,
+		      xa_name->utf8string_val);
+	if (rc >= sizeof(name))
+		return posix2fsal_status(-ENAMETOOLONG);
+
+	fd = (obj_hdl->type == DIRECTORY) ?
+		     vfs_fsal_open(myself, O_DIRECTORY, &fsal_error) :
+		     vfs_fsal_open(myself, O_RDONLY, &fsal_error);
+	if (fd < 0) {
+		LogDebug(COMPONENT_FSAL, "vfs_open_fsal returned %d", fd);
+		return fsalstat(fsal_error, -fd);
+	}
+
+	rc = fgetxattr(fd, name, xa_value->utf8string_val,
+		       xa_value->utf8string_len);
+	err = errno; /* save errno before close() */
+	close(fd);
+	if (rc < 0) {
+		LogDebug(COMPONENT_FSAL, "fgetxattr returned %d, errno: %d", rc,
+			 err);
+		switch (err) {
+		case ENODATA:
+			return fsalstat(ERR_FSAL_NOXATTR, 0);
+		case ERANGE:
+			return fsalstat(ERR_FSAL_XATTR2BIG, 0);
+		default:
+			return posix2fsal_status(err);
+		}
+	}
+
+	xa_value->utf8string_len = rc;
+	return fsalstat(ERR_FSAL_NO_ERROR, 0);
+}
+
+static fsal_status_t vfs_setxattrs(struct fsal_obj_handle *obj_hdl,
+				   setxattr_option4 option, xattrkey4 *xa_name,
+				   xattrvalue4 *xa_value)
+{
+	struct vfs_fsal_obj_handle *myself =
+		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
+	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
+	char name[sizeof("user.") + NAME_MAX];
+	int fd = -1;
+	int rc = 0;
+	int flags = 0;
+	int err = 0;
+
+	rc = snprintf(name, sizeof(name), "user.%.*s", xa_name->utf8string_len,
+		      xa_name->utf8string_val);
+	if (rc >= sizeof(name))
+		return posix2fsal_status(-ENAMETOOLONG);
+
+	fd = (obj_hdl->type == DIRECTORY) ?
+		     vfs_fsal_open(myself, O_DIRECTORY, &fsal_error) :
+		     vfs_fsal_open(myself, O_RDWR, &fsal_error);
+	if (fd < 0) {
+		LogDebug(COMPONENT_FSAL, "vfs_open_fsal returned %d", fd);
+		return fsalstat(fsal_error, -fd);
+	}
+	switch (option) {
+	case SETXATTR4_CREATE:
+		flags = XATTR_CREATE;
+		break;
+	case SETXATTR4_REPLACE:
+		flags = XATTR_REPLACE;
+		break;
+	default:
+		flags = 0;
+		break;
+	}
+	if (xa_value->utf8string_len == 0) {
+		rc = fsetxattr(fd, name, "", 1, flags);
+	} else {
+		rc = fsetxattr(fd, name, xa_value->utf8string_val,
+			       xa_value->utf8string_len, flags);
+	}
+	err = errno; /* save errno before close() */
+	close(fd);
+	if (rc < 0) {
+		LogDebug(COMPONENT_FSAL, "fsetxattr returned %d, errno: %d", rc,
+			 err);
+		switch (err) {
+		case ENODATA:
+			return fsalstat(ERR_FSAL_NOXATTR, 0);
+		case ERANGE:
+			return fsalstat(ERR_FSAL_XATTR2BIG, 0);
+		default:
+			return posix2fsal_status(err);
+		}
+	}
+	return fsalstat(ERR_FSAL_NO_ERROR, 0);
+}
+
+static fsal_status_t vfs_removexattrs(struct fsal_obj_handle *obj_hdl,
+				      xattrkey4 *xa_name)
+{
+	struct vfs_fsal_obj_handle *myself =
+		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
+	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
+	char name[sizeof("user.") + NAME_MAX];
+	int fd = -1;
+	int rc = 0;
+	int err = 0;
+
+	rc = snprintf(name, sizeof(name), "user.%.*s", xa_name->utf8string_len,
+		      xa_name->utf8string_val);
+	if (rc >= sizeof(name))
+		return posix2fsal_status(-ENAMETOOLONG);
+
+	fd = (obj_hdl->type == DIRECTORY) ?
+		     vfs_fsal_open(myself, O_DIRECTORY, &fsal_error) :
+		     vfs_fsal_open(myself, O_RDWR, &fsal_error);
+	if (fd < 0) {
+		LogDebug(COMPONENT_FSAL, "vfs_open_fsal returned %d", fd);
+		return fsalstat(fsal_error, -fd);
+	}
+	rc = fremovexattr(fd, name);
+	err = errno; /* save errno before close() */
+	close(fd);
+	if (rc < 0) {
+		LogDebug(COMPONENT_FSAL, "fremovexattr returned %d, errno: %d",
+			 rc, err);
+		switch (err) {
+		case ENODATA:
+			return fsalstat(ERR_FSAL_NOXATTR, 0);
+		case ERANGE:
+			return fsalstat(ERR_FSAL_XATTR2BIG, 0);
+		default:
+			return posix2fsal_status(err);
+		}
+	}
+	return fsalstat(ERR_FSAL_NO_ERROR, 0);
+}
+
+static fsal_status_t vfs_listxattrs(struct fsal_obj_handle *obj_hdl,
+				    count4 la_maxcount, nfs_cookie4 *la_cookie,
+				    bool_t *lr_eof, xattrlist4 *lr_names)
+{
+	struct vfs_fsal_obj_handle *myself;
+	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
+	int fd = -1;
+	int err = 0;
+	int listsize = 0;
+	char names[MAXPATHLEN];
+
+	myself = container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
+	fd = (obj_hdl->type == DIRECTORY) ?
+		     vfs_fsal_open(myself, O_DIRECTORY, &fsal_error) :
+		     vfs_fsal_open(myself, O_RDONLY, &fsal_error);
+	if (fd < 0) {
+		LogDebug(COMPONENT_FSAL, "vfs_open_fsal returned %d", fd);
+		return fsalstat(fsal_error, -fd);
+	}
+	listsize = flistxattr(fd, names, sizeof(names));
+	err = errno; /* save errno before close() */
+	close(fd);
+	if (listsize < 0) {
+		LogDebug(COMPONENT_FSAL, "flistxattr returned %d, errno: %d",
+			 listsize, err);
+		return posix2fsal_status(err);
+	}
+	return fsal_listxattr_helper(names, listsize, la_maxcount, la_cookie,
+				     lr_eof, lr_names);
+}
+
 void vfs_handle_ops_init(struct fsal_obj_ops *ops)
 {
 	fsal_default_obj_ops_init(ops);
@@ -1771,6 +1948,11 @@ void vfs_handle_ops_init(struct fsal_obj_ops *ops)
 	ops->remove_extattr_by_name = vfs_remove_extattr_by_name;
 
 	ops->is_referral = fsal_common_is_referral;
+
+	ops->getxattrs = vfs_getxattrs;
+	ops->setxattrs = vfs_setxattrs;
+	ops->listxattrs = vfs_listxattrs;
+	ops->removexattrs = vfs_removexattrs;
 }
 
 /* export methods that create object handles
