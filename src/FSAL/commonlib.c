@@ -3233,8 +3233,10 @@ static inline void clear_op_context_export_impl(void)
 	if (op_ctx->ctx_export != NULL)
 		put_gsh_export(op_ctx->ctx_export);
 
-	if (op_ctx->ctx_pnfs_ds != NULL)
+	if (op_ctx->ctx_pnfs_ds != NULL) {
 		pnfs_ds_put(op_ctx->ctx_pnfs_ds);
+		op_ctx->ctx_pnfs_ds = NULL;
+	}
 
 	/* Note these are NEVER NULL in an active op_context. When an op_context
 	 * is initialized, if there is no export, these strings will be set to
@@ -3401,8 +3403,10 @@ void discard_op_context_export(struct saved_export_context *saved)
 	if (saved->saved_export)
 		put_gsh_export(saved->saved_export);
 
-	if (saved->saved_pnfs_ds != NULL)
+	if (saved->saved_pnfs_ds != NULL) {
 		pnfs_ds_put(saved->saved_pnfs_ds);
+		saved->saved_pnfs_ds = NULL;
+	}
 
 	if (saved->saved_fullpath != NULL)
 		gsh_refstr_put(saved->saved_fullpath);
