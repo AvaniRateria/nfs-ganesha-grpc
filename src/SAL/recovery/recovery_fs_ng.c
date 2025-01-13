@@ -104,10 +104,12 @@ static int fs_ng_create_recov_dir(void)
 
 	err = mkdir(nfs_param.nfsv4_param.recov_root, 0700);
 	if (err == -1 && errno != EEXIST) {
-		LogEvent(COMPONENT_CLIENTID,
+		err = errno;
+		LogCrit(COMPONENT_CLIENTID,
 			 "Failed to create v4 recovery dir (%s): %s (%d)",
 			 nfs_param.nfsv4_param.recov_root, strerror(errno),
 			 errno);
+		return -err;
 	}
 
 	err = snprintf(v4_recov_dir, sizeof(v4_recov_dir), "%s/%s",
@@ -118,7 +120,7 @@ static int fs_ng_create_recov_dir(void)
 		LogCrit(COMPONENT_CLIENTID, "Path too long %s/%s",
 			nfs_param.nfsv4_param.recov_root,
 			nfs_param.nfsv4_param.recov_dir);
-		return -EINVAL;
+		return -ENAMETOOLONG;
 	} else if (unlikely(err < 0)) {
 		int error = errno;
 
@@ -130,9 +132,11 @@ static int fs_ng_create_recov_dir(void)
 
 	err = mkdir(v4_recov_dir, 0700);
 	if (err == -1 && errno != EEXIST) {
-		LogEvent(COMPONENT_CLIENTID,
+		err = errno;
+		LogCrit(COMPONENT_CLIENTID,
 			 "Failed to create v4 recovery dir(%s): %s (%d)",
 			 v4_recov_dir, strerror(errno), errno);
+		return -err;
 	}
 
 	/* Populate link path string */
@@ -154,10 +158,11 @@ static int fs_ng_create_recov_dir(void)
 	} else {
 		err = gethostname(host, sizeof(host));
 		if (err) {
-			LogEvent(COMPONENT_CLIENTID,
+			err = errno;
+			LogCrit(COMPONENT_CLIENTID,
 				 "Failed to gethostname: %s (%d)",
 				 strerror(errno), errno);
-			return -errno;
+			return -err;
 		}
 	}
 
@@ -185,7 +190,7 @@ static int fs_ng_create_recov_dir(void)
 	if (unlikely(err >= sizeof(v4_recov_dir))) {
 		LogCrit(COMPONENT_CLIENTID, "Path too long %s.XXXXXX",
 			v4_recov_link);
-		return -EINVAL;
+		return -ENAMETOOLONG;
 	} else if (unlikely(err < 0)) {
 		int error = errno;
 
@@ -199,12 +204,18 @@ static int fs_ng_create_recov_dir(void)
 
 	newdir = mkdtemp(v4_recov_dir);
 	if (newdir != v4_recov_dir) {
-		LogEvent(COMPONENT_CLIENTID,
+		err = errno;
+		LogCrit(COMPONENT_CLIENTID,
 			 "Failed to create v4 recovery dir(%s): %s (%d)",
 			 v4_recov_dir, strerror(errno), errno);
+		return -err;
 	}
 
 	legacy_fs_db_migrate();
+
+	LogEvent(COMPONENT_CLIENTID,
+		 "fs-ng recovery backend initialization complete");
+
 	return 0;
 }
 

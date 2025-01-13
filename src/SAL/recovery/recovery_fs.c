@@ -163,18 +163,21 @@ int fs_create_recov_dir(void)
 		node_size = snprintf(node, sizeof(node), "/node%d", g_nodeid);
 
 		if (unlikely(node_size >= sizeof(node) || node_size < 0)) {
-			LogFatal(COMPONENT_CLIENTID,
+			LogCrit(COMPONENT_CLIENTID,
 				 "snprintf returned unexpected %d", node_size);
+			return -ENAMETOOLONG;
 		}
 	}
 
 	err = mkdir(nfs_param.nfsv4_param.recov_root, 0755);
 	if (err == -1 && errno != EEXIST) {
-		LogEvent(
+		err = errno;
+		LogCrit(
 			COMPONENT_CLIENTID,
 			"Failed to create v4 recovery dir (%s), errno: %s (%d)",
 			nfs_param.nfsv4_param.recov_root, strerror(errno),
 			errno);
+		return -err;
 	}
 
 	root_len = strlen(nfs_param.nfsv4_param.recov_root);
@@ -185,11 +188,13 @@ int fs_create_recov_dir(void)
 	 */
 	v4_recov_dir_len = root_len + 1 + dir_len + node_size;
 
-	if (v4_recov_dir_len >= sizeof(v4_recov_dir))
-		LogFatal(COMPONENT_CLIENTID,
+	if (v4_recov_dir_len >= sizeof(v4_recov_dir)) {
+		LogCrit(COMPONENT_CLIENTID,
 			 "v4 recovery dir path (%s/%s) is too long",
 			 nfs_param.nfsv4_param.recov_root,
 			 nfs_param.nfsv4_param.recov_dir);
+		return -ENAMETOOLONG;
+	}
 
 	memcpy(v4_recov_dir, nfs_param.nfsv4_param.recov_root, root_len);
 	v4_recov_dir[root_len] = '/';
@@ -201,9 +206,11 @@ int fs_create_recov_dir(void)
 
 	err = mkdir(v4_recov_dir, 0755);
 	if (err == -1 && errno != EEXIST) {
-		LogEvent(COMPONENT_CLIENTID,
+		err = errno;
+		LogCrit(COMPONENT_CLIENTID,
 			 "Failed to create v4 recovery dir(%s), errno: %s (%d)",
 			 v4_recov_dir, strerror(errno), errno);
+		return -err;
 	}
 
 	root_len = strlen(nfs_param.nfsv4_param.recov_root);
@@ -214,11 +221,13 @@ int fs_create_recov_dir(void)
 	 */
 	v4_old_dir_len = root_len + 1 + old_len + node_size;
 
-	if (v4_old_dir_len >= sizeof(v4_old_dir))
-		LogFatal(COMPONENT_CLIENTID,
+	if (v4_old_dir_len >= sizeof(v4_old_dir)) {
+		LogCrit(COMPONENT_CLIENTID,
 			 "v4 recovery dir path (%s/%s) is too long",
 			 nfs_param.nfsv4_param.recov_root,
 			 nfs_param.nfsv4_param.recov_old_dir);
+		return -ENAMETOOLONG;
+	}
 
 	memcpy(v4_old_dir, nfs_param.nfsv4_param.recov_root, root_len);
 	v4_old_dir[root_len] = '/';
@@ -231,9 +240,11 @@ int fs_create_recov_dir(void)
 	err = mkdir(v4_old_dir, 0755);
 
 	if (err == -1 && errno != EEXIST) {
-		LogEvent(COMPONENT_CLIENTID,
+		err = errno;
+		LogCrit(COMPONENT_CLIENTID,
 			 "Failed to create v4 recovery dir(%s), errno: %s (%d)",
 			 v4_old_dir, strerror(errno), errno);
+		return -err;
 	}
 	if (nfs_param.core_param.clustered) {
 		/* Now make the node specific directory.
@@ -250,19 +261,23 @@ int fs_create_recov_dir(void)
 		err = mkdir(v4_recov_dir, 0755);
 
 		if (err == -1 && errno != EEXIST) {
-			LogEvent(
+			err = errno;
+			LogCrit(
 				COMPONENT_CLIENTID,
 				"Failed to create v4 recovery dir(%s), errno: %s (%d)",
 				v4_recov_dir, strerror(errno), errno);
+			return -err;
 		}
 
 		err = mkdir(v4_old_dir, 0755);
 
 		if (err == -1 && errno != EEXIST) {
-			LogEvent(
+			err = errno;
+			LogCrit(
 				COMPONENT_CLIENTID,
 				"Failed to create v4 recovery dir(%s), errno: %s (%d)",
 				v4_old_dir, strerror(errno), errno);
+			return -err;
 		}
 	}
 
@@ -270,6 +285,9 @@ int fs_create_recov_dir(void)
 		v4_recov_dir);
 	LogInfo(COMPONENT_CLIENTID, "NFSv4 Recovery Directory (old) %s",
 		v4_old_dir);
+
+	LogEvent(COMPONENT_CLIENTID,
+		 "fs recovery backend initialization complete");
 
 	return 0;
 }

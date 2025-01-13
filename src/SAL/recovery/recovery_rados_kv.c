@@ -425,7 +425,7 @@ int rados_kv_init(void)
 
 		if (ret) {
 			ret = errno;
-			LogEvent(COMPONENT_CLIENTID,
+			LogCrit(COMPONENT_CLIENTID,
 				 "Failed to gethostname: %s (%d)",
 				 strerror(ret), ret);
 			return -ret;
@@ -453,8 +453,8 @@ int rados_kv_init(void)
 			       rados_kv_param.ceph_conf, rados_kv_param.pool,
 			       rados_kv_param.namespace);
 	if (ret < 0) {
-		LogEvent(COMPONENT_CLIENTID, "Failed to connect to cluster: %d",
-			 ret);
+		LogCrit(COMPONENT_CLIENTID,
+			"Failed to connect to rados kv store: %d", ret);
 		goto out;
 	}
 
@@ -464,7 +464,8 @@ int rados_kv_init(void)
 	ret = rados_write_op_operate(op, rados_recov_io_ctx, old_oid->gr_val,
 				     NULL, 0);
 	if (ret < 0 && ret != -EEXIST) {
-		LogEvent(COMPONENT_CLIENTID, "Failed to create object");
+		LogCrit(COMPONENT_CLIENTID,
+			"Failed to create recovery (rados) object");
 		rados_release_write_op(op);
 		rados_kv_shutdown();
 		goto out;
@@ -476,14 +477,16 @@ int rados_kv_init(void)
 	ret = rados_write_op_operate(op, rados_recov_io_ctx, recov_oid->gr_val,
 				     NULL, 0);
 	if (ret < 0 && ret != -EEXIST) {
-		LogEvent(COMPONENT_CLIENTID, "Failed to create object");
+		LogCrit(COMPONENT_CLIENTID,
+			"Failed to create recovery (rados) object");
 		rados_release_write_op(op);
 		rados_kv_shutdown();
 		goto out;
 	}
 	rados_release_write_op(op);
 
-	LogEvent(COMPONENT_CLIENTID, "Rados kv store init done");
+	LogEvent(COMPONENT_CLIENTID,
+		 "rados-kv recovery backend initialization complete");
 	ret = 0;
 out:
 	gsh_refstr_put(recov_oid);

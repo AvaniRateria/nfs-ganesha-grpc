@@ -830,7 +830,7 @@ const char *recovery_backend_str(enum recovery_backend recovery_backend)
  */
 int nfs4_recovery_init(void)
 {
-	LogInfo(COMPONENT_CLIENTID, "Recovery Backend Init for %s",
+	LogEvent(COMPONENT_CLIENTID, "Recovery Backend Init for %s",
 		recovery_backend_str(nfs_param.nfsv4_param.recovery_backend));
 
 	switch (nfs_param.nfsv4_param.recovery_backend) {
