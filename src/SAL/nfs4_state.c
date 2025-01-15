@@ -553,7 +553,17 @@ void _state_del_locked(state_t *state, const char *func, int line)
 	 * is the last point we have a valid reference to the object
 	 * handle.
 	 */
+	/* Mark in op_ctx for the last close of a file */
+	if (nfs_param.nfsv4_param.preserve_unlinked &&
+	    op_ctx->fsal_export->exp_ops.fs_supports(
+			op_ctx->fsal_export,
+			fso_preserve_unlinked) &&
+	    !fsal_has_file_states(obj))
+		op_ctx->last_close = true;
+
 	(void)obj->obj_ops->close2(obj, state);
+	op_ctx->last_close = false;
+
 	if (clientid) {
 		if (state->state_type == STATE_TYPE_SHARE)
 			atomic_dec_uint32_t(&clientid->cid_open_state_counter);

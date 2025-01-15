@@ -1414,6 +1414,22 @@ fsal_status_t fsal_readdir(struct fsal_obj_handle *directory, uint64_t cookie,
 }
 
 /**
+ * Check if a obj has file states
+ * @note The st_lock MUST be held
+ *
+ * @param[in] obj   File
+ * @retval true if the file has file states, false otherwise
+ */
+bool
+fsal_has_file_states(struct fsal_obj_handle *obj_hdl)
+{
+	if (obj_hdl->type == REGULAR_FILE &&
+	    !glist_empty(&obj_hdl->state_hdl->file.list_of_states))
+		return true;
+	return false;
+}
+
+/**
  *
  * @brief Remove a name from a directory.
  *
@@ -1482,9 +1498,21 @@ fsal_status_t fsal_remove(struct fsal_obj_handle *parent, const char *name,
 		goto out;
 #endif /* ENABLE_RFC_ACL */
 
+	if (nfs_param.nfsv4_param.preserve_unlinked &&
+	    op_ctx->fsal_export->exp_ops.fs_supports(
+			op_ctx->fsal_export,
+			fso_preserve_unlinked)) {
+		STATELOCK_lock(to_remove_obj);
+		if (fsal_has_file_states(to_remove_obj))
+			op_ctx->is_unlink_with_states = true;
+		STATELOCK_unlock(to_remove_obj);
+	}
+
 	status = parent->obj_ops->unlink(parent, to_remove_obj, name,
 					 parent_pre_attrs_out,
 					 parent_post_attrs_out);
+
+	op_ctx->is_unlink_with_states = false;
 
 	if (FSAL_IS_ERROR(status)) {
 		LogFullDebug(COMPONENT_FSAL, "unlink %s failure %s", name,

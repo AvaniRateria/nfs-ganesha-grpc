@@ -316,6 +316,7 @@ fsal_status_t fsal_readdir(struct fsal_obj_handle *directory, uint64_t cookie,
 			   unsigned int *nbfound, bool *eod_met,
 			   attrmask_t attrmask, helper_readdir_cb cb,
 			   void *opaque);
+bool fsal_has_file_states(struct fsal_obj_handle *obj_hdl);
 fsal_status_t fsal_remove(struct fsal_obj_handle *parent, const char *name,
 			  struct fsal_attrlist *parent_pre_attrs_out,
 			  struct fsal_attrlist *parent_post_attrs_out);

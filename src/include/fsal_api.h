@@ -498,6 +498,8 @@ struct req_op_context {
 	void *fsal_private; /*< private for FSAL use */
 	void *proto_private; /*< private for protocol layer use */
 	bool is_rdma_buff_used; /*< Whether RDMA buffer is being used */
+	bool is_unlink_with_states; /* Indicate unlink with file states */
+	bool last_close; /* Indicate the last close of a file */
 	struct fsal_module *fsal_module; /*< current fsal module */
 	struct fsal_pnfs_ds *ctx_pnfs_ds; /*< current pNFS DS */
 	nfs_request_t *
