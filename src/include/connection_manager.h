@@ -122,12 +122,58 @@ typedef enum connection_manager__drain_t (*connection_manager__callback_drain_t)
 	/* Timeout for the draining */
 	const struct timespec *timeout);
 
+enum connection_manager__register_t {
+	/* Registration was successful. The server is able to handle requests on
+	 * this connection.
+	 * The server expects to deregister the connection once it is closed.
+	 */
+	CONNECTION_MANAGER__REGISTER__SUCCESS = 0,
+	/* The server refused the registration. It is unable to handle any
+	 * requests on this connection.
+	 * Deregister is not expected to be called for this connection.
+	 */
+	CONNECTION_MANAGER__REGISTER__REFUSED,
+
+	/* Number of register results (for monitoring) */
+	CONNECTION_MANAGER__REGISTER__LAST,
+};
+
+typedef enum connection_manager__register_t (
+	*connection_manager__callback_register_t)(
+	/* User provided context */
+	void *user_context,
+	/* Client to register */
+	const sockaddr_t *client_address,
+	/* Client address string for logging/debugging */
+	const char *client_address_str,
+	/* Timeout for the registration */
+	const struct timespec *timeout);
+
+typedef void (*connection_manager__callback_deregister_t)(
+	/* User provided context */
+	void *user_context,
+	/* Client to deregister */
+	const sockaddr_t *client_address,
+	/* Client address string for logging/debugging */
+	const char *client_address_str);
+
 typedef struct connection_manager__callback_context_t {
 	/* User provided context */
 	void *user_context;
-	/* Sends a "DRAIN" request to the other Ganesha servers in the
-	 * cluster */
-	connection_manager__callback_drain_t drain_and_disconnect_other_servers;
+	/* Registers a new connection for the client in the cluster.
+	 * Once a registration is successful, the FSAL expects to deregister the
+	 * connection when it is closed.
+	 * Also sends a "DRAIN" request to other Ganesha servers.
+	 */
+	connection_manager__callback_drain_t
+		register_connection_and_drain_other_servers;
+	/* Registers a new connection for the client in the cluster.
+	 * Once a registration is successful, the FSAL expects to deregister the
+	 * connection when it is closed.
+	 */
+	connection_manager__callback_register_t register_connection;
+	/* Removes a registration of a existing connection in the cluster */
+	connection_manager__callback_deregister_t deregister_connection;
 } connection_manager__callback_context_t;
 
 /* A client steady state can be either DRAINED or ACTIVE.
@@ -154,13 +200,12 @@ enum connection_manager__client_state_t {
 	/* In this state, new connections will block-wait until the state is
 	 * changed */
 	CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING,
-	/* In this state, new connections are allowed immediately, without going
-	 * through the process of draining other servers */
+	/* In this state, new connections only need registration and do not need
+	 * to drain other servers */
 	CONNECTION_MANAGER__CLIENT_STATE__ACTIVE,
 	/* In this state, new connections will abort the local draining process
 	 * and transition back to ACTIVE state */
 	CONNECTION_MANAGER__CLIENT_STATE__DRAINING,
-
 	/* Number of client states (for monitoring) */
 	CONNECTION_MANAGER__CLIENT_STATE__LAST,
 };
@@ -168,10 +213,8 @@ enum connection_manager__client_state_t {
 enum connection_manager__connection_started_t {
 	/* The new connection is allowed to be created and execute requests */
 	CONNECTION_MANAGER__CONNECTION_STARTED__ALLOW = 0,
-	/* The draining process in other servers failed, the new connection
-	 * should be dropped */
+	/* The server cannot handle the connection and it should be dropped */
 	CONNECTION_MANAGER__CONNECTION_STARTED__DROP,
-
 	/* Number of connection started results (for monitoring) */
 	CONNECTION_MANAGER__CONNECTION_STARTED__LAST,
 };
@@ -180,10 +223,12 @@ typedef struct connection_manager__connection_t {
 	/* When false, fields below are unused */
 	bool is_managed;
 	/* We don't have ownership on XPRT, when the XPRT is destroyed it calls
-	 * connection_manager__connection_finished which destroys this struct */
+	 * connection_manager__connection_finished which destroys this struct.
+	 */
 	SVCXPRT *xprt;
 	/* We have ownership on gsh_client, and it should be released when this
-	 * struct is destroyed */
+	 * struct is destroyed.
+	 */
 	struct gsh_client *gsh_client;
 	/* connections list in connection_manager__client_t */
 	struct glist_head node;
@@ -204,18 +249,18 @@ typedef struct connection_manager__client_t {
 } connection_manager__client_t;
 
 /**
- * Sets the callbacks to be called on draining
- * Can be called only on init or after "clear" was called
+ * Sets the callbacks to be called on new connections.
+ * Can be called only on init or after "clear" was called.
  */
 void connection_manager__callback_set(connection_manager__callback_context_t);
 /**
- * Clears the drain callbacks, and returns the last stored callbacks struct
- * Can be called only after "set" was called
+ * Clears the callbacks, and returns the last stored callbacks struct.
+ * Can be called only after "set" was called.
  */
 connection_manager__callback_context_t connection_manager__callback_clear(void);
 
 /**
- * Initialize the Connection Manager module
+ * Initialize the Connection Manager module.
  */
 void connection_manager__init(void);
 
@@ -256,11 +301,17 @@ connection_manager__connection_started(SVCXPRT *);
 void connection_manager__connection_finished(const SVCXPRT *);
 
 /**
+ * Used to check if the drain was successful.
+ */
+bool connection_manager__is_drain_success(
+	enum connection_manager__drain_t result);
+
+/**
  * Calls SVC_DESTROY on the client's connections, and block-waits until they
  * are closed, or until timeout.
- * The "drain_and_disconnect_other_servers" callback should send a "DRAIN"
- * request to the other Ganesha servers in the cluster. When a "DRAIN" request
- * is received, this method should be called.
+ * The "register_connection_and_drain_other_servers" callback should send a
+ * "DRAIN" request to the other Ganesha servers in the cluster. When a "DRAIN"
+ * request is received, this method should be called.
  */
 enum connection_manager__drain_t
 connection_manager__drain_and_disconnect_local(sockaddr_t *);

@@ -201,9 +201,37 @@ static enum connection_manager__drain_t callback_default_drain_other_servers(
 	return CONNECTION_MANAGER__DRAIN__FAILED;
 }
 
-#define DEFAULT_CALLBACK_CONTEXT                     \
-	{ /*user_context=*/                          \
-	  NULL, callback_default_drain_other_servers \
+static enum connection_manager__register_t callback_default_register_connection(
+	void *context, const sockaddr_t *client_address,
+	const char *client_address_str, const struct timespec *timeout)
+{
+	LogWarn(COMPONENT_XPRT,
+		"%s: Client connected before Connection Manager callback was registered",
+		client_address_str);
+	GSH_AUTO_TRACEPOINT(PROV_NAME, default_register, TRACE_WARNING,
+			    "{}: Connection is not managed",
+			    TP_STR(client_address_str));
+	return CONNECTION_MANAGER__REGISTER__REFUSED;
+}
+
+static void
+callback_default_deregister_connection(void *context,
+				       const sockaddr_t *client_address,
+				       const char *client_address_str)
+{
+	LogWarn(COMPONENT_XPRT,
+		"%s: Client connected before Connection Manager callback was registered",
+		client_address_str);
+	GSH_AUTO_TRACEPOINT(PROV_NAME, default_deregister, TRACE_WARNING,
+			    "{}: Connection is not managed",
+			    TP_STR(client_address_str));
+}
+
+#define DEFAULT_CALLBACK_CONTEXT                      \
+	{ /*user_context=*/                           \
+	  NULL, callback_default_drain_other_servers, \
+	  callback_default_register_connection,       \
+	  callback_default_deregister_connection      \
 	}
 
 static pthread_rwlock_t callback_lock = RWLOCK_INITIALIZER;
@@ -212,24 +240,33 @@ static const connection_manager__callback_context_t callback_default =
 static connection_manager__callback_context_t callback_context =
 	DEFAULT_CALLBACK_CONTEXT;
 
-void connection_manager__callback_set(connection_manager__callback_context_t new)
+void connection_manager__callback_set(
+	connection_manager__callback_context_t new_cb)
 {
 	PTHREAD_RWLOCK_wrlock(&callback_lock);
-	assert(callback_context.drain_and_disconnect_other_servers ==
-	       callback_default.drain_and_disconnect_other_servers);
-	callback_context = new;
+	assert(callback_context.register_connection_and_drain_other_servers ==
+	       callback_default.register_connection_and_drain_other_servers);
+	assert(callback_context.register_connection ==
+	       callback_default.register_connection);
+	assert(callback_context.deregister_connection ==
+	       callback_default.deregister_connection);
+	callback_context = new_cb;
 	PTHREAD_RWLOCK_unlock(&callback_lock);
 }
 
 connection_manager__callback_context_t connection_manager__callback_clear(void)
 {
 	PTHREAD_RWLOCK_wrlock(&callback_lock);
-	assert(callback_context.drain_and_disconnect_other_servers !=
-	       callback_default.drain_and_disconnect_other_servers);
-	const connection_manager__callback_context_t old = callback_context;
+	assert(callback_context.register_connection_and_drain_other_servers !=
+	       callback_default.register_connection_and_drain_other_servers);
+	assert(callback_context.register_connection !=
+	       callback_default.register_connection);
+	assert(callback_context.deregister_connection !=
+	       callback_default.deregister_connection);
+	const connection_manager__callback_context_t old_cb = callback_context;
 	callback_context = callback_default;
 	PTHREAD_RWLOCK_unlock(&callback_lock);
-	return old;
+	return old_cb;
 }
 
 void connection_manager__client_init(connection_manager__client_t *client)
@@ -345,18 +382,16 @@ try_drain_self(connection_manager__client_t *client, uint32_t timeout_sec)
 		 * the state to DRAINED/ACTIVE. This also holds in more complex
 		 * scenarios where the draining was aborted by another thread
 		 * and then restarted by a third thread. */
-		if (client->connections_count == 0) {
+		if (client->connections_count == 0)
 			change_state(client,
 				     CONNECTION_MANAGER__CLIENT_STATE__DRAINED);
-		} else {
+		else
 			change_state(client,
 				     CONNECTION_MANAGER__CLIENT_STATE__ACTIVE);
-		}
 	}
 
-	if (client->state == CONNECTION_MANAGER__CLIENT_STATE__DRAINED) {
+	if (client->state == CONNECTION_MANAGER__CLIENT_STATE__DRAINED)
 		return CONNECTION_MANAGER__DRAIN__SUCCESS;
-	}
 
 	/* Check for stuck connections */
 	glist_for_each(node, &client->connections)
@@ -517,62 +552,80 @@ static inline bool should_manage_connection(sockaddr_t *client_address)
 	       !is_loopback(client_address);
 }
 
-static inline bool is_drain_success(enum connection_manager__drain_t result)
+bool connection_manager__is_drain_success(
+	enum connection_manager__drain_t result)
 {
 	return result == CONNECTION_MANAGER__DRAIN__SUCCESS ||
 	       result == CONNECTION_MANAGER__DRAIN__SUCCESS_NO_CONNECTIONS;
 }
 
 /**
- * Tries to activate the client if it's not already activated.
+ * Tries to activate the client.
  * The "connection" parameter is used for logging purposes only, the entity
  * being activated is the client.
  *
  * Assumes the client mutex is held.
+ * Assumes the client is currently in DRAINED state.
  */
-static void
-try_activate_client_if_needed(connection_manager__connection_t *connection)
+static void try_activate_client(connection_manager__connection_t *connection)
+{
+	connection_manager__client_t *const client =
+		&connection->gsh_client->connection_manager;
+	assert(client->state == CONNECTION_MANAGER__CLIENT_STATE__DRAINED);
+	LogDebugConnection(connection, "Client is drained, activating");
+	CONN_AUTO_TRACEPOINT(connection, activate_clinet__drained, TRACE_INFO,
+			     "Client is drained, activating");
+	change_state(client, CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING);
+	/* It's OK to unlock because no other thread can change the
+	 * state while ACTIVATING.
+	 */
+	PTHREAD_MUTEX_unlock(&client->mutex);
+
+	LogDebugConnection(connection, "Draining other servers");
+	CONN_AUTO_TRACEPOINT(connection, activate_clinet__drain_others,
+			     TRACE_INFO, "Draining other servers");
+	const struct timespec timeout = timeout_seconds(
+		nfs_param.core_param.connection_manager_timeout_sec);
+	PTHREAD_RWLOCK_rdlock(&callback_lock);
+	const enum connection_manager__drain_t drain_result =
+		callback_context.register_connection_and_drain_other_servers(
+			callback_context.user_context,
+			get_client_address(client),
+			get_client_address_for_debugging(client), &timeout);
+	PTHREAD_RWLOCK_unlock(&callback_lock);
+
+	PTHREAD_MUTEX_lock(&client->mutex);
+	assert(client->state == CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING);
+
+	if (connection_manager__is_drain_success(drain_result))
+		change_state(client, CONNECTION_MANAGER__CLIENT_STATE__ACTIVE);
+	else
+		change_state(client, CONNECTION_MANAGER__CLIENT_STATE__DRAINED);
+}
+
+/**
+ * Register a new connection for a client.
+ * Will handle any client state changes required.
+ *
+ * The "connection" parameter is used for logging purposes only, the entity
+ * being activated is the client.
+ * Assumes the client mutex is held.
+ */
+static enum connection_manager__register_t
+register_new_client_connection(connection_manager__connection_t *connection)
 {
 	connection_manager__client_t *const client =
 		&connection->gsh_client->connection_manager;
 
 	switch (client->state) {
 	case CONNECTION_MANAGER__CLIENT_STATE__DRAINED: {
-		LogDebugConnection(connection, "Client is drained, activating");
-		CONN_AUTO_TRACEPOINT(connection, activate_clinet__drained,
-				     TRACE_INFO,
-				     "Client is drained, activating");
-		change_state(client,
-			     CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING);
-		/* It's OK to unlock because no other thread can change the
-		 * state while ACTIVATING. */
-		PTHREAD_MUTEX_unlock(&client->mutex);
+		try_activate_client(connection);
 
-		LogDebugConnection(connection, "Draining other servers");
-		CONN_AUTO_TRACEPOINT(connection, activate_clinet__drain_others,
-				     TRACE_INFO, "Draining other servers");
-		const struct timespec timeout = timeout_seconds(
-			nfs_param.core_param.connection_manager_timeout_sec);
-		PTHREAD_RWLOCK_rdlock(&callback_lock);
-		const enum connection_manager__drain_t drain_result =
-			callback_context.drain_and_disconnect_other_servers(
-				callback_context.user_context,
-				get_client_address(client),
-				get_client_address_for_debugging(client),
-				&timeout);
-		PTHREAD_RWLOCK_unlock(&callback_lock);
-
-		PTHREAD_MUTEX_lock(&client->mutex);
-		assert(client->state ==
-		       CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING);
-
-		if (is_drain_success(drain_result)) {
-			change_state(client,
-				     CONNECTION_MANAGER__CLIENT_STATE__ACTIVE);
-		} else {
-			change_state(client,
-				     CONNECTION_MANAGER__CLIENT_STATE__DRAINED);
-		}
+		/* If we just activated the client, we also registered a new
+		 * connection.
+		 */
+		if (client->state == CONNECTION_MANAGER__CLIENT_STATE__ACTIVE)
+			return CONNECTION_MANAGER__REGISTER__SUCCESS;
 		break;
 	}
 	case CONNECTION_MANAGER__CLIENT_STATE__ACTIVATING: {
@@ -608,6 +661,56 @@ try_activate_client_if_needed(connection_manager__connection_t *connection)
 				   client->state);
 	}
 	}
+
+	/* If the client is not active, connection registration will be refused
+	 * so we can fail early.
+	 */
+	if (client->state != CONNECTION_MANAGER__CLIENT_STATE__ACTIVE)
+		return CONNECTION_MANAGER__REGISTER__REFUSED;
+
+	/* We can release the mutex as we verify the client still active after
+	 * registration.
+	 */
+	PTHREAD_MUTEX_unlock(&client->mutex);
+	LogDebugConnection(connection, "Registering connection");
+	CONN_AUTO_TRACEPOINT(connection, activate_client__register_connection,
+			     TRACE_INFO, "Registering connection");
+	const struct timespec timeout = timeout_seconds(
+		nfs_param.core_param.connection_manager_timeout_sec);
+	PTHREAD_RWLOCK_rdlock(&callback_lock);
+	const enum connection_manager__register_t register_result =
+		callback_context.register_connection(
+			callback_context.user_context,
+			get_client_address(client),
+			get_client_address_for_debugging(client), &timeout);
+	PTHREAD_RWLOCK_unlock(&callback_lock);
+
+	PTHREAD_MUTEX_lock(&client->mutex);
+	/* The client might have been drained while registering. */
+	if (client->state != CONNECTION_MANAGER__CLIENT_STATE__ACTIVE) {
+		LogDebugConnection(
+			connection,
+			"Client was drained while registering connection");
+		CONN_AUTO_TRACEPOINT(
+			connection,
+			activate_client__register_connection_drained,
+			TRACE_INFO,
+			"Client was drained while registering connection");
+		if (register_result == CONNECTION_MANAGER__REGISTER__SUCCESS) {
+			/* If we already registered the connection, we need to
+			 * deregister it.
+			 */
+			PTHREAD_RWLOCK_rdlock(&callback_lock);
+			callback_context.deregister_connection(
+				callback_context.user_context,
+				get_client_address(client),
+				get_client_address_for_debugging(client));
+			PTHREAD_RWLOCK_unlock(&callback_lock);
+		}
+		return CONNECTION_MANAGER__REGISTER__REFUSED;
+	}
+
+	return register_result;
 }
 
 void connection_manager__connection_init(SVCXPRT *xprt)
@@ -631,7 +734,8 @@ void connection_manager__connection_init(SVCXPRT *xprt)
 	}
 	/* No need to hold XPRT refcount, because the connection struct is
 	 * stored in the XPRT custom user data. When the XPRT is destroyed it
-	 * calls connection_manager__connection_finished  */
+	 * calls connection_manager__connection_finished.
+	 */
 	connection->xprt = xprt;
 	connection->is_destroyed = false;
 	connection->destroy_start = 0;
@@ -644,7 +748,8 @@ void connection_manager__connection_init(SVCXPRT *xprt)
 	 * not be used till then.
 	 * When the svc_vc handles the first packet, it knows what is the
 	 * remote address and update any upper layer registered for this
-	 * notification.    */
+	 * notification.
+	 */
 	connection->gsh_client = NULL;
 }
 
@@ -678,7 +783,8 @@ connection_manager__connection_started(SVCXPRT *xprt)
 	}
 
 	/* assert that connecton_init function was called before.
-	 * The init function should have set the xprt in the connection. */
+	 * The init function should have set the xprt in the connection.
+	 */
 	if (connection->xprt != xprt) {
 		CLIENT_AUTO_TRACEPOINT(
 			client, conn_started_xprt, TRACE_CRIT,
@@ -712,14 +818,20 @@ connection_manager__connection_started(SVCXPRT *xprt)
 	}
 
 	PTHREAD_MUTEX_lock(&client->mutex);
-	try_activate_client_if_needed(connection);
+	/* Note the mutex might be temporarily released while registering the
+	 * connection.
+	 */
+	const enum connection_manager__register_t register_result =
+		register_new_client_connection(connection);
 
-	if (client->state != CONNECTION_MANAGER__CLIENT_STATE__ACTIVE) {
-		LogWarnConnection(connection, "Failed with state %d",
-				  client->state);
+	/* A connection can only be allowed if the registration was successful
+	 * and the client wasn't drained while registering the connection.
+	 */
+	if (register_result != CONNECTION_MANAGER__REGISTER__SUCCESS) {
+		LogWarnConnection(connection, "Failed to register connection");
 		CONN_AUTO_TRACEPOINT(connection, conn_started_not_active,
-				     TRACE_WARNING, "Failed with state {}",
-				     client->state);
+				     TRACE_WARNING,
+				     "Failed to register connection");
 		connection->is_managed = false;
 		PTHREAD_MUTEX_unlock(&client->mutex);
 		connection->gsh_client = NULL;
@@ -761,6 +873,12 @@ void connection_manager__connection_finished(const SVCXPRT *xprt)
 	LogDebugConnection(connection, "Connection finished");
 	CONN_AUTO_TRACEPOINT(connection, conn_finished, TRACE_INFO,
 			     "Connection finished");
+
+	PTHREAD_RWLOCK_rdlock(&callback_lock);
+	callback_context.deregister_connection(
+		callback_context.user_context, get_client_address(client),
+		get_client_address_for_debugging(client));
+	PTHREAD_RWLOCK_unlock(&callback_lock);
 
 	PTHREAD_MUTEX_lock(&client->mutex);
 	glist_del(&connection->node);
