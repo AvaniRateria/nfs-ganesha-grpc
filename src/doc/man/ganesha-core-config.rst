@@ -483,6 +483,16 @@ Delegations(bool, default false)
 Deleg_Recall_Retry_Delay(uint32_t, range 0 to 10, default 1)
     Delay after which server will retry a recall in case of failures
 
+Preserve_Unlinked(bool, default false)
+    Whether to allow preserve unlinked. Refer to RFC5661, In traditional
+    NFS, "silly rename" is used to handle open files deleted by another
+    client by renaming them to hidden temporary names. With NFSv4.1,
+    the OPEN4_RESULT_PRESERVE_UNLINKED flag allows the server to preserve
+    unlinked files until all references are closed, eliminating the need
+    for "silly rename" and simplifying client logic while ensuring efficient
+    file lifecycle management. The support on NFS client is now generally
+    available in RHEL8.7 and RHEL9.1.
+
 pnfs_mds(bool, default false)
     Whether this a pNFS MDS server.
     For FSAL Gluster, if this is true, set pnfs_mds in gluster block as well.

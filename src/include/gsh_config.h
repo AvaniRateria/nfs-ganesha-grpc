@@ -656,6 +656,8 @@ typedef struct nfs_version4_parameter {
 	bool allow_delegations;
 	/** Delay after which server will retry a recall in case of failures */
 	uint32_t deleg_recall_retry_delay;
+	/** support for OPEN4_RESULT_PRESERVE_UNLINKED */
+	bool preserve_unlinked;
 	/** Whether this a pNFS MDS server. Defaults to false */
 	bool pnfs_mds;
 	/** Whether this a pNFS DS server. Defaults to false */

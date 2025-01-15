@@ -657,6 +657,7 @@ typedef enum enum_fsal_fsinfo_options {
 	fso_compliant_eof_behavior,
 	fso_xattr_support,
 	fso_allocate_own_read_buffer,
+	fso_preserve_unlinked,
 } fsal_fsinfo_options_t;
 
 /* The largest maxread and maxwrite value */
@@ -723,6 +724,7 @@ typedef struct fsal_staticfsinfo_t {
 				       change for a directory with an upcall,
 				       set this to -1. Else set it to some
 				       positive value. Defaults to -1. */
+	bool preserve_unlinked;	/*< FSAL preserves unlinked files */
 } fsal_staticfsinfo_t;
 
 /**
