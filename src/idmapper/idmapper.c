@@ -291,19 +291,10 @@ static void idmapper_reaper_init(void)
  */
 bool idmapper_init(void)
 {
-	bool rc;
-
 	PTHREAD_RWLOCK_init(&winbind_auth_lock, NULL);
 	PTHREAD_RWLOCK_init(&gc_auth_lock, NULL);
 	PTHREAD_RWLOCK_init(&dns_auth_lock, NULL);
 	PTHREAD_RWLOCK_init(&owner_domain.lock, NULL);
-
-	rc = idmapper_set_owner_domain();
-	if (!rc) {
-		LogWarn(COMPONENT_IDMAPPER,
-			"Unable to set owner-domain required for idmapping.");
-		return false;
-	}
 
 	idmapper_cache_init();
 	idmapper_negative_cache_init();
