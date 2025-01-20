@@ -488,11 +488,7 @@ static void crash_handler(int signo, siginfo_t *info, void *ctx)
 	/* Already in the process of shutting down, skip backtraces & cores */
 	if (admin_shutdown)
 		return;
-#ifdef USE_UNWIND
-	gsh_libunwind();
-#else
-	gsh_backtrace();
-#endif
+	gsh_log_backtrace();
 	/* re-raise the signal for the default signal handler to dump core */
 	raise(signo);
 }

@@ -112,6 +112,8 @@ void gsh_libunwind(void);
 
 void gsh_backtrace(void);
 
+void gsh_log_backtrace(void);
+
 /* These functions display a timeval or timespec into the display buffer
  * in the same format used for logging timestamp.
  */

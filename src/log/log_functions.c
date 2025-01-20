@@ -353,7 +353,7 @@ void Cleanup(void)
 
 void Fatal(void)
 {
-	gsh_backtrace();
+	gsh_log_backtrace();
 	_exit(2);
 }
 
@@ -2670,6 +2670,15 @@ void gsh_backtrace(void)
 		}
 	}
 	PTHREAD_RWLOCK_unlock(&log_rwlock);
+}
+
+void gsh_log_backtrace(void)
+{
+#ifdef USE_UNWIND
+	gsh_libunwind();
+#else
+	gsh_backtrace();
+#endif
 }
 
 bool _ratelimit(struct ratelimit_state *rs, int *missed)
