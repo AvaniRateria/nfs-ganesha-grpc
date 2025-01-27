@@ -1251,6 +1251,8 @@ if (USE_UNWIND)
     set(USE_UNWIND OFF)
   endif (UNWIND_FOUND)
 endif(USE_UNWIND)
+goption(USE_UNWIND_ENRICHED_BT "Enable libunwind enriched bt" OFF)
+gopt_test(USE_UNWIND_ENRICHED_BT)
 
 if(USE_9P_RDMA)
   find_package(PkgConfig)

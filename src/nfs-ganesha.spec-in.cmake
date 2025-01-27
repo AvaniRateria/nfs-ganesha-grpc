@@ -89,6 +89,9 @@ Requires: openSUSE-release
 @BCOND_UNWIND@ unwind
 %global use_unwind %{on_off_switch unwind}
 
+@BCOND_UNWIND_ENRICHED_BT@ unwind_enriched_bt
+%global use_unwind_enriched_bt %{on_off_switch unwind_enriched_bt}
+
 @BCOND_MSPAC_SUPPORT@ mspac_support
 %global use_mspac_support %{on_off_switch mspac_support}
 
@@ -559,6 +562,7 @@ cmake3 .	-DCMAKE_BUILD_TYPE=Debug			\
 	-DUSE_9P_RDMA=%{use_rdma}			\
 	-DUSE_LTTNG=%{use_lttng}			\
 	-DUSE_UNWIND=%{use_unwind}			\
+	-DUSE_UNWIND_ENRICHED_BT=%{use_unwind_enriched_bt}    \
 	-DUSE_ADMIN_TOOLS=%{use_utils}			\
 	-DUSE_GUI_ADMIN_TOOLS=%{use_gui_utils}		\
 	-DUSE_RADOS_RECOV=%{use_rados_recov}		\

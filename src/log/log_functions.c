@@ -45,6 +45,7 @@
 #include <execinfo.h>
 #include <assert.h>
 #include <dlfcn.h>
+#include <limits.h>
 
 #ifdef USE_UNWIND
 #define UNW_LOCAL_ONLY
@@ -269,6 +270,7 @@ static int log_mask = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 static char program_name[1024];
 static char hostname[256];
 static int syslog_opened;
+bool is_inside_crash_handler = false;
 
 /* Number of bytes actually usable in the log buffer */
 #define LOG_BUF_USE (LOG_BUFF_LEN + 1)
@@ -997,6 +999,57 @@ int set_log_level(const char *name, log_levels_t max_level)
 	return 0;
 }
 
+#ifdef USE_UNWIND_ENRICHED_BT
+static struct fridgethr *crash_handler_monitor_fridge;
+static void crash_handler_monitor(struct fridgethr_context *ctx)
+{
+	static bool abort_on_next_run;
+
+	if (abort_on_next_run) {
+		LogMajor(COMPONENT_INIT,
+			 "Crash handler took too long. Aborting.");
+		_exit(2);
+	}
+
+	if (is_inside_crash_handler)
+		abort_on_next_run = true;
+}
+
+static int crash_handler_monitor_init(void)
+{
+	struct fridgethr_params frp;
+	int rc = 0;
+	static const int crash_handler_monitor_delay_sec = 5;
+
+	memset(&frp, 0, sizeof(struct fridgethr_params));
+	frp.thr_max = 1;
+	frp.thr_min = 1;
+	frp.thread_delay = crash_handler_monitor_delay_sec;
+	frp.flavor = fridgethr_flavor_looper;
+
+	rc = fridgethr_init(&crash_handler_monitor_fridge, "reaper", &frp);
+	if (rc != 0) {
+		LogMajor(
+			COMPONENT_INIT,
+			"Unable to initialize crash_handler_monitor fridge, error code %d.",
+			rc);
+		return rc;
+	}
+
+	rc = fridgethr_submit(crash_handler_monitor_fridge,
+			      crash_handler_monitor, NULL);
+	if (rc != 0) {
+		LogMajor(
+			COMPONENT_INIT,
+			"Unable to start crash_handler_monitor thread, error code %d.",
+			rc);
+		return rc;
+	}
+
+	return 0;
+}
+#endif
+
 /**
  * @brief Initialize Logging
  *
@@ -1097,6 +1150,10 @@ void init_logging(const char *log_path, const int debug_level)
 		SetLevelDebug(debug_level);
 		original_log_level = debug_level;
 	}
+
+#ifdef USE_UNWIND_ENRICHED_BT
+	crash_handler_monitor_init();
+#endif
 }
 
 /*
@@ -2534,6 +2591,168 @@ int read_log_config(config_file_t in_config, struct config_error_type *err_type)
 } /* read_log_config */
 
 #ifdef USE_UNWIND
+
+#ifdef USE_UNWIND_ENRICHED_BT
+
+#define MAX_FUNCTION_NAME_LENGTH 256
+#define BUFFER_WITH_PATH_LENGTH 4500 /* PATH_MAX + 500 extra buffer */
+#define STR_(x) #x
+#define STR(x) STR_(x)
+
+typedef enum {
+	ENRICHED_BT_SUCCUESS = 0,
+	ENRICHED_BT_FAILURE = 1
+} enriched_backtrace_status;
+
+static void strip_new_line_from_string_end(char *str)
+{
+	char *last_char = str + strlen(str) - 1;
+
+	if (*last_char == '\n')
+		*last_char = '\0';
+}
+
+static enriched_backtrace_status get_code_location(const char *binary_path,
+						   unw_word_t relative_address,
+						   char *out_code_path)
+{
+	static const char addr2line_command_format[] = "addr2line -ipe %s %p\n";
+	static char command[BUFFER_WITH_PATH_LENGTH];
+	FILE *fp;
+
+	snprintf(command, sizeof(command), addr2line_command_format,
+		 binary_path, (void *)relative_address);
+	fp = popen(command, "r");
+	if (fp == NULL)
+		return ENRICHED_BT_FAILURE;
+
+	if (fgets(out_code_path, BUFFER_WITH_PATH_LENGTH, fp) == NULL) {
+		pclose(fp);
+		return ENRICHED_BT_FAILURE;
+	}
+	pclose(fp);
+	strip_new_line_from_string_end(out_code_path);
+
+	return ENRICHED_BT_SUCCUESS;
+}
+
+static enriched_backtrace_status
+get_binary_path_for_ip(unw_word_t ip, char *out_binary_path,
+		       unw_word_t *out_binary_base)
+{
+	unw_word_t start_addr, end_addr;
+	static char binary_path[BUFFER_WITH_PATH_LENGTH];
+	static char line[BUFFER_WITH_PATH_LENGTH];
+	/* format: start_addr-end_addr permissions offset
+	 * dev inode binary_path
+	 */
+	static const char *scan_format_buffer =
+		"%lx-%lx %*s %*s %*s %*s %" STR(PATH_MAX) "[^\n]";
+	int n;
+	FILE *maps_file;
+
+	maps_file = fopen("/proc/self/maps", "r");
+	if (maps_file == NULL)
+		return ENRICHED_BT_FAILURE;
+
+	while (fgets(line, BUFFER_WITH_PATH_LENGTH, maps_file) != NULL) {
+		n = sscanf(line, scan_format_buffer, &start_addr, &end_addr,
+			   (char *)binary_path);
+		if (n > 0 && ip >= start_addr && ip < end_addr) {
+			fclose(maps_file);
+
+			*out_binary_base = start_addr;
+			n = snprintf(out_binary_path, BUFFER_WITH_PATH_LENGTH,
+				     "%s", binary_path);
+			if (n > 0)
+				return ENRICHED_BT_SUCCUESS;
+			else
+				return ENRICHED_BT_FAILURE;
+		}
+	}
+
+	fclose(maps_file);
+	return ENRICHED_BT_FAILURE;
+}
+
+/*
+ * This function is similar to gsh_libunwind with the addition
+ * of enriched backtrace. The enriched backtrace includes the
+ * following information:
+ * function name, file name, line number, binary path.
+ * This function is not signal safe, though as we call
+ * it from a signal handler while crashing we just want
+ * to make sure the process won't be left stuck.
+ * For that reason we have a watchdog side-thread to exit
+ * the process if we get stuck in the middle of the function.
+ */
+void gsh_libunwind_enriched_bt(void)
+{
+	static const char *unknown_code_path_msg = "<unknown code path>";
+	static const char *unknown_binary_msg = "<unknown binary path>";
+	static const char *unknown_symbol_msg = "<unknown symbol>";
+	static char binary_path[BUFFER_WITH_PATH_LENGTH];
+	static char code_path[BUFFER_WITH_PATH_LENGTH];
+	static char procname[BUFFER_WITH_PATH_LENGTH];
+	unw_cursor_t cursor;
+	unw_context_t unwind_context;
+	unsigned int i = 0;
+	const char *binary_path_to_log, *code_path_to_log, *procname_to_log;
+	unw_word_t ip, offset_unused, binary_base, relative_address;
+	int unw_get_proc_name_result;
+	enriched_backtrace_status get_binary_path_for_ip_result;
+	enriched_backtrace_status get_code_location_result;
+
+	if (unw_getcontext(&unwind_context) != 0)
+		goto libunwind_failed;
+
+	if (unw_init_local(&cursor, &unwind_context) != 0)
+		goto libunwind_failed;
+
+	LogMajor(COMPONENT_INIT, "ENRICHED BACKTRACE:");
+
+	for (i = 0; unw_step(&cursor) > 0; ++i) {
+		ip = 0;
+		unw_get_reg(&cursor, UNW_REG_IP, &ip);
+
+		get_binary_path_for_ip_result =
+			get_binary_path_for_ip(ip, binary_path, &binary_base);
+		if (get_binary_path_for_ip_result == ENRICHED_BT_SUCCUESS) {
+			binary_path_to_log = binary_path;
+			relative_address = ip - binary_base;
+			get_code_location_result = get_code_location(
+				binary_path, relative_address, code_path);
+			code_path_to_log = (get_code_location_result ==
+					    ENRICHED_BT_SUCCUESS) ?
+						   code_path :
+						   unknown_code_path_msg;
+		} else {
+			binary_path_to_log = unknown_binary_msg;
+			code_path_to_log = unknown_code_path_msg;
+		}
+
+		unw_get_proc_name_result =
+			unw_get_proc_name(&cursor, procname,
+					  sizeof(procname) - 1, &offset_unused);
+		procname_to_log = (unw_get_proc_name_result == 0 ||
+				   unw_get_proc_name_result == -UNW_ENOMEM) ?
+					  procname :
+					  unknown_symbol_msg;
+
+		LogMajor(COMPONENT_INIT,
+			 " #%u %s at code path %s from binary %s", i,
+			 procname_to_log, code_path_to_log, binary_path_to_log);
+	}
+
+	return;
+
+libunwind_failed:
+	LogCrit(COMPONENT_INIT,
+		"unable to produce a stack trace with libunwind");
+}
+
+#endif
+
 void gsh_libunwind(void)
 {
 	unw_cursor_t cursor;
@@ -2674,8 +2893,20 @@ void gsh_backtrace(void)
 
 void gsh_log_backtrace(void)
 {
+	/* Setting the value of global variable is_inside_crash_handler to true
+	 * so we can exit the process if we get stuck during the backtrace
+	 * generation (we have a watchdog thread checking this flag
+	 */
+	is_inside_crash_handler = true;
+
 #ifdef USE_UNWIND
 	gsh_libunwind();
+#ifdef USE_UNWIND_ENRICHED_BT
+	/* gsh_libunwind_enriched_bt is not signal safe. call it after
+	 * gsh_libunwind as a best effort to get the enriched backtrace.
+	 */
+	gsh_libunwind_enriched_bt();
+#endif
 #else
 	gsh_backtrace();
 #endif
