@@ -219,6 +219,16 @@ struct config_block fsal_block = {
 	.blk_desc.u.blk.commit = noop_conf_commit
 };
 
+/*
+ * This can be overridden by by any FSAL that is compiled statically with
+ * Ganesha and wants to be started when the static fsals are started.
+ */
+__attribute__((weak)) void start_custom_static_fsals(
+	config_file_t __attribute__((unused)) in_config,
+	struct config_error_type __attribute__((unused)) * err_type)
+{
+}
+
 /**
  * @brief Start_fsals
  *
@@ -249,6 +259,9 @@ int start_fsals(config_file_t in_config, struct config_error_type *err_type)
 
 	/* Load FSAL_PSEUDO */
 	load_fsal_static("PSEUDO", pseudo_fsal_init);
+
+	/* Load additional static FSALs */
+	start_custom_static_fsals(in_config, err_type);
 
 	return 0;
 }
