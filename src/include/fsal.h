@@ -133,6 +133,17 @@ void set_op_context_pnfs_ds(struct fsal_pnfs_ds *pds);
  * used by nfs_main to initialize fsal modules.
  */
 
+/**
+ * @brief Start a static FSAL
+ *
+ * Start a FSAL that's statically linked in.
+ *
+ * @param[in] name	FSAL name
+ * @param[in] init	Initialization function for FSAL
+ */
+
+void load_fsal_static(const char *name, void (*init)(void));
+
 /* Called only within MODULE_INIT and MODULE_FINI functions of a fsal
  * module
  */
@@ -158,6 +169,7 @@ void set_op_context_pnfs_ds(struct fsal_pnfs_ds *pds);
 int register_fsal(struct fsal_module *fsal_hdl, const char *name,
 		  uint32_t major_version, uint32_t minor_version,
 		  uint8_t fsal_id);
+
 /**
  * @brief Unregister an FSAL
  *

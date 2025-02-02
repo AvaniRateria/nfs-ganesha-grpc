@@ -119,7 +119,7 @@ static enum load_state {
  * @param[in] init	Initialization function for FSAL
  */
 
-static void load_fsal_static(const char *name, void (*init)(void))
+void load_fsal_static(const char *name, void (*init)(void))
 {
 	char *dl_path = gsh_concat("Builtin-", name);
 	struct fsal_module *fsal;
@@ -227,6 +227,7 @@ __attribute__((weak)) void start_custom_static_fsals(
 	config_file_t __attribute__((unused)) in_config,
 	struct config_error_type __attribute__((unused)) * err_type)
 {
+	LogInfo(COMPONENT_FSAL, "start_custom_static_fsals is not implemented");
 }
 
 /**
