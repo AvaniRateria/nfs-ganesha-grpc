@@ -115,11 +115,13 @@ static enum load_state {
  *
  * Start a FSAL that's statically linked in.
  *
- * @param[in] name	FSAL name
- * @param[in] init	Initialization function for FSAL
+ * @param[in]  name	    FSAL name
+ * @param[in]  init	    Initialization function for FSAL
+ * @param[out] fsal_hdl	FSAL handle
  */
 
-void load_fsal_static(const char *name, void (*init)(void))
+void load_fsal_static(const char *name, void (*init)(void),
+		      struct fsal_module **fsal_hdl)
 {
 	char *dl_path = gsh_concat("Builtin-", name);
 	struct fsal_module *fsal;
@@ -154,6 +156,9 @@ void load_fsal_static(const char *name, void (*init)(void))
 	fsal->dl_handle = NULL;
 	so_error = 0;
 	load_state = idle;
+
+	if (fsal_hdl != NULL)
+		*fsal_hdl = fsal;
 	PTHREAD_MUTEX_unlock(&fsal_lock);
 }
 
@@ -256,10 +261,10 @@ int start_fsals(config_file_t in_config, struct config_error_type *err_type)
 	load_state = idle;
 
 	/* Load FSAL_MDCACHE */
-	load_fsal_static("MDCACHE", mdcache_fsal_init);
+	load_fsal_static("MDCACHE", mdcache_fsal_init, NULL);
 
 	/* Load FSAL_PSEUDO */
-	load_fsal_static("PSEUDO", pseudo_fsal_init);
+	load_fsal_static("PSEUDO", pseudo_fsal_init, NULL);
 
 	/* Load additional static FSALs */
 	start_custom_static_fsals(in_config, err_type);

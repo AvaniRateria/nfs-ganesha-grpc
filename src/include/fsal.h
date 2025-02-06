@@ -138,11 +138,13 @@ void set_op_context_pnfs_ds(struct fsal_pnfs_ds *pds);
  *
  * Start a FSAL that's statically linked in.
  *
- * @param[in] name	FSAL name
- * @param[in] init	Initialization function for FSAL
+ * @param[in]  name	    FSAL name
+ * @param[in]  init	    Initialization function for FSAL
+ * @param[out] fsal_hdl FSAL handle
  */
 
-void load_fsal_static(const char *name, void (*init)(void));
+void load_fsal_static(const char *name, void (*init)(void),
+		      struct fsal_module **fsal_hdl);
 
 /* Called only within MODULE_INIT and MODULE_FINI functions of a fsal
  * module
