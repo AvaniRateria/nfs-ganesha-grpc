@@ -2,8 +2,8 @@
 /*
  * vim:noexpandtab:shiftwidth=8:tabstop=8:
  *
- * Copyright 2024 Google LLC
- * Contributor : Yoni Couriel  yonic@google.com
+ * Copyright 2025 Google LLC
+ * Contributor : Roy Babayov  roybabayov@google.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@
  */
 
 /**
- * @file exposer.cc
- * @author Yoni Couriel <yonic@google.com>
+ * @file prometheus_exposer.cc
+ * @author Roy Babayov <roybabayov@google.com>
  * @brief Prometheus client that exposes HTTP interface for metrics scraping.
  */
 #include <arpa/inet.h>
@@ -34,10 +34,9 @@
 #include <unistd.h>
 #include <streambuf>
 
-#include "prometheus/histogram.h"
-#include "prometheus/text_serializer.h"
+#include "prometheus_exposer.h"
 
-#include "exposer.h"
+#ifdef USE_MONITORING
 
 #define PERROR(MESSAGE)                                                    \
 	fprintf(stderr, "[%s:%d] %s: %s\n", __FILE__, __LINE__, (MESSAGE), \
@@ -162,7 +161,7 @@ static inline HistogramInt::BucketBoundaries getBoundries()
 		 524288, 1048576, 2097152, 4194304, 8388608, 16777216 };
 }
 
-Exposer::Exposer(prometheus::Registry &registry)
+PrometheusExposer::PrometheusExposer(prometheus::Registry &registry)
 	: registry_(registry)
 	, scrapingLatencies_(
 		  prometheus::Builder<HistogramInt>()
@@ -176,12 +175,12 @@ Exposer::Exposer(prometheus::Registry &registry)
 {
 }
 
-Exposer::~Exposer()
+PrometheusExposer::~PrometheusExposer()
 {
 	stop();
 }
 
-void Exposer::start(uint16_t port)
+void PrometheusExposer::start(uint16_t port)
 {
 	const std::lock_guard<std::mutex> lock(mutex_);
 	if (running_)
@@ -209,7 +208,7 @@ void Exposer::start(uint16_t port)
 	thread_id_ = std::thread{ server_thread, this };
 }
 
-void Exposer::stop()
+void PrometheusExposer::stop()
 {
 	const std::lock_guard<std::mutex> lock(mutex_);
 	if (running_) {
@@ -239,9 +238,10 @@ static inline int64_t get_elapsed_ms(uint64_t start_time_ns)
 	return (now_mono_ns() - start_time_ns) / 1000000LL;
 }
 
-void *Exposer::server_thread(void *arg)
+void *PrometheusExposer::server_thread(void *arg)
 {
-	Exposer *const exposer = (Exposer *)arg;
+	PrometheusExposer *const exposer =
+		static_cast<PrometheusExposer *>(arg);
 	char buffer[1024];
 
 	while (exposer->running_) {
@@ -277,4 +277,23 @@ void *Exposer::server_thread(void *arg)
 	return NULL;
 }
 
-} // namespace ganesha_monitoring
+extern "C" {
+
+void prometheus_exposer__start(uint16_t port,
+			       prometheus_registry_handle_t registry_handle)
+{
+	static bool initialized = false;
+	if (initialized)
+		return;
+	prometheus::Registry *registry_ptr =
+		static_cast<prometheus::Registry *>(registry_handle.registry);
+	static PrometheusExposer exposer(*registry_ptr);
+	exposer.start(port);
+	initialized = true;
+}
+
+} /* extern "C" */
+
+} /* namespace ganesha_monitoring */
+
+#endif /* USE_MONITORING */

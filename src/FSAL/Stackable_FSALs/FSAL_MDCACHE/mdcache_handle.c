@@ -45,9 +45,7 @@
 #include "mdcache_hash.h"
 #include "mdcache_avl.h"
 
-#ifdef USE_MONITORING
-#include "monitoring.h"
-#endif /* USE_MONITORING */
+#include "dynamic_metrics.h"
 
 /*
  * handle methods
@@ -971,18 +969,14 @@ static fsal_status_t mdcache_getattrs(struct fsal_obj_handle *obj_hdl,
 	fsal_status_t status = { 0, 0 };
 	bool invalidate = false;
 
-#ifdef USE_MONITORING
 	const char *OPERATION = "getattr";
 	struct fsal_export *export = op_ctx->fsal_export;
 	const uint16_t export_id = (export == NULL ? 0 : export->export_id);
-#endif /* USE_MONITORING */
 
 	if (op_ctx->export_perms.expire_time_attr == 0) {
 		/* Attribute caching is disabled. No reason to lock the entry
 		 * and serialize getattr access. Use subcall directly */
-#ifdef USE_MONITORING
-		monitoring__dynamic_mdcache_cache_miss(OPERATION, export_id);
-#endif /* USE_MONITORING */
+		dynamic_metrics__mdcache_cache_miss(OPERATION, export_id);
 
 		subcall(status = entry->sub_handle->obj_ops->getattrs(
 				entry->sub_handle, attrs_out););
@@ -996,9 +990,7 @@ static fsal_status_t mdcache_getattrs(struct fsal_obj_handle *obj_hdl,
 
 	if (mdcache_is_attrs_valid(entry, attrs_out->request_mask)) {
 		/* Up-to-date */
-#ifdef USE_MONITORING
-		monitoring__dynamic_mdcache_cache_hit(OPERATION, export_id);
-#endif /* USE_MONITORING */
+		dynamic_metrics__mdcache_cache_hit(OPERATION, export_id);
 		goto unlock;
 	}
 
@@ -1008,15 +1000,11 @@ static fsal_status_t mdcache_getattrs(struct fsal_obj_handle *obj_hdl,
 
 	if (mdcache_is_attrs_valid(entry, attrs_out->request_mask)) {
 		/* Someone beat us to it */
-#ifdef USE_MONITORING
-		monitoring__dynamic_mdcache_cache_hit(OPERATION, export_id);
-#endif /* USE_MONITORING */
+		dynamic_metrics__mdcache_cache_hit(OPERATION, export_id);
 		goto unlock;
 	}
 
-#ifdef USE_MONITORING
-	monitoring__dynamic_mdcache_cache_miss(OPERATION, export_id);
-#endif /* USE_MONITORING */
+	dynamic_metrics__mdcache_cache_miss(OPERATION, export_id);
 
 	status = mdcache_refresh_attrs(
 		entry, (attrs_out->request_mask & ATTR_ACL) != 0,

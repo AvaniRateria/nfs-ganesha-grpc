@@ -164,7 +164,7 @@ BuildRequires:	libasan
 Requires:	nfs-utils
 
 %if %{with monitoring}
-Requires:	gmonitoring
+Requires:	ganesha_monitoring
 %endif
 
 %if ( 0%{?with_rpcbind} )
@@ -231,12 +231,12 @@ to simplify mounting to NFS-GANESHA. This is a 9p mount helper.
 %endif
 
 %if %{with monitoring}
-%package -n gmonitoring
+%package -n ganesha_monitoring
 Summary: The NFS-GANESHA Monitoring module
 Group: Applications/System
-Provides: libgmonitoring.so
+Provides: libganesha_monitoring.so
 
-%description -n gmonitoring
+%description -n ganesha_monitoring
 The monitoring module contains metrics collectors and HTTP exposer
 in Prometheus format.
 %endif
@@ -515,7 +515,7 @@ Url:		https://github.com/nfs-ganesha/ntirpc
 Requires:	libtirpc
 
 %if %{with monitoring}
-Requires:	gmonitoring
+Requires:	ganesha_monitoring
 %endif
 
 %description -n libntirpc
@@ -779,8 +779,8 @@ exit 0
 %endif
 
 %if %{with monitoring}
-%files -n gmonitoring
-%{_libdir}/libgmonitoring*
+%files -n ganesha_monitoring
+%{_libdir}/libganesha_monitoring*
 %endif
 
 %files vfs

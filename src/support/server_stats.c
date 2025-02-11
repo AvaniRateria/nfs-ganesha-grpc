@@ -1537,7 +1537,6 @@ void server_stats_io_done(size_t requested, size_t transferred, bool success,
 		record_io_stats(&exp_st->st, &op_ctx->ctx_export->exp_lock,
 				requested, transferred, success, is_write);
 	}
-#ifdef USE_MONITORING
 	if (op_ctx->req_type == NFS_REQUEST) {
 		uint16_t export_id = 0;
 		struct fsal_export *export = op_ctx->fsal_export;
@@ -1547,11 +1546,9 @@ void server_stats_io_done(size_t requested, size_t transferred, bool success,
 
 		if (export != NULL)
 			export_id = export->export_id;
-		monitoring__dynamic_observe_nfs_io(requested, transferred,
-						   success, is_write, export_id,
-						   client_ip);
+		dynamic_metrics__observe_nfs_io(requested, transferred,
+						is_write, export_id, client_ip);
 	}
-#endif
 }
 
 /**
@@ -3055,7 +3052,6 @@ static void record_v3_full_stats(struct svc_req *req,
 	uint32_t vers = req->rq_msg.cb_vers;
 	uint32_t proc = req->rq_msg.cb_proc;
 
-#ifdef USE_MONITORING
 	if (prog == NFS_PROGRAM) {
 		uint16_t export_id = 0;
 		struct fsal_export *export = op_ctx->fsal_export;
@@ -3067,7 +3063,6 @@ static void record_v3_full_stats(struct svc_req *req,
 		nfs_metrics__nfs3_request(proc, request_time, status, export_id,
 					  client_ip);
 	}
-#endif
 
 	if (prog == NFS_program[P_NFS] && vers == NFS_V3) {
 		if (proc >= NFS_V3_NB_COMMAND) {
@@ -3099,7 +3094,6 @@ void reset_v3_full_stats(void)
 static void record_v4_full_stats(uint32_t proc, nsecs_elapsed_t request_time,
 				 nfsstat4 status)
 {
-#ifdef USE_MONITORING
 	uint16_t export_id = 0;
 	struct fsal_export *export = op_ctx->fsal_export;
 	struct gsh_client *client = op_ctx->client;
@@ -3109,7 +3103,6 @@ static void record_v4_full_stats(uint32_t proc, nsecs_elapsed_t request_time,
 		export_id = export->export_id;
 	nfs_metrics__nfs4_request(proc, request_time, status, export_id,
 				  client_ip);
-#endif
 	if (proc >= NFS4_OP_LAST_ONE) {
 		LogCrit(COMPONENT_DBUS,
 			"proc is more than NFS4_OP_LAST_ONE: %d\n", proc);

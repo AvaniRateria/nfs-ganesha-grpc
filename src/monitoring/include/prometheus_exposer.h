@@ -2,8 +2,8 @@
 /*
  * vim:noexpandtab:shiftwidth=8:tabstop=8:
  *
- * Copyright 2024 Google LLC
- * Contributor : Yoni Couriel  yonic@google.com
+ * Copyright 2025 Google LLC
+ * Contributor : Roy Babayov  roybabayov@google.com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,44 @@
  */
 
 /**
- * @file exposer.h
- * @author Yoni Couriel <yonic@google.com>
+ * @file prometheus_exposer.h
+ * @author Roy Babayov <roybabayov@google.com>
  * @brief Prometheus client that exposes HTTP interface for metrics scraping.
  */
+
+#ifndef PROMETHEUS_EXPOSER_H
+#define PROMETHEUS_EXPOSER_H
+
+#include "monitoring.h"
+
+#ifdef USE_MONITORING
+
+#ifndef __cplusplus
+void prometheus_exposer__start(uint16_t port,
+			       prometheus_registry_handle_t registry_handle);
+
+#else /* __cplusplus */
+
 #include <thread>
 
+#include "prometheus/histogram.h"
+#include "prometheus/text_serializer.h"
 #include "prometheus/registry.h"
+
+extern "C" {
+void prometheus_exposer__start(uint16_t port,
+			       prometheus_registry_handle_t registry_handle);
+} /* extern "C" */
 
 namespace ganesha_monitoring
 {
 
 using HistogramInt = prometheus::Histogram<int64_t>;
 
-class Exposer {
+class PrometheusExposer {
     public:
-	explicit Exposer(prometheus::Registry &registry);
-	~Exposer();
+	explicit PrometheusExposer(prometheus::Registry &registry);
+	~PrometheusExposer();
 
 	void start(uint16_t port);
 	void stop(void);
@@ -57,12 +78,32 @@ class Exposer {
 	std::mutex mutex_;
 
 	// Delete copy/move constructor/assignment
-	Exposer(const Exposer &) = delete;
-	Exposer &operator=(const Exposer &) = delete;
-	Exposer(Exposer &&) = delete;
-	Exposer &operator=(Exposer &&) = delete;
+	PrometheusExposer(const PrometheusExposer &) = delete;
+	PrometheusExposer &operator=(const PrometheusExposer &) = delete;
+	PrometheusExposer(PrometheusExposer &&) = delete;
+	PrometheusExposer &operator=(PrometheusExposer &&) = delete;
 
 	static void *server_thread(void *arg);
 };
 
 } // namespace ganesha_monitoring
+
+#endif /* __cplusplus */
+
+#else /* USE_MONITORING */
+
+#ifndef UNUSED
+#define UNUSED_ATTR __attribute__((unused))
+#define UNUSED(...) UNUSED_(__VA_ARGS__)
+#define UNUSED_(arg) NOT_USED_##arg UNUSED_ATTR
+#endif
+
+static inline void
+prometheus_exposer__start(uint16_t UNUSED(port),
+			  prometheus_registry_handle_t UNUSED(registry_handle))
+{
+}
+
+#endif /* USE_MONITORING */
+
+#endif /* PROMETHEUS_EXPOSER_H */

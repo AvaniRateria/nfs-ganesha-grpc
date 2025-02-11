@@ -48,10 +48,8 @@
 #include "config_parsing.h"
 #include "conf_url.h"
 #include "sal_functions.h"
-
-#ifdef USE_MONITORING
-#include "monitoring.h"
-#endif /* USE_MONITORING */
+#include "dynamic_metrics.h"
+#include "prometheus_exposer.h"
 
 #ifdef LINUX
 #include <sys/prctl.h>
@@ -574,9 +572,11 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef USE_MONITORING
-	monitoring__init(nfs_param.core_param.monitoring_port,
-			 nfs_param.core_param.enable_dynamic_metrics);
-#endif /* USE_MONITORING */
+	if (nfs_param.core_param.enable_dynamic_metrics)
+		dynamic_metrics__init();
+	prometheus_exposer__start(nfs_param.core_param.monitoring_port,
+				  monitoring__get_registry_handle());
+#endif
 
 	/* initialize core subsystems and data structures */
 	if (init_server_pkgs() != 0) {

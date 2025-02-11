@@ -50,9 +50,7 @@
 #include "mdcache_lru.h"
 #include "mdcache_hash.h"
 #include "mdcache_avl.h"
-#ifdef USE_MONITORING
-#include "monitoring.h"
-#endif /* USE_MONITORING */
+#include "dynamic_metrics.h"
 
 #include "gsh_lttng/gsh_lttng.h"
 #if defined(USE_LTTNG) && !defined(LTTNG_PARSING)
@@ -1220,11 +1218,9 @@ fsal_status_t mdc_lookup(mdcache_entry_t *mdc_parent, const char *name,
 	*new_entry = NULL;
 	fsal_status_t status;
 
-#ifdef USE_MONITORING
 	const char *OPERATION = "lookup";
 	struct fsal_export *export = op_ctx->fsal_export;
 	const uint16_t export_id = (export == NULL ? 0 : export->export_id);
-#endif /* USE_MONITORING */
 
 	LogFullDebugAlt(COMPONENT_NFS_READDIR, COMPONENT_MDCACHE, "Lookup %s",
 			name);
@@ -1247,9 +1243,8 @@ fsal_status_t mdc_lookup(mdcache_entry_t *mdc_parent, const char *name,
 
 		if (status.major == ERR_FSAL_STALE)
 			status.major = ERR_FSAL_NOENT;
-#ifdef USE_MONITORING
-		monitoring__dynamic_mdcache_cache_miss(OPERATION, export_id);
-#endif /* USE_MONITORING */
+		dynamic_metrics__mdcache_cache_miss(OPERATION, export_id);
+
 		return status;
 	}
 
@@ -1302,9 +1297,7 @@ fsal_status_t mdc_lookup(mdcache_entry_t *mdc_parent, const char *name,
 			mdcache_lru_unref(*new_entry, LRU_ACTIVE_REF);
 			*new_entry = NULL;
 		}
-#ifdef USE_MONITORING
-		monitoring__dynamic_mdcache_cache_hit(OPERATION, export_id);
-#endif /* USE_MONITORING */
+		dynamic_metrics__mdcache_cache_hit(OPERATION, export_id);
 		return status;
 	} else if (!uncached) {
 		/* Was only looking in cache, so don't bother looking further */
@@ -1335,9 +1328,7 @@ out:
 	PTHREAD_RWLOCK_unlock(&mdc_parent->content_lock);
 	if (status.major == ERR_FSAL_STALE)
 		status.major = ERR_FSAL_NOENT;
-#ifdef USE_MONITORING
-	monitoring__dynamic_mdcache_cache_miss(OPERATION, export_id);
-#endif /* USE_MONITORING */
+	dynamic_metrics__mdcache_cache_miss(OPERATION, export_id);
 	return status;
 }
 

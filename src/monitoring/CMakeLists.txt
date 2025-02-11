@@ -2,17 +2,17 @@
 
 set(CMAKE_CXX_STANDARD 17)
 
-SET(gmonitoring_SRCS
-  exposer.cc
-  monitoring.cc
+SET(ganesha_monitoring_SRCS
+  prometheus_exposer.cc
+  dynamic_metrics.cc
 )
 
-add_library(gmonitoring SHARED ${gmonitoring_SRCS})
-add_sanitizers(gmonitoring)
-set_target_properties(gmonitoring PROPERTIES COMPILE_FLAGS "-fPIC")
-target_include_directories(gmonitoring     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/prometheus-cpp-lite/core/include)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Werror -Wall")
+add_library(ganesha_monitoring ${ganesha_monitoring_SRCS})
+add_sanitizers(ganesha_monitoring)
+set_target_properties(ganesha_monitoring PROPERTIES COMPILE_FLAGS "-fPIC")
+target_include_directories(ganesha_monitoring     PRIVATE ${PROJECT_SOURCE_DIR}/libntirpc/src/monitoring/prometheus-cpp-lite/core/include)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Werror -Wall -Wextra")
 
-install(TARGETS gmonitoring LIBRARY DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS ganesha_monitoring LIBRARY DESTINATION ${LIB_INSTALL_DIR})
 
 ########### install files ###############

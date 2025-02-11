@@ -49,7 +49,7 @@ core.*
 *cmake_install.cmake
 libfsal*.so*
 libganesha_nfsd.so*
-libgmonitoring.so*
+libganesha_monitoring.a
 libganesha_trace.so*
 Doxyfile
 *~

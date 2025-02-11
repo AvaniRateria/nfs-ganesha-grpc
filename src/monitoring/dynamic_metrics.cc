@@ -2,8 +2,8 @@
 /*
  * vim:noexpandtab:shiftwidth=8:tabstop=8:
  *
- * Copyright (C) Google Inc., 2022
- * Author: Bjorn Leffler leffler@google.com
+ * Copyright (C) Google Inc., 2025
+ * Author: Roy Babayov roybabayov@google.com
  *
  *   This library is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published
@@ -29,12 +29,13 @@
 #include <algorithm>
 #include <shared_mutex>
 
+#include "dynamic_metrics.h"
+
+#ifdef USE_MONITORING
+
 #include "prometheus/counter.h"
 #include "prometheus/gauge.h"
 #include "prometheus/histogram.h"
-
-#include "monitoring.h"
-#include "exposer.h"
 
 /*
  * This file contains the C++ monitoring implementation for Ganesha.
@@ -54,9 +55,6 @@ using GaugeInt = prometheus::Gauge<int64_t>;
 using HistogramInt = prometheus::Histogram<int64_t>;
 using HistogramDouble = prometheus::Histogram<double>;
 using LabelsMap = std::map<const std::string, const std::string>;
-
-static prometheus::Registry registry;
-static Exposer exposer(registry);
 
 // 24 size buckets: 2 bytes to 16 MB as powers of 2.
 static const HistogramInt::BucketBoundaries requestSizeBuckets = {
@@ -311,163 +309,31 @@ static void toLowerCase(std::string &s)
 	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 }
 
-/**
- * @brief Formats full description from metadata into output buffer.
- *
- * @note description character array needs to be provided by the caller,
- * the function populates a string into the character array.
- */
-static const std::string get_description(const metric_metadata_t &metadata)
-{
-	std::ostringstream description;
-	description << metadata.description;
-	if (metadata.unit != METRIC_UNIT_NONE) {
-		description << " [" << metadata.unit << "]";
-	}
-
-	return description.str();
-}
-
-static const LabelsMap get_labels(const metric_label_t *labels,
-				  uint16_t num_labels)
-{
-	LabelsMap labels_map;
-	for (uint16_t i = 0; i < num_labels; i++) {
-		labels_map.emplace(labels[i].key, labels[i].value);
-	}
-	return labels_map;
-}
-
-template <typename X, typename Y> static X convert_to_handle(Y *metric)
-{
-	void *const ptr = static_cast<void *>(metric);
-	return { ptr };
-}
-
-template <typename X, typename Y> static X *convert_from_handle(Y handle)
-{
-	void *const ptr = handle.metric;
-	return static_cast<X *>(ptr);
-}
-
 /*
  * Functions used from NFS Ganesha below.
  */
 
 extern "C" {
 
-histogram_buckets_t monitoring__buckets_exp2(void)
-{
-	static const int64_t buckets[] = {
-		1,	   2,	     4,	       8,	  16,	     32,
-		64,	   128,	     256,      512,	  1024,	     2048,
-		4096,	   8192,     16384,    32768,	  65536,     131072,
-		262144,	   524288,   1048576,  2097152,	  4194304,   8388608,
-		16777216,  33554432, 67108864, 134217728, 268435456, 536870912,
-		1073741824
-	};
-	return { buckets, sizeof(buckets) / sizeof(*buckets) };
-}
-
-histogram_buckets_t monitoring__buckets_exp2_compact(void)
-{
-	static const int64_t buckets[] = { 10,	  20,	 40,	 80,
-					   160,	  320,	 640,	 1280,
-					   2560,  5120,	 10240,	 20480,
-					   40960, 81920, 163840, 327680 };
-	return { buckets, sizeof(buckets) / sizeof(*buckets) };
-}
-
-counter_metric_handle_t
-monitoring__register_counter(const char *name, metric_metadata_t metadata,
-			     const metric_label_t *labels, uint16_t num_labels)
-{
-	auto &counter = prometheus::Builder<CounterInt>()
-				.Name(name)
-				.Help(get_description(metadata))
-				.Register(registry)
-				.Add(get_labels(labels, num_labels));
-	return convert_to_handle<counter_metric_handle_t>(&counter);
-}
-
-gauge_metric_handle_t monitoring__register_gauge(const char *name,
-						 metric_metadata_t metadata,
-						 const metric_label_t *labels,
-						 uint16_t num_labels)
-{
-	auto &gauge = prometheus::Builder<GaugeInt>()
-			      .Name(name)
-			      .Help(get_description(metadata))
-			      .Register(registry)
-			      .Add(get_labels(labels, num_labels));
-	return convert_to_handle<gauge_metric_handle_t>(&gauge);
-}
-
-histogram_metric_handle_t
-monitoring__register_histogram(const char *name, metric_metadata_t metadata,
-			       const metric_label_t *labels,
-			       uint16_t num_labels, histogram_buckets_t buckets)
-{
-	const auto &buckets_vector = HistogramInt::BucketBoundaries(
-		buckets.buckets, buckets.buckets + buckets.count);
-	auto &histogram =
-		prometheus::Builder<HistogramInt>()
-			.Name(name)
-			.Help(get_description(metadata))
-			.Register(registry)
-			.Add(get_labels(labels, num_labels), buckets_vector);
-	return convert_to_handle<histogram_metric_handle_t>(&histogram);
-}
-
-void monitoring__counter_inc(counter_metric_handle_t handle, int64_t value)
-{
-	convert_from_handle<CounterInt>(handle)->Increment(value);
-}
-
-void monitoring__gauge_inc(gauge_metric_handle_t handle, int64_t value)
-{
-	convert_from_handle<GaugeInt>(handle)->Increment(value);
-}
-
-void monitoring__gauge_dec(gauge_metric_handle_t handle, int64_t value)
-{
-	convert_from_handle<GaugeInt>(handle)->Decrement(value);
-}
-
-void monitoring__gauge_set(gauge_metric_handle_t handle, int64_t value)
-{
-	convert_from_handle<GaugeInt>(handle)->Set(value);
-}
-
-void monitoring__histogram_observe(histogram_metric_handle_t handle,
-				   int64_t value)
-{
-	convert_from_handle<HistogramInt>(handle)->Observe(value);
-}
-
-void monitoring_register_export_label(const export_id_t export_id,
-				      const char *label)
-{
-	exportLabels.InsertOrUpdate(export_id, std::string(label));
-}
-
-void monitoring__init(uint16_t port, bool enable_dynamic_metrics)
+void dynamic_metrics__init(void)
 {
 	static bool initialized = false;
 	if (initialized)
 		return;
-	if (enable_dynamic_metrics)
-		dynamic_metrics = std::make_unique<DynamicMetrics>(registry);
-	exposer.start(port);
+	prometheus_registry_handle_t registry_handle =
+		monitoring__get_registry_handle();
+	prometheus::Registry *registry_ptr =
+		(prometheus::Registry *)(registry_handle.registry);
+	dynamic_metrics = std::make_unique<DynamicMetrics>(*registry_ptr);
 	initialized = true;
 }
 
-void monitoring__dynamic_observe_nfs_request(const char *operation,
-					     nsecs_elapsed_t request_time,
-					     const char *version,
-					     const char *status_label,
-					     export_id_t export_id,
-					     const char *client_ip)
+void dynamic_metrics__observe_nfs_request(const char *operation,
+					  nsecs_elapsed_t request_time,
+					  const char *version,
+					  const char *status_label,
+					  export_id_t export_id,
+					  const char *client_ip)
 {
 	if (!dynamic_metrics)
 		return;
@@ -520,10 +386,10 @@ void monitoring__dynamic_observe_nfs_request(const char *operation,
 		.Observe(latency_ms);
 }
 
-void monitoring__dynamic_observe_nfs_io(size_t bytes_requested,
-					size_t bytes_transferred, bool success,
-					bool is_write, export_id_t export_id,
-					const char *client_ip)
+void dynamic_metrics__observe_nfs_io(size_t bytes_requested,
+				     size_t bytes_transferred, bool is_write,
+				     export_id_t export_id,
+				     const char *client_ip)
 {
 	if (!dynamic_metrics)
 		return;
@@ -578,8 +444,8 @@ void monitoring__dynamic_observe_nfs_io(size_t bytes_requested,
 		.Observe(bytes_sent);
 }
 
-void monitoring__dynamic_mdcache_cache_hit(const char *operation,
-					   export_id_t export_id)
+void dynamic_metrics__mdcache_cache_hit(const char *operation,
+					export_id_t export_id)
 {
 	if (!dynamic_metrics)
 		return;
@@ -595,8 +461,8 @@ void monitoring__dynamic_mdcache_cache_hit(const char *operation,
 	}
 }
 
-void monitoring__dynamic_mdcache_cache_miss(const char *operation,
-					    export_id_t export_id)
+void dynamic_metrics__mdcache_cache_miss(const char *operation,
+					 export_id_t export_id)
 {
 	if (!dynamic_metrics)
 		return;
@@ -614,3 +480,5 @@ void monitoring__dynamic_mdcache_cache_miss(const char *operation,
 } // extern "C"
 
 } // namespace ganesha_monitoring
+
+#endif /* USE_MONITORING */

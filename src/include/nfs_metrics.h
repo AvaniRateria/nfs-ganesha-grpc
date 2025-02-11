@@ -31,7 +31,7 @@
 #ifndef NFS_METRICS_H
 #define NFS_METRICS_H
 
-#include "monitoring.h"
+#include "dynamic_metrics.h"
 #include "nfsv41.h"
 #include "nfs23.h"
 

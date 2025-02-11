@@ -311,13 +311,8 @@ goption(USE_FSAL_SAUNAFS "build SAUNAFS FSAL shared library" ON)
 option(GSH_CAN_HOST_LOCAL_FS "Ganesha supports hosting local filesystems" ON)
 
 # Monitoring stack.
-goption(USE_MONITORING "Build monitoring stack" OFF)
+goption(USE_MONITORING "Enable monitoring stack" OFF)
 gopt_test(USE_MONITORING)
-if(USE_MONITORING)
-  set(MONITORING_LIBRARIES
-    gmonitoring
-  )
-endif(USE_MONITORING)
 
 # nTIRPC
 option(USE_SYSTEM_NTIRPC "Use the system nTIRPC, rather than the submodule" OFF)
@@ -1114,6 +1109,8 @@ endif( "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_LESS "2.8" )
 include_directories(
   "${PROJECT_BINARY_DIR}/include"
   "${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_BINARY_DIR}/libntirpc/src/monitoring/include"
+  "${PROJECT_SOURCE_DIR}/libntirpc/src/monitoring/include"
   "${PROJECT_BINARY_DIR}/monitoring/include"
   "${PROJECT_SOURCE_DIR}/monitoring/include"
   "${OS_INCLUDE_DIR}"
@@ -1325,12 +1322,7 @@ add_subdirectory(RPCAL)
 add_subdirectory(Protocols)
 add_subdirectory(support)
 add_subdirectory(os)
-if(USE_MONITORING)
-  add_subdirectory(monitoring)
-  set(BCOND_MONITORING "%bcond_without")
-else(USE_MONITORING)
-  set(BCOND_MONITORING "%bcond_with")
-endif(USE_MONITORING)
+add_subdirectory(monitoring)
 
 add_subdirectory(FSAL)
 add_subdirectory(idmapper)
@@ -1772,7 +1764,7 @@ target_link_libraries(ganesha.nfsd
   ${SYSTEM_LIBRARIES}
   ${LTTNG_LIBRARIES}
   ${LDFLAG_DISALLOW_UNDEF}
-  ${MONITORING_LIBRARIES}
+  ganesha_monitoring
 )
 set_target_properties(ganesha.nfsd PROPERTIES COMPILE_FLAGS "-fPIC")
 install(TARGETS ganesha.nfsd COMPONENT daemon DESTINATION bin)
