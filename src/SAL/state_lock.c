@@ -3014,9 +3014,7 @@ state_unlock_internal(struct fsal_obj_handle *obj, state_t *state,
 	if (glist_empty(&obj->state_hdl->file.lock_list)) {
 		LogDebug(COMPONENT_STATE,
 			 "Unlock success on file with no locks");
-
-		status = STATE_SUCCESS;
-		goto out_unlock;
+		goto unlock_fsal;
 	}
 
 	LOCK__REQUEST_AUTO_TRACEPOINT(lock, obj, unlock_request_start,
@@ -3053,6 +3051,7 @@ state_unlock_internal(struct fsal_obj_handle *obj, state_t *state,
 		goto out_unlock;
 	}
 
+unlock_fsal:
 	/* Unlocking the entire region will remove any FSAL locks we held,
 	 * whether from fully granted locks, or from blocking locks that were
 	 * in the process of being granted.
