@@ -52,6 +52,7 @@
 #include "pnfs_utils.h"
 #include "fsal.h"
 #include "netgroup_cache.h"
+#include "nfs_dupreq.h"
 #ifdef USE_DBUS
 #include "gsh_dbus.h"
 #include "mdcache.h"
@@ -237,6 +238,107 @@ static struct gsh_dbus_method method_shutdown = { .name = "shutdown",
 						  .method = admin_dbus_shutdown,
 						  .args = { STATUS_REPLY,
 							    END_ARG_LIST } };
+
+static void drc_to_dbus(drc_t *drc, void *state)
+{
+	DBusMessageIter struct_iter;
+	DBusMessageIter *array_iter = (DBusMessageIter *)state;
+	char client_ip[SOCK_NAME_MAX] = { 0 };
+	char *ipaddr = client_ip;
+	const char *str = NULL;
+
+	if (!drc) {
+		LogEvent(COMPONENT_DBUS, "Skipping NULL drc");
+		return;
+	}
+
+	if (!sprint_sockip(&drc->d_u.tcp.addr, ipaddr, SOCK_NAME_MAX))
+		(void)strlcpy(ipaddr, "<unknown>", SOCK_NAME_MAX);
+
+	dbus_message_iter_open_container(array_iter, DBUS_TYPE_STRUCT, NULL,
+					 &struct_iter);
+	str = "Client addr:";
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &ipaddr);
+	str = "Number of DRC entries:";
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT32,
+				       &drc->size);
+	dbus_message_iter_close_container(array_iter, &struct_iter);
+}
+
+/**
+ * @brief Dbus method get the drc info
+ *
+ * @param[in]  args
+ */
+static bool admin_dbus_get_drc_info(DBusMessageIter *args, DBusMessage *reply,
+				    DBusError *error)
+{
+	char *errormsg = "get drc into success";
+	const char *str = NULL;
+	bool success = true;
+	uint32_t counter;
+	DBusMessageIter iter, array_iter, struct_iter;
+
+	dbus_message_iter_init_append(reply, &iter);
+	if (args != NULL) {
+		errormsg = "Get drc info takes no arguments.";
+		success = false;
+		LogWarn(COMPONENT_DBUS, "%s", errormsg);
+		goto out;
+	}
+
+	dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(sssu)",
+					 &array_iter);
+
+	counter = for_each_tcp_drc(drc_to_dbus, (void *)&array_iter);
+
+	dbus_message_iter_close_container(&iter, &array_iter);
+
+	str = "Number of DRCs:";
+	dbus_message_iter_open_container(&iter, DBUS_TYPE_STRUCT, NULL,
+					 &struct_iter);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT32,
+				       &counter);
+	dbus_message_iter_close_container(&iter, &struct_iter);
+
+	counter = get_tcp_drc_recycle_qlen();
+	str = "Number of inactive DRCs:";
+	dbus_message_iter_open_container(&iter, DBUS_TYPE_STRUCT, NULL,
+					 &struct_iter);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT32,
+				       &counter);
+	dbus_message_iter_close_container(&iter, &struct_iter);
+
+out:
+	gsh_dbus_status_reply(&iter, success, errormsg);
+	return success;
+}
+
+static struct gsh_dbus_method method_get_drc_info = {
+	.name = "get_drc_info",
+	.method = admin_dbus_get_drc_info,
+	.args = { {
+			  .name = "drc_info",
+			  .type = "a(sssu)",
+			  .direction = "out",
+		  },
+		  {
+			  .name = "num_of_drcs",
+			  .type = "(su)",
+			  .direction = "out",
+		  },
+		  {
+			  .name = "num_of_inactive_drcs",
+			  .type = "(su)",
+			  .direction = "out",
+		  },
+		  STATUS_REPLY,
+		  END_ARG_LIST }
+};
 
 /**
  * @brief Dbus method for flushing manage gids cache
@@ -627,6 +729,7 @@ static struct gsh_dbus_method *admin_methods[] = { &method_shutdown,
 						   &method_trim_call,
 						   &method_trim_status,
 						   &method_reread_config,
+						   &method_get_drc_info,
 						   NULL };
 
 #define HANDLE_VERSION_PROP(prop_name, prop_string)                           \

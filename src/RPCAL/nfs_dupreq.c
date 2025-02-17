@@ -1474,3 +1474,45 @@ out:
 	if (reqnfs->svc.rq_auth)
 		SVCAUTH_RELEASE(&reqnfs->svc);
 }
+
+/**
+ * @brief Iterates over each tcp DRC entry in the TCP DRC recycle tree.
+ *
+ * @param[in] cb Callback function to be executed for each DRC entry.
+ * @param[in] state User-defined parameter passed to the callback function.
+ *
+ * @return The total number of DRC entries processed.
+ */
+int for_each_tcp_drc(void (*cb)(drc_t *drc, void *state), void *state)
+{
+	struct rbtree_x *t = &(drc_st->tcp_drc_recycle_t);
+	uint32_t npart = t->npart;
+	struct opr_rbtree_node *node;
+	drc_t *drc = NULL;
+	uint32_t idx;
+	uint64_t num_drcs = 0;
+
+	DRC_ST_LOCK();
+	for (idx = 0; idx < npart; ++idx) {
+		num_drcs += t->tree[idx].t.size;
+		node = opr_rbtree_first(&t->tree[idx].t);
+		while (node) {
+			drc = opr_containerof(node, drc_t, d_u.tcp.recycle_k);
+			cb(drc, state);
+			node = opr_rbtree_next(node);
+		}
+	}
+	DRC_ST_UNLOCK();
+
+	return num_drcs;
+}
+
+/**
+ * @brief Retrieves the length of the TCP DRC recycle queue.
+ *
+ * @return The number of entries in the TCP DRC recycle queue.
+ */
+uint32_t get_tcp_drc_recycle_qlen(void)
+{
+	return drc_st->tcp_drc_recycle_qlen;
+}

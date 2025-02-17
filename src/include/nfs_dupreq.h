@@ -178,5 +178,7 @@ dupreq_status_t nfs_dupreq_start(nfs_request_t *);
 void nfs_dupreq_finish(nfs_request_t *, enum nfs_req_result);
 void nfs_dupreq_delete(nfs_request_t *, enum nfs_req_result);
 void nfs_dupreq_rele(nfs_request_t *);
+int for_each_tcp_drc(void (*cb)(drc_t *drc, void *state), void *state);
+uint32_t get_tcp_drc_recycle_qlen(void);
 
 #endif /* NFS_DUPREQ_H */
