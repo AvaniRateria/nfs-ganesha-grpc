@@ -376,15 +376,22 @@ static int reclaim_reset(struct ceph_mount *cm)
 
 	len = strlen(RECLAIM_UUID_PREFIX) + strlen(nodeid) + 1 + 4 + 1;
 	uuid = gsh_malloc(len);
-	(void)snprintf(uuid, len, RECLAIM_UUID_PREFIX "%s-%4.4hx", nodeid,
-		       cm->cm_export_id);
+	/* uuid will be always like "ganesha-node<n>-0001" */
+	(void)snprintf(uuid, len, RECLAIM_UUID_PREFIX "%s-%4.4hx", nodeid, 1);
 
 	/* If this fails, log a message but soldier on */
 	LogDebug(COMPONENT_FSAL, "Issuing reclaim reset for %s", uuid);
 	ceph_status = ceph_start_reclaim(cm->cmount, uuid, CEPH_RECLAIM_RESET);
-	if (ceph_status)
+	if (ceph_status) {
+		/* Error ENOENT indicates that most likely this is first run
+		 * of this Ganesha instance, so can be ignored. Any other
+		 * failure indicates problem with this ceph client, better
+		 * throw the error and exit */
 		LogEvent(COMPONENT_FSAL, "start_reclaim failed: %s",
 			 strerror(-ceph_status));
+		if (ceph_status != ENOENT)
+			return ceph_status;
+	}
 	ceph_finish_reclaim(cm->cmount);
 	ceph_set_uuid(cm->cmount, uuid);
 	gsh_free(nodeid);
@@ -455,8 +462,8 @@ static void ino_release_cb(void *handle, vinodeno_t vino)
 
 /* Callback for inode invalidation. This callback is triggered when ceph client
  * cache is invalidated due to file attribute change */
-static void ino_invalidate_cb(void *handle, vinodeno_t vino,
-		int64_t offset, int64_t len)
+static void ino_invalidate_cb(void *handle, vinodeno_t vino, int64_t offset,
+			      int64_t len)
 {
 	struct ceph_mount *cm = handle;
 	struct ceph_handle_key key;
@@ -471,9 +478,9 @@ static void ino_invalidate_cb(void *handle, vinodeno_t vino,
 	key.export_id = cm->cm_export_id;
 	fh_desc.addr = &key;
 	fh_desc.len = sizeof(key);
-	cm->cm_export->export.up_ops->invalidate(
-				cm->cm_export->export.up_ops, &fh_desc,
-				FSAL_UP_INVALIDATE_CACHE);
+	cm->cm_export->export.up_ops->invalidate(cm->cm_export->export.up_ops,
+						 &fh_desc,
+						 FSAL_UP_INVALIDATE_CACHE);
 }
 
 static mode_t umask_cb(void *handle)
