@@ -76,7 +76,7 @@ bool config_errors_fatal;
 #define LTTNG_OPTION
 #endif /* USE_LTTNG */
 
-static const char options[] = "v@L:N:S:f:p:FRTE:ChIV:x" LTTNG_OPTION;
+static const char options[] = "v@L:N:S:f:p:FRTE:ChI:V:x" LTTNG_OPTION;
 static const char usage[] =
 	"Usage: %s [-hd][-L <logfile>][-N <dbg_lvl>][-f <config_file>]\n"
 	"\t[-v]                display version information\n"
