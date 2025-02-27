@@ -225,6 +225,9 @@ static void rados_cluster_end_grace(void)
 
 	synchronize_rcu();
 	gsh_refstr_put(old_oid);
+
+	/* mark takeover complete */
+	takeover = false;
 }
 
 void rados_cluster_add_clid(nfs_client_id_t *clientid)
@@ -272,7 +275,6 @@ static void set_recovery_object_for_takeover(nfs_grace_start_t *gsp)
 	int ret;
 	int take_addr;
 
-	takeover = false;
 	switch (gsp->event) {
 	case EVENT_TAKE_IP:
 		if (!nfs_param.nfsv4_param.recovery_backend_ipbased) {
