@@ -245,6 +245,7 @@ static void drc_to_dbus(drc_t *drc, void *state)
 	DBusMessageIter *array_iter = (DBusMessageIter *)state;
 	char client_ip[SOCK_NAME_MAX] = { 0 };
 	char *ipaddr = client_ip;
+	int port;
 	const char *str = NULL;
 
 	if (!drc) {
@@ -255,11 +256,16 @@ static void drc_to_dbus(drc_t *drc, void *state)
 	if (!sprint_sockip(&drc->d_u.tcp.addr, ipaddr, SOCK_NAME_MAX))
 		(void)strlcpy(ipaddr, "<unknown>", SOCK_NAME_MAX);
 
+	port = get_sockport(&drc->d_u.tcp.addr);
+
 	dbus_message_iter_open_container(array_iter, DBUS_TYPE_STRUCT, NULL,
 					 &struct_iter);
 	str = "Client addr:";
 	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
 	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &ipaddr);
+	str = "Client port:";
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
+	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT32, &port);
 	str = "Number of DRC entries:";
 	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING, &str);
 	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT32,
@@ -289,7 +295,7 @@ static bool admin_dbus_get_drc_info(DBusMessageIter *args, DBusMessage *reply,
 		goto out;
 	}
 
-	dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(sssu)",
+	dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(sssusu)",
 					 &array_iter);
 
 	counter = for_each_tcp_drc(drc_to_dbus, (void *)&array_iter);
@@ -323,7 +329,7 @@ static struct gsh_dbus_method method_get_drc_info = {
 	.method = admin_dbus_get_drc_info,
 	.args = { {
 			  .name = "drc_info",
-			  .type = "a(sssu)",
+			  .type = "a(sssusu)",
 			  .direction = "out",
 		  },
 		  {

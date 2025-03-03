@@ -246,6 +246,22 @@ static inline size_t socket_addr_len(sockaddr_t *addr)
 	}
 }
 
+static inline int get_sockport(sockaddr_t *addr)
+{
+#ifdef RPC_VSOCK
+	if (addr->ss_family == AF_VSOCK)
+		return ((struct sockaddr_vm *)addr)->svm_port;
+#endif /* VSOCK */
+
+	if (addr->ss_family == AF_INET)
+		return ntohs(((struct sockaddr_in *)addr)->sin_port);
+
+	if (addr->ss_family == AF_INET6)
+		return ntohs(((struct sockaddr_in6 *)addr)->sin6_port);
+
+	return -1;
+}
+
 static inline bool sprint_sockip(sockaddr_t *addr, char *buf, int len)
 {
 #ifdef RPC_VSOCK
