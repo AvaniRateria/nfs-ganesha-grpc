@@ -32,7 +32,11 @@ if [ ! -f "$GANESHA_EXE" ]; then
   exit 1
 fi
 
-TEMP_DIR=$(mktemp --directory)
+# We can't use /tmp because VFS FSAL doesn't support it as export path
+# See: https://review.gerrithub.io/c/ffilz/nfs-ganesha/+/555058
+mkdir --parents "$HOME/ganesha-test-mode/"
+TEMP_DIR=$(mktemp --directory --tmpdir="$HOME/ganesha-test-mode/")
+
 CONFIG_FILE="$TEMP_DIR/conf"
 LOG_FILE="$TEMP_DIR/log"
 PID_FILE="$TEMP_DIR/pid"
@@ -65,4 +69,4 @@ LOG {
 EOF
 
 set -x
-sudo /tmp/ganesha/ganesha.nfsd -F -x -f $CONFIG_FILE -L $LOG_FILE -p $PID_FILE
+sudo "$GANESHA_EXE" -F -x -f "$CONFIG_FILE" -L "$LOG_FILE" -p "$PID_FILE"
