@@ -337,7 +337,10 @@ int nfs3_read(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 
 	if (FSAL_IS_ERROR(fsal_status)) {
 		res->res_read3.status = nfs3_Errno_status(fsal_status);
-		goto return_ok;
+		if (nfs_RetryableError(fsal_status.major))
+			goto drop_error;
+		else
+			goto return_ok;
 	}
 
 	/* Sanity check: read only from a regular file */
@@ -392,7 +395,10 @@ int nfs3_read(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 	/* Check for delegation conflict. */
 	if (state_deleg_conflict(obj, false)) {
 		res->res_read3.status = NFS3ERR_JUKEBOX;
-		goto return_ok;
+		if (nfs_DropDelayErrors())
+			goto drop_error;
+		else
+			goto return_ok;
 	}
 
 	/* Set up result using internal iovec of length 1 that allows FSAL
@@ -475,6 +481,14 @@ return_ok:
 	server_stats_io_done(size, 0, true, false);
 
 	return NFS_REQ_OK;
+
+drop_error:
+
+	if (obj)
+		obj->obj_ops->put_ref(obj);
+
+	server_stats_io_done(size, 0, false, false);
+	return NFS_REQ_DROP;
 } /* nfs3_read */
 
 /**

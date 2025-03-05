@@ -245,6 +245,11 @@ void nfs_PreOpAttrFromFsalAttr(struct fsal_attrlist *fsal_attrs,
 			       pre_op_attr *out_pre_attr);
 #endif
 
+static inline bool nfs_DropDelayErrors(void)
+{
+	return nfs_param.core_param.drop_delay_errors;
+}
+
 bool nfs_RetryableError(fsal_errors_t fsal_errors);
 
 int nfs3_Sattr_To_FSAL_attr(struct fsal_attrlist *pFSALattr, sattr3 *psattr);
