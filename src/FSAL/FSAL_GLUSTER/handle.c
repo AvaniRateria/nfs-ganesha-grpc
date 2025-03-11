@@ -64,8 +64,6 @@ static void handle_release(struct fsal_obj_handle *obj_hdl)
 	now(&s_time);
 #endif
 
-	fsal_obj_handle_fini(&objhandle->handle, true);
-
 	if (obj_hdl->type == REGULAR_FILE) {
 		fsal_status_t st;
 
@@ -97,6 +95,7 @@ static void handle_release(struct fsal_obj_handle *obj_hdl)
 	if (objhandle->handle.type == REGULAR_FILE)
 		destroy_fsal_fd(&my_fd->fsal_fd);
 
+	fsal_obj_handle_fini(&objhandle->handle, true);
 	gsh_free(objhandle);
 
 #ifdef GLTIMING
