@@ -266,6 +266,7 @@ void nfs41_Build_sessionid(clientid4 *clientid, char *sessionid)
 int32_t _inc_session_ref(nfs41_session_t *session, const char *func, int line)
 {
 	int32_t refcnt = atomic_inc_int32_t(&session->refcount);
+
 	GSH_AUTO_TRACEPOINT(nfs4, incref, TRACE_INFO,
 			    "Session incref. Session: {}, refcount: {}",
 			    session, refcnt);
@@ -276,6 +277,7 @@ int32_t _dec_session_ref(nfs41_session_t *session, const char *func, int line)
 {
 	int i;
 	int32_t refcnt = atomic_dec_int32_t(&session->refcount);
+
 	GSH_AUTO_TRACEPOINT(nfs4, decref, TRACE_INFO,
 			    "Session decref. Session: {}, refcount: {}",
 			    session, refcnt);

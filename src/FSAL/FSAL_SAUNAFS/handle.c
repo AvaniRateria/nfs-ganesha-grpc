@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-later
 /*
    Copyright 2017 Skytechnology sp. z o.o.
    Copyright 2023 Leil Storage OÜ
@@ -724,14 +724,16 @@ static fsal_status_t openByName(struct fsal_obj_handle *objectHandle,
  *
  * @returns: FSAL status
  */
-static fsal_status_t
-open2(struct fsal_obj_handle *objectHandle, struct state_t *state,
-      fsal_openflags_t openflags, enum fsal_create_mode createmode,
-      const char *name, struct fsal_attrlist *attributesToSet,
-      fsal_verifier_t verifier, struct fsal_obj_handle **createdObject,
-      struct fsal_attrlist *attributes, bool *callerPermissionCheck,
-      struct fsal_attrlist *parentPreAttributes,
-      struct fsal_attrlist *parentPostAttributes)
+static fsal_status_t open2(struct fsal_obj_handle *objectHandle,
+			   struct state_t *state, fsal_openflags_t openflags,
+			   enum fsal_create_mode createmode, const char *name,
+			   struct fsal_attrlist *attributesToSet,
+			   fsal_verifier_t verifier,
+			   struct fsal_obj_handle **createdObject,
+			   struct fsal_attrlist *attributes,
+			   bool *callerPermissionCheck,
+			   struct fsal_attrlist *parentPreAttributes,
+			   struct fsal_attrlist *parentPostAttributes)
 {
 	struct SaunaFSExport *export = NULL;
 	struct SaunaFSHandle *handle = NULL;

@@ -52,8 +52,8 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	count = atoi(argv[2]) if (count == 0)
-	{
+	count = atoi(argv[2]);
+	if (count == 0) {
 		LogTest("usage: test_handle_mapping <db_dir> <db_count>");
 		exit(1);
 	}

@@ -1302,6 +1302,7 @@ bool principal2uid(char *principal, uid_t *uid, gid_t *gid)
 	if (nfs_param.nfsv4_param.use_getpwnam) {
 		bool got_gid = false;
 		char *at = strchr(principal, '@');
+
 		LogDebug(COMPONENT_IDMAPPER, "Get uid for %s using pw func",
 			 principal);
 

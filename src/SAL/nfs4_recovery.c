@@ -636,6 +636,7 @@ void nfs_wait_for_grace_norefs(void)
 {
 	pthread_mutex_lock(&norefs_mutex);
 	struct timespec timeo = { .tv_sec = time(NULL) + 5, .tv_nsec = 0 };
+
 	pthread_cond_timedwait(&norefs_cond, &norefs_mutex, &timeo);
 	pthread_mutex_unlock(&norefs_mutex);
 }
@@ -930,8 +931,9 @@ bool nfs4_check_deleg_reclaim(nfs_client_id_t *clid, nfs_fh4 *fhandle)
 	struct glist_head *node;
 	rdel_fh_t *rfh_entry;
 	clid_entry_t *clid_ent;
-	int __attribute__((unused)) b64ret;
 	bool retval = true;
+
+	int __attribute__((unused)) b64ret;
 
 	/* Convert nfs_fh4_val into base64 encoded string */
 	b64ret = base64url_encode(fhandle->nfs_fh4_val, fhandle->nfs_fh4_len,

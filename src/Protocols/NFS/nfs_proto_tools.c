@@ -2508,6 +2508,7 @@ encode_support_exclusive_create(XDR *xdr, struct xdr_attrs_args *args)
 {
 	struct bitmap4 bits;
 	int attr, offset;
+
 	bool __attribute__((unused)) res;
 
 	memset(&bits, 0, sizeof(bits));

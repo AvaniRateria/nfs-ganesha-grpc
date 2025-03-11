@@ -350,6 +350,7 @@ restart:
 	   transition that gets us out. */
 	while (true) {
 		bool fre_mtx_locked = true;
+
 		if ((fr->p.wake_threads == NULL) ||
 		    (fr->command != fridgethr_comm_run)) {
 			if (fr->p.thread_delay > 0) {
@@ -458,9 +459,10 @@ static void *fridgethr_start_routine(void *arg)
 	struct fridgethr_entry *fe = arg;
 	struct fridgethr *fr = fe->fr;
 	bool reschedule;
-	int __attribute__((unused)) rc = 0;
 	int old_type = 0;
 	int old_state = 0;
+
+	int __attribute__((unused)) rc = 0;
 
 	rcu_register_thread();
 	SetNameFunction(fr->s);

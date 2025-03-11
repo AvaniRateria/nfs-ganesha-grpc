@@ -69,13 +69,14 @@ enum nfs_req_result nfs4_op_access(struct nfs_argop4 *op, compound_data_t *data,
 				   struct nfs_resop4 *resp)
 {
 	ACCESS4args *const arg_ACCESS4 = &op->nfs_argop4_u.opaccess;
-	GSH_AUTO_TRACEPOINT(nfs4, op_access_start, TRACE_INFO,
-			    "ACCESS arg: access={}", arg_ACCESS4->access);
 	ACCESS4res *const res_ACCESS4 = &resp->nfs_resop4_u.opaccess;
 	fsal_status_t status;
 	uint32_t max_access =
 		(ACCESS4_READ | ACCESS4_LOOKUP | ACCESS4_MODIFY |
 		 ACCESS4_EXTEND | ACCESS4_DELETE | ACCESS4_EXECUTE);
+
+	GSH_AUTO_TRACEPOINT(nfs4, op_access_start, TRACE_INFO,
+			    "ACCESS arg: access={}", arg_ACCESS4->access);
 
 	/* xattrs are a v4.2+ feature */
 	if (data->minorversion >= 2) {

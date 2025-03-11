@@ -1243,14 +1243,16 @@ static nfsstat4 layoutcommit(struct fsal_obj_handle *obj_hdl, XDR *lou_body,
  * default case not supported
  */
 
-static fsal_status_t
-open2(struct fsal_obj_handle *obj_hdl, struct state_t *fd,
-      fsal_openflags_t openflags, enum fsal_create_mode createmode,
-      const char *name, struct fsal_attrlist *attrib_set,
-      fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-      struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-      struct fsal_attrlist *parent_pre_attrs_out,
-      struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t open2(struct fsal_obj_handle *objectHandle,
+			   struct state_t *state, fsal_openflags_t openflags,
+			   enum fsal_create_mode createmode, const char *name,
+			   struct fsal_attrlist *attributesToSet,
+			   fsal_verifier_t verifier,
+			   struct fsal_obj_handle **createdObject,
+			   struct fsal_attrlist *attributes,
+			   bool *callerPermissionCheck,
+			   struct fsal_attrlist *parentPreAttributes,
+			   struct fsal_attrlist *parentPostAttributes)
 {
 	LogCrit(COMPONENT_FSAL, "Invoking unsupported FSAL operation");
 	return fsalstat(ERR_FSAL_NOTSUPP, ENOTSUP);

@@ -502,8 +502,8 @@ struct req_op_context {
 	bool last_close; /* Indicate the last close of a file */
 	struct fsal_module *fsal_module; /*< current fsal module */
 	struct fsal_pnfs_ds *ctx_pnfs_ds; /*< current pNFS DS */
-	nfs_request_t *
-		nfs_reqdata; /* Request data (if op is originated from a client request) */
+	nfs_request_t *nfs_reqdata; /* Request data (if op is originated from a
+				     * client request) */
 	uint32_t op_id;
 	struct {
 		bool pseudo_fsal_internal_lookup;

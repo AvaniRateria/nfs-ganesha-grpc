@@ -1613,6 +1613,7 @@ int main(int argc, char **argv)
 {
 	setup();
 	int i;
+
 	for (i = 0; i < kTestSize - 1; i++)
 		Test(testdata[i], i * i, i);
 

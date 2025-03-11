@@ -1693,6 +1693,7 @@ int display_clientid(struct display_buffer *dspbuf, clientid4 clientid)
 clientid4 new_clientid(void)
 {
 	clientid4 newid = atomic_inc_uint32_t(&clientid_counter);
+
 	return newid + (clientid4)(get_unique_server_id() << 32);
 }
 

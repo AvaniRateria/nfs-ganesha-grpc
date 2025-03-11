@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-3.0-or-later */
+// SPDX-License-Identifier: LGPL-3.0-or-later
 /*
  * vim:noexpandtab:shiftwidth=8:tabstop=8:
  *
@@ -264,6 +264,7 @@ connection_manager__callback_context_t connection_manager__callback_clear(void)
 	assert(callback_context.deregister_connection !=
 	       callback_default.deregister_connection);
 	const connection_manager__callback_context_t old_cb = callback_context;
+
 	callback_context = callback_default;
 	PTHREAD_RWLOCK_unlock(&callback_lock);
 	return old_cb;
@@ -309,6 +310,7 @@ update_socket_linger(const connection_manager__connection_t *connection)
 	if (setsockopt(connection->xprt->xp_fd, SOL_SOCKET, SO_LINGER, &linger,
 		       sizeof(linger)) < 0) {
 		const char *const strerr = strerror(errno);
+
 		LogWarnConnection(connection,
 				  "Could not set linger for connection: %s",
 				  strerr);
@@ -534,6 +536,8 @@ out:
 static inline connection_manager__connection_t *
 xprt_to_connection(const SVCXPRT *xprt)
 {
+	xprt_custom_data_t *xprt_data;
+
 	if (xprt->xp_u1 == NULL) {
 		LogInfo(COMPONENT_XPRT, "fd %d: No custom data allocated",
 			xprt->xp_fd);
@@ -542,7 +546,9 @@ xprt_to_connection(const SVCXPRT *xprt)
 				    xprt->xp_fd);
 		return NULL;
 	}
-	xprt_custom_data_t *const xprt_data = (xprt_custom_data_t *)xprt->xp_u1;
+
+	xprt_data = (xprt_custom_data_t *)xprt->xp_u1;
+
 	return &xprt_data->managed_connection;
 }
 

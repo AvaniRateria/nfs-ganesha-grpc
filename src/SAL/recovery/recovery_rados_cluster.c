@@ -37,7 +37,7 @@
 
 /* Use hostname as nodeid in cluster */
 char *nodeid;
-static bool takeover = false;
+static bool takeover;
 /* recovery rados object names for takeover */
 static char object_takeover[NI_MAXHOST];
 static char object_takeover_old[NI_MAXHOST];

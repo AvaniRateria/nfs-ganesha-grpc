@@ -46,8 +46,8 @@
 
 static rados_write_op_t grace_op;
 static pthread_mutex_t grace_op_lock;
-bool takeover = false;
-bool no_cleanup = false;
+bool takeover;
+bool no_cleanup;
 char object_takeover[NI_MAXHOST];
 
 static int rados_ng_put(char *key, char *val, char *object)

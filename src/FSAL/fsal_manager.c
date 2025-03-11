@@ -225,7 +225,7 @@ struct config_block fsal_block = {
 };
 
 /*
- * This can be overridden by by any FSAL that is compiled statically with
+ * This can be overridden by any FSAL that is compiled statically with
  * Ganesha and wants to be started when the static fsals are started.
  */
 __attribute__((weak)) void start_custom_static_fsals(

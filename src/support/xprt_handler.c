@@ -156,8 +156,10 @@ void remove_nfs41_session_from_xprt(SVCXPRT *xprt, nfs41_session_t *session)
 			found_session_count++;
 		}
 	}
+
 	sessions_holder->num_sessions -= found_session_count;
 	const uint8_t num_sessions = sessions_holder->num_sessions;
+
 	PTHREAD_RWLOCK_unlock(&sessions_holder->sessions_lock);
 
 	if (found_session_count > 0)

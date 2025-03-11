@@ -270,7 +270,7 @@ static int log_mask = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 static char program_name[1024];
 static char hostname[256];
 static int syslog_opened;
-bool is_inside_crash_handler = false;
+bool is_inside_crash_handler;
 
 /* Number of bytes actually usable in the log buffer */
 #define LOG_BUF_USE (LOG_BUFF_LEN + 1)

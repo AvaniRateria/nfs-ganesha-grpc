@@ -100,6 +100,7 @@ void cleanup_pseudofs_node(char *pseudo_path, struct fsal_obj_handle *obj)
 	char *pos = pseudo_path + strlen(pseudo_path) - 1;
 	char *name;
 	fsal_status_t fsal_status;
+
 	op_ctx->flags.pseudo_fsal_internal_lookup = true;
 
 	/* Strip trailing / from pseudo_path */
