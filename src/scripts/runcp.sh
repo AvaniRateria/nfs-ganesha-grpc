@@ -117,6 +117,15 @@ check_one_file()
 		then
 			EXTRA_OPT="$EXTRA_OPT --ignore ENOSYS"
 		fi
+
+		egrep $NO_FUNCNAME_FILES $OUTFILE 2>&1 >/dev/null
+
+		RC=$?
+
+		if [ $RC -eq 0 ]
+		then
+			EXTRA_OPT="$EXTRA_OPT --ignore EMBEDDED_FUNCTION_NAME"
+		fi
 	fi
 
 	$CURDIR/checkpatch.pl $TYPEDEF $EXTRA_OPT \
@@ -269,6 +278,8 @@ NO_DATE_TIME_FILES="MainNFSD/nfs_main.c"
 NO_STATIC_CONST_CHAR_ARRAY_FILES="FSAL_CEPH/main.c"
 
 NO_ENOSYS_FILES="FSAL_GPFS/fsal_up.c|FSAL_GPFS/gpfsext.c"
+
+NO_FUNCNAME_FILES="os/freebsd/atsyscalls.c|os/freebsd/subr.c"
 
 NO_SPACING=1
 
