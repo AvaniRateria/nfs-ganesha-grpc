@@ -2,7 +2,8 @@
 # Ganesha pre-commit hook
 #
 # 1. Run clang-format on the commit
-# 2. Check to see if a submodule is not being updated
+# 2. checkpatch on the commit
+# 3. Check to see if a submodule is not being updated
 
 # define colors for use in output
 red='\033[0;31m'
@@ -45,6 +46,21 @@ function check_staged_files() {
 }
 
 check_staged_files
+
+if git rev-parse --verify HEAD 2>/dev/null >/dev/null
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+topdir=$(git rev-parse --show-toplevel)
+git diff --cached  $against | $topdir/src/scripts/checkpatch.pl \
+	      --no-signoff -q -
+if [ $? != 0 ]; then
+	exit 1
+fi
 
 ###############################################################
 # Check whether any submodule is about to be updated with the
