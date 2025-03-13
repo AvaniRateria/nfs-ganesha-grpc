@@ -250,8 +250,7 @@ create_file_recall(struct fsal_obj_handle *obj, layouttype4 type,
 		goto out;
 	}
 
-	glist_for_each(state_iter, &obj->state_hdl->file.list_of_states)
-	{
+	glist_for_each(state_iter, &obj->state_hdl->file.list_of_states) {
 		/* Entry in the state list */
 		struct recall_state_list *list_entry = NULL;
 		/* Iterator over segments on this state */
@@ -299,8 +298,7 @@ create_file_recall(struct fsal_obj_handle *obj, layouttype4 type,
 
 		dec_state_owner_ref(owner);
 
-		glist_for_each(seg_iter, &s->state_data.layout.state_segments)
-		{
+		glist_for_each(seg_iter, &s->state_data.layout.state_segments) {
 			state_layout_segment_t *g =
 				glist_entry(seg_iter, state_layout_segment_t,
 					    sls_state_segments);
@@ -421,8 +419,7 @@ state_status_t layoutrecall(const struct fsal_up_vector *vec,
 	 * while we're traversing the work list. However, the race may now
 	 * be harmless since everything is refcounted.
 	 */
-	glist_for_each(wi, &recall->state_list)
-	{
+	glist_for_each(wi, &recall->state_list) {
 		/* The current entry in the queue */
 		struct recall_state_list *g =
 			glist_entry(wi, struct recall_state_list, link);
@@ -1454,8 +1451,7 @@ state_status_t delegrecall_impl(struct fsal_obj_handle *obj)
 
 	STATELOCK_lock(obj);
 	glist_for_each_safe(glist, glist_n,
-			    &obj->state_hdl->file.list_of_states)
-	{
+			    &obj->state_hdl->file.list_of_states) {
 		state = glist_entry(glist, struct state_t, state_list);
 
 		if (state->state_type != STATE_TYPE_DELEG)

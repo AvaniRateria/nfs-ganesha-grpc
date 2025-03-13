@@ -127,11 +127,13 @@ static nfsstat4 ds_read(struct fsal_ds_handle *const ds_pub,
  *
  * @return An NFSv4.1 status code.
  */
-static nfsstat4
-ds_write(struct fsal_ds_handle *const ds_pub, const stateid4 *stateid,
-	 const offset4 offset, const count4 write_length, const void *buffer,
-	 const stable_how4 stability_wanted, count4 *const written_length,
-	 verifier4 *const writeverf, stable_how4 *const stability_got)
+static nfsstat4 ds_write(struct fsal_ds_handle *const ds_pub,
+			 const stateid4 *stateid, const offset4 offset,
+			 const count4 write_length, const void *buffer,
+			 const stable_how4 stability_wanted,
+			 count4 *const written_length,
+			 verifier4 *const writeverf,
+			 stable_how4 *const stability_got)
 {
 	struct glfs_ds_handle *ds =
 		container_of(ds_pub, struct glfs_ds_handle, ds);
@@ -253,8 +255,9 @@ static nfsstat4 make_ds_handle(struct fsal_pnfs_ds *const pds,
 	struct glfs_ds_handle *ds = NULL;
 	unsigned char globjhdl[GFAPI_HANDLE_LENGTH] = { '\0' };
 	struct stat sb;
-	struct glusterfs_export *glfs_export = container_of(
-		pds->mds_fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(pds->mds_fsal_export, struct glusterfs_export,
+			     export);
 
 	*handle = NULL;
 
@@ -268,8 +271,9 @@ static nfsstat4 make_ds_handle(struct fsal_pnfs_ds *const pds,
 	memcpy(globjhdl, hdl_desc->addr, GFAPI_HANDLE_LENGTH);
 
 	/* Create glfs_object for the DS handle */
-	ds->glhandle = glfs_h_create_from_handle(
-		glfs_export->gl_fs->fs, globjhdl, GFAPI_HANDLE_LENGTH, &sb);
+	ds->glhandle = glfs_h_create_from_handle(glfs_export->gl_fs->fs,
+						 globjhdl, GFAPI_HANDLE_LENGTH,
+						 &sb);
 	if (ds->glhandle == NULL) {
 		LogDebug(COMPONENT_PNFS, "glhandle in ds_handle is NULL");
 		return NFS4ERR_SERVERFAULT;

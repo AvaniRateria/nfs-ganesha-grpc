@@ -71,10 +71,12 @@ static void release(struct fsal_obj_handle *obj_hdl)
  * @return FSAL status codes.
  */
 
-static fsal_status_t
-lookup_int(struct fsal_obj_handle *dir_hdl, const char *path,
-	   struct fsal_obj_handle **obj_hdl, struct fsal_attrlist *attrs_out,
-	   struct stat *rcb_st, uint32_t rcb_st_mask, uint32_t flags)
+static fsal_status_t lookup_int(struct fsal_obj_handle *dir_hdl,
+				const char *path,
+				struct fsal_obj_handle **obj_hdl,
+				struct fsal_attrlist *attrs_out,
+				struct stat *rcb_st, uint32_t rcb_st_mask,
+				uint32_t flags)
 {
 	int rc;
 	struct stat st;
@@ -576,14 +578,13 @@ out:
  * @return FSAL status.
  */
 
-static fsal_status_t
-rgw_fsal_rename(struct fsal_obj_handle *obj_hdl,
-		struct fsal_obj_handle *olddir_hdl, const char *old_name,
-		struct fsal_obj_handle *newdir_hdl, const char *new_name,
-		struct fsal_attrlist *olddir_pre_attrs_out,
-		struct fsal_attrlist *olddir_post_attrs_out,
-		struct fsal_attrlist *newdir_pre_attrs_out,
-		struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t rgw_fsal_rename(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
+	const char *old_name, struct fsal_obj_handle *newdir_hdl,
+	const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
+	struct fsal_attrlist *olddir_post_attrs_out,
+	struct fsal_attrlist *newdir_pre_attrs_out,
+	struct fsal_attrlist *newdir_post_attrs_out)
 {
 	int rc;
 
@@ -623,11 +624,10 @@ rgw_fsal_rename(struct fsal_obj_handle *obj_hdl,
  * @return FSAL status.
  */
 
-static fsal_status_t
-rgw_fsal_unlink(struct fsal_obj_handle *dir_hdl,
-		struct fsal_obj_handle *obj_hdl, const char *name,
-		struct fsal_attrlist *parent_pre_attrs_out,
-		struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t rgw_fsal_unlink(
+	struct fsal_obj_handle *dir_hdl, struct fsal_obj_handle *obj_hdl,
+	const char *name, struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	int rc;
 
@@ -735,14 +735,16 @@ fsal_status_t rgw_merge(struct fsal_obj_handle *orig_hdl,
  * @return FSAL status.
  */
 
-fsal_status_t
-rgw_fsal_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	       fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	       const char *name, struct fsal_attrlist *attrib_set,
-	       fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	       struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	       struct fsal_attrlist *parent_pre_attrs_out,
-	       struct fsal_attrlist *parent_post_attrs_out)
+fsal_status_t rgw_fsal_open2(struct fsal_obj_handle *obj_hdl,
+			     struct state_t *state, fsal_openflags_t openflags,
+			     enum fsal_create_mode createmode, const char *name,
+			     struct fsal_attrlist *attrib_set,
+			     fsal_verifier_t verifier,
+			     struct fsal_obj_handle **new_obj,
+			     struct fsal_attrlist *attrs_out,
+			     bool *caller_perm_check,
+			     struct fsal_attrlist *parent_pre_attrs_out,
+			     struct fsal_attrlist *parent_post_attrs_out)
 {
 	int posix_flags = 0;
 	int rc;
@@ -855,9 +857,9 @@ rgw_fsal_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
 				    !obj_hdl->obj_ops->check_verifier(
 					    obj_hdl, verifier)) {
 					/* Verifier didn't match */
-					status = fsalstat(
-						posix2fsal_error(EEXIST),
-						EEXIST);
+					status = fsalstat(posix2fsal_error(
+								  EEXIST),
+							  EEXIST);
 				} else if (attrs_out) {
 					posix2fsal_attributes_all(&st,
 								  attrs_out);
@@ -1223,8 +1225,9 @@ fsal_status_t rgw_fsal_reopen2(struct fsal_obj_handle *obj_hdl,
 	 * set up the new share so we can drop the lock and not have a
 	 * conflicting share be asserted, updating the share counters.
 	 */
-	status = check_share_conflict_and_update_locked(
-		obj_hdl, &handle->share, old_openflags, openflags, false);
+	status = check_share_conflict_and_update_locked(obj_hdl, &handle->share,
+							old_openflags,
+							openflags, false);
 
 	if (FSAL_IS_ERROR(status))
 		return status;
@@ -1235,8 +1238,8 @@ fsal_status_t rgw_fsal_reopen2(struct fsal_obj_handle *obj_hdl,
 		 * 9P does, V3 does not */
 
 		int rc = rgw_open(export->rgw_fs, handle->rgw_fh, posix_flags,
-				  (!state) ? RGW_OPEN_FLAG_V3 :
-					     RGW_OPEN_FLAG_NONE);
+				  (!state) ? RGW_OPEN_FLAG_V3
+					   : RGW_OPEN_FLAG_NONE);
 
 		if (rc < 0) {
 			/* We had a failure on open - we need to revert the
@@ -1360,8 +1363,8 @@ void rgw_fsal_write2(struct fsal_obj_handle *obj_hdl, bool bypass,
 		rc = rgw_write(export->rgw_fs, handle->rgw_fh, offset,
 			       write_arg->iov[i].iov_len, &nb_write,
 			       write_arg->iov[i].iov_base,
-			       (!write_arg->state) ? RGW_OPEN_FLAG_V3 :
-						     RGW_OPEN_FLAG_NONE);
+			       (!write_arg->state) ? RGW_OPEN_FLAG_V3
+						   : RGW_OPEN_FLAG_NONE);
 
 		if (rc < 0) {
 			done_cb(obj_hdl, rgw2fsal_error(rc), write_arg,
@@ -1788,8 +1791,9 @@ static int lsxattr_cb(rgw_xattrlist *attrs, void *arg, uint32_t flag)
 			    XATTR_USER_PREFIX_LEN))
 			return 0;
 
-		entry->utf8string_val = gsh_strldup(
-			xattr->key.val, xattr->key.len, &entry->utf8string_len);
+		entry->utf8string_val = gsh_strldup(xattr->key.val,
+						    xattr->key.len,
+						    &entry->utf8string_len);
 		cb_arg->names->xl4_count++;
 
 		if (cb_arg->names->xl4_count == cb_arg->max) {

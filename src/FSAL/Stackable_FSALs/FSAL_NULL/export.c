@@ -84,8 +84,9 @@ static fsal_status_t get_dynamic_info(struct fsal_export *exp_hdl,
 	struct nullfs_fsal_export *exp =
 		container_of(exp_hdl, struct nullfs_fsal_export, export);
 
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = exp->export.sub_export;
@@ -454,8 +455,9 @@ fsal_status_t nullfs_create_export(struct fsal_module *fsal_hdl,
 	}
 
 	myself = gsh_calloc(1, sizeof(struct nullfs_fsal_export));
-	expres = fsal_stack->m_ops.create_export(
-		fsal_stack, nullfsal.subfsal.fsal_node, err_type, up_ops);
+	expres = fsal_stack->m_ops.create_export(fsal_stack,
+						 nullfsal.subfsal.fsal_node,
+						 err_type, up_ops);
 	fsal_put(fsal_stack);
 
 	LogFullDebug(COMPONENT_FSAL, "FSAL %s fsal_refcount %" PRIu32,

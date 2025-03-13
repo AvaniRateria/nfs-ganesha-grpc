@@ -45,16 +45,18 @@
 
 #include "include/gpfs.h"
 
+/* clang-format off */
 #define FSAL_INTERNAL_ERROR(__error, __msg)                                 \
 	({                                                                  \
 		if ((__error) == EUNATCH)                                   \
 			LogFatal(COMPONENT_FSAL, "GPFS Returned EUNATCH");  \
-                                                                            \
+									    \
 		LogFullDebug(COMPONENT_FSAL, "%s returned errno=%d", __msg, \
 			     __error);                                      \
-                                                                            \
+									    \
 		fsalstat(posix2fsal_error(__error), __error);               \
 	})
+/* clang-format on */
 
 /*********************************************************************
  *
@@ -362,8 +364,9 @@ fsal_status_t fsal_internal_create(struct fsal_obj_handle *dir_hdl,
 				   struct stat *buf)
 {
 	struct create_name_arg crarg = { 0 };
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	if (!stat_name)
@@ -398,8 +401,9 @@ fsal_status_t fsal_internal_mknode(struct fsal_obj_handle *dir_hdl,
 				   struct stat *buf)
 {
 	struct create_name_arg crarg = { 0 };
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	if (!stat_name)
@@ -544,11 +548,13 @@ int fsal_internal_version(void)
  *  @param use_acl Bool whether to ACL is to be used
  *  @return status of operation
  */
-fsal_status_t
-fsal_get_xstat_by_handle(int dirfd, struct gpfs_file_handle *gpfs_fh,
-			 gpfsfsal_xstat_t *buffxstat, gpfs_acl_t *acl_buf,
-			 unsigned int acl_buflen, uint32_t *expire_time_attr,
-			 bool expire, bool use_acl)
+fsal_status_t fsal_get_xstat_by_handle(int dirfd,
+				       struct gpfs_file_handle *gpfs_fh,
+				       gpfsfsal_xstat_t *buffxstat,
+				       gpfs_acl_t *acl_buf,
+				       unsigned int acl_buflen,
+				       uint32_t *expire_time_attr, bool expire,
+				       bool use_acl)
 {
 	struct xstat_arg xstatarg = { 0 };
 	int errsv;
@@ -636,10 +642,9 @@ fsal_get_xstat_by_handle(int dirfd, struct gpfs_file_handle *gpfs_fh,
 
 	if (use_acl) {
 		if (acl_buf->acl_nace > GPFS_ACL_MAX_NACES) {
-			LogEvent(
-				COMPONENT_FSAL,
-				"No. of ACE's:%d higher than supported by GPFS",
-				acl_buf->acl_nace);
+			LogEvent(COMPONENT_FSAL,
+				 "No. of ACE's:%d higher than supported by GPFS",
+				 acl_buf->acl_nace);
 			/* Fail the request if ACL is invalid*/
 			return fsalstat(ERR_FSAL_SERVERFAULT, 0);
 		}

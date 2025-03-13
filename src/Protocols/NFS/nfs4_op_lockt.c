@@ -176,9 +176,9 @@ enum nfs_req_result nfs4_op_lockt(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	/* Check clientid */
-	rc = nfs_client_id_get_confirmed(data->minorversion == 0 ?
-						 arg_LOCKT4->owner.clientid :
-						 data->session->clientid,
+	rc = nfs_client_id_get_confirmed(data->minorversion == 0
+						 ? arg_LOCKT4->owner.clientid
+						 : data->session->clientid,
 					 &clientid);
 
 	if (rc != CLIENT_ID_SUCCESS) {
@@ -233,9 +233,10 @@ enum nfs_req_result nfs4_op_lockt(struct nfs_argop4 *op, compound_data_t *data,
 		 */
 		LogStateOwner("Conflict: ", conflict_owner);
 
-		res_LOCKT4->status = Process_nfs4_conflict(
-			&res_LOCKT4->LOCKT4res_u.denied, conflict_owner,
-			&conflict_desc, data);
+		res_LOCKT4->status =
+			Process_nfs4_conflict(&res_LOCKT4->LOCKT4res_u.denied,
+					      conflict_owner, &conflict_desc,
+					      data);
 	} else {
 		/* Return result */
 		res_LOCKT4->status = nfs4_Errno_state(state_status);

@@ -163,9 +163,10 @@ static enum nfs_req_result nfs4_complete_read(struct nfs4_read_data *data)
 			read_arg->iov_release(read_arg->release_data);
 	}
 
-	server_stats_io_done(
-		read_arg->io_request, read_arg->io_amount,
-		(data->res_READ4->status == NFS4_OK) ? true : false, false);
+	server_stats_io_done(read_arg->io_request, read_arg->io_amount,
+			     (data->res_READ4->status == NFS4_OK) ? true
+								  : false,
+			     false);
 
 	if (data->owner != NULL) {
 		op_ctx->clientid = NULL;
@@ -387,8 +388,9 @@ enum nfs_req_result nfs4_op_read_plus_resume(struct nfs_argop4 *op,
  *
  */
 
-static enum nfs_req_result
-op_dsread(struct nfs_argop4 *op, compound_data_t *data, struct nfs_resop4 *resp)
+static enum nfs_req_result op_dsread(struct nfs_argop4 *op,
+				     compound_data_t *data,
+				     struct nfs_resop4 *resp)
 {
 	READ4args *const arg_READ4 = &op->nfs_argop4_u.opread;
 	READ4res *const res_READ4 = &resp->nfs_resop4_u.opread;
@@ -720,11 +722,10 @@ static enum nfs_req_result nfs4_read(struct nfs_argop4 *op,
 			     offset, size, MaxOffsetRead);
 
 		if ((offset + size) > MaxOffsetRead) {
-			LogEvent(
-				COMPONENT_NFS_V4,
-				"A client tried to violate max file size %" PRIu64
-				" for exportid #%hu",
-				MaxOffsetRead, op_ctx->ctx_export->export_id);
+			LogEvent(COMPONENT_NFS_V4,
+				 "A client tried to violate max file size %" PRIu64
+				 " for exportid #%hu",
+				 MaxOffsetRead, op_ctx->ctx_export->export_id);
 			res_READ4->status = NFS4ERR_FBIG;
 			goto out;
 		}
@@ -994,8 +995,9 @@ enum nfs_req_result nfs4_op_read_plus(struct nfs_argop4 *op,
 	if (req_result == NFS_REQ_OK) {
 		struct nfs4_read_data *read_data = data->op_data;
 
-		nfs4_complete_read_plus(
-			resp, read_data != NULL ? &read_data->info : &info);
+		nfs4_complete_read_plus(resp, read_data != NULL
+						      ? &read_data->info
+						      : &info);
 	}
 
 	if (req_result != NFS_REQ_ASYNC_WAIT && data->op_data != NULL) {
@@ -1073,9 +1075,10 @@ enum nfs_req_result nfs4_op_io_advise(struct nfs_argop4 *op,
 	/* Check stateid correctness and get pointer to state (also
 	   checks for special stateids) */
 
-	res_IO_ADVISE->iaa_status = nfs4_Check_Stateid(
-		&arg_IO_ADVISE->iaa_stateid, obj, &state_found, data,
-		STATEID_SPECIAL_ANY, 0, false, "IO_ADVISE");
+	res_IO_ADVISE->iaa_status =
+		nfs4_Check_Stateid(&arg_IO_ADVISE->iaa_stateid, obj,
+				   &state_found, data, STATEID_SPECIAL_ANY, 0,
+				   false, "IO_ADVISE");
 	if (res_IO_ADVISE->iaa_status != NFS4_OK)
 		goto done;
 

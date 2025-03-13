@@ -105,8 +105,7 @@ static inline void _9p_queue_awaken(void *arg)
 	struct glist_head *n = NULL;
 
 	PTHREAD_SPIN_lock(&st->reqs._9p_rq_st_spinlock);
-	glist_for_each_safe(g, n, &st->reqs.wait_list)
-	{
+	glist_for_each_safe(g, n, &st->reqs.wait_list) {
 		wait_q_entry_t *wqe = glist_entry(g, wait_q_entry_t, waitq);
 
 		pthread_cond_signal(&wqe->lwe.wq_cv);

@@ -441,8 +441,7 @@ void cancel_work(struct response *req)
 	while (start_over) {
 		start_over = false;
 
-		glist_for_each(glist, fno_work + req->r_fpos)
-		{
+		glist_for_each(glist, fno_work + req->r_fpos) {
 			work = glist_entry(glist, struct work_item, fno_work);
 			if (work->resp.r_start >= req->r_start &&
 			    lock_end(&work->resp) <= lock_end(req)) {

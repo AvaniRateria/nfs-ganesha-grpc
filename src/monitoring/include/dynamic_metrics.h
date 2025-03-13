@@ -123,15 +123,13 @@ static inline void dynamic_metrics__observe_nfs_io(
 {
 }
 
-static inline void
-dynamic_metrics__mdcache_cache_hit(const char *UNUSED(operation),
-				   export_id_t UNUSED(export_id))
+static inline void dynamic_metrics__mdcache_cache_hit(
+	const char *UNUSED(operation), export_id_t UNUSED(export_id))
 {
 }
 
-static inline void
-dynamic_metrics__mdcache_cache_miss(const char *UNUSED(operation),
-				    export_id_t UNUSED(export_id))
+static inline void dynamic_metrics__mdcache_cache_miss(
+	const char *UNUSED(operation), export_id_t UNUSED(export_id))
 {
 }
 

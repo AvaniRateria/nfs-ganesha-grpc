@@ -298,9 +298,10 @@ int nlm_send_async(int proc, state_nlm_client_t *host, void *inarg, void *key)
 					clnt_vc_ncreate(fd, &local_buf, NLMPROG,
 							NLM4_VERS, 0, 0);
 			} else {
-				host->slc_callback_clnt = clnt_ncreate(
-					caller_name, NLMPROG, NLM4_VERS,
-					(char *)client_type_str);
+				host->slc_callback_clnt =
+					clnt_ncreate(caller_name, NLMPROG,
+						     NLM4_VERS,
+						     (char *)client_type_str);
 			}
 
 			if (CLNT_FAILURE(host->slc_callback_clnt)) {

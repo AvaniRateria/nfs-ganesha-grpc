@@ -301,9 +301,9 @@ enum nfs_req_result nfs4_op_lock(struct nfs_argop4 *op, compound_data_t *data,
 
 		/* Check is the clientid is known or not */
 		rc = nfs_client_id_get_confirmed(
-			data->minorversion == 0 ?
-				arg_open_owner->lock_owner.clientid :
-				data->session->clientid,
+			data->minorversion == 0
+				? arg_open_owner->lock_owner.clientid
+				: data->session->clientid,
 			&clientid);
 
 		if (rc != CLIENT_ID_SUCCESS) {
@@ -530,8 +530,9 @@ check_seqid:
 		goto out;
 	}
 
-	fsal_grace = op_ctx->fsal_export->exp_ops.fs_supports(
-		op_ctx->fsal_export, fso_grace_method);
+	fsal_grace =
+		op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+							 fso_grace_method);
 
 	/* Do grace period checking (use resp_owner below since a new
 	 * lock request with a new lock owner doesn't have a lock owner

@@ -422,8 +422,9 @@ int ceph_get_acl(struct ceph_export *export, struct ceph_handle *objhandle,
 	}
 
 	/* Reallocating acldata into the required size */
-	acldata.aces = (fsal_ace_t *)gsh_realloc(
-		acldata.aces, new_count * sizeof(fsal_ace_t));
+	acldata.aces =
+		(fsal_ace_t *)gsh_realloc(acldata.aces,
+					  new_count * sizeof(fsal_ace_t));
 	acldata.naces = new_count;
 
 	attrs->acl = nfs4_acl_new_entry(&acldata, &aclstatus);

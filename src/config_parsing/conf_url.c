@@ -41,8 +41,7 @@ int register_url_provider(struct gsh_url_provider *nurl_p)
 	int code = 0;
 
 	PTHREAD_RWLOCK_wrlock(&url_rwlock);
-	glist_for_each(gl, &url_providers)
-	{
+	glist_for_each(gl, &url_providers) {
 		url_p = glist_entry(gl, struct gsh_url_provider, link);
 		if (!strcasecmp(url_p->name, nurl_p->name)) {
 			code = EEXIST;
@@ -226,8 +225,7 @@ int config_url_fetch(const char *url, FILE **f, char **fbuf)
 	}
 
 	PTHREAD_RWLOCK_rdlock(&url_rwlock);
-	glist_for_each(gl, &url_providers)
-	{
+	glist_for_each(gl, &url_providers) {
 		url_p = glist_entry(gl, struct gsh_url_provider, link);
 		if (!strcasecmp(url_type, url_p->name)) {
 			code = url_p->url_fetch(m_url, f, fbuf);

@@ -97,10 +97,9 @@ struct mdcache_fsal_module
  * must be called with a reference taken (via lookup_fsal)
  */
 
-static fsal_status_t
-mdcache_fsal_init_config(struct fsal_module *mdcache_fsal_module,
-			 config_file_t config_struct,
-			 struct config_error_type *err_type)
+static fsal_status_t mdcache_fsal_init_config(
+	struct fsal_module *mdcache_fsal_module, config_file_t config_struct,
+	struct config_error_type *err_type)
 {
 	/* Configuration setting options:
 	 * 1. there are none that are changeable. (this case)

@@ -715,8 +715,7 @@ void nfs4_chk_clid_impl(nfs_client_id_t *clientid, clid_entry_t **clid_ent_arg)
 	 * find it, mark it to allow reclaims.
 	 */
 	PTHREAD_MUTEX_lock(&clientid->cid_mutex);
-	glist_for_each(node, &clid_list)
-	{
+	glist_for_each(node, &clid_list) {
 		clid_ent = glist_entry(node, clid_entry_t, cl_list);
 		if (check_clid(clientid, clid_ent)) {
 			if (isDebug(COMPONENT_CLIENTID)) {
@@ -832,7 +831,7 @@ const char *recovery_backend_str(enum recovery_backend recovery_backend)
 int nfs4_recovery_init(void)
 {
 	LogEvent(COMPONENT_CLIENTID, "Recovery Backend Init for %s",
-		recovery_backend_str(nfs_param.nfsv4_param.recovery_backend));
+		 recovery_backend_str(nfs_param.nfsv4_param.recovery_backend));
 
 	switch (nfs_param.nfsv4_param.recovery_backend) {
 	case RECOVERY_BACKEND_FS:
@@ -943,8 +942,7 @@ bool nfs4_check_deleg_reclaim(nfs_client_id_t *clid, nfs_fh4 *fhandle)
 	PTHREAD_MUTEX_lock(&grace_mutex);
 	nfs4_chk_clid_impl(clid, &clid_ent);
 	if (clid_ent) {
-		glist_for_each(node, &clid_ent->cl_rfh_list)
-		{
+		glist_for_each(node, &clid_ent->cl_rfh_list) {
 			rfh_entry = glist_entry(node, rdel_fh_t, rdfh_list);
 			assert(rfh_entry != NULL);
 			if (!strcmp(rhdlstr, rfh_entry->rdfh_handle_str)) {
@@ -1064,9 +1062,10 @@ static void nfs_release_nlm_state(char *release_ip)
 			    ip_str_match(release_ip, serverip)) {
 				nsm_cp = nlm_cp->slc_nsm_client;
 				inc_nsm_client_ref(nsm_cp);
-				state_status = fridgethr_submit(
-					state_async_fridge, nlm_releasecall,
-					nsm_cp);
+				state_status =
+					fridgethr_submit(state_async_fridge,
+							 nlm_releasecall,
+							 nsm_cp);
 				if (state_status != STATE_SUCCESS) {
 					dec_nsm_client_ref(nsm_cp);
 					LogCrit(COMPONENT_STATE,

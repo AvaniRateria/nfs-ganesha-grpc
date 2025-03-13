@@ -51,8 +51,9 @@ fsal_status_t GPFSFSAL_unlink(struct fsal_obj_handle *dir_hdl,
 	fsal_status_t status;
 	gpfsfsal_xstat_t buffxstat;
 	struct gpfs_fsal_obj_handle *gpfs_hdl;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	gpfs_hdl =

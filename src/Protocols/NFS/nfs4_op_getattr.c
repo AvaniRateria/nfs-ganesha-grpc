@@ -166,8 +166,9 @@ enum nfs_req_result nfs4_op_getattr(struct nfs_argop4 *op,
 	 */
 	if (res_GETATTR4->status == NFS4_OK && current_obj_is_referral) {
 		bool fill_rdattr_error = true;
-		bool fslocations_requested = attribute_is_set(
-			&arg_GETATTR4->attr_request, FATTR4_FS_LOCATIONS);
+		bool fslocations_requested =
+			attribute_is_set(&arg_GETATTR4->attr_request,
+					 FATTR4_FS_LOCATIONS);
 
 		if (!fslocations_requested) {
 			if (!attribute_is_set(&arg_GETATTR4->attr_request,
@@ -184,9 +185,10 @@ enum nfs_req_result nfs4_op_getattr(struct nfs_argop4 *op,
 			args.fsid = data->current_obj->fsid;
 			get_mounted_on_fileid(data, &args.mounted_on_fileid);
 
-			if (nfs4_Fattr_Fill_Error(
-				    data, obj_attributes, NFS4ERR_MOVED,
-				    &arg_GETATTR4->attr_request, &args) != 0) {
+			if (nfs4_Fattr_Fill_Error(data, obj_attributes,
+						  NFS4ERR_MOVED,
+						  &arg_GETATTR4->attr_request,
+						  &args) != 0) {
 				/* Report an error. */
 				res_GETATTR4->status = NFS4ERR_SERVERFAULT;
 			}

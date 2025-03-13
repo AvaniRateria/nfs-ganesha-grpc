@@ -176,10 +176,9 @@ static void register_user_groups_metric(void)
 		empty_labels, ARRAY_SIZE(empty_labels), histogram_buckets);
 }
 
-static void
-register_external_request_latency_metric(idmapping_op_t op,
-					 idmapping_utility_t utility,
-					 idmapping_status_t status)
+static void register_external_request_latency_metric(idmapping_op_t op,
+						     idmapping_utility_t utility,
+						     idmapping_status_t status)
 {
 	const metric_label_t labels[] = {
 		METRIC_LABEL("op", get_op_name(op)),
@@ -248,8 +247,9 @@ static void register_failure_total_metrics(void)
 static void register_evicted_entries_cache_duration_metrics(void)
 {
 	for (int i = 0; i < IDMAPPING_CACHE_ENTITY_COUNT; i++) {
-		const metric_label_t labels[] = { METRIC_LABEL(
-			"cache_entity", get_cache_entity_name(i)) };
+		const metric_label_t labels[] = {
+			METRIC_LABEL("cache_entity", get_cache_entity_name(i))
+		};
 		evicted_entries_cached_duration[i] =
 			monitoring__register_histogram(
 				"idmapping__evicted_entries_cached_duration",
@@ -276,8 +276,8 @@ void idmapper_monitoring__cache_usage(idmapping_cache_t idmapping_cache,
 				      bool is_cache_hit)
 {
 	const idmapping_status_t idmapping_status =
-		is_cache_hit ? IDMAPPING_STATUS_SUCCESS :
-			       IDMAPPING_STATUS_FAILURE;
+		is_cache_hit ? IDMAPPING_STATUS_SUCCESS
+			     : IDMAPPING_STATUS_FAILURE;
 	monitoring__counter_inc(
 		idmapping_cache_uses_total[idmapping_cache][idmapping_status],
 		1);
@@ -290,8 +290,8 @@ void idmapper_monitoring__external_request(
 {
 	const nsecs_elapsed_t resp_time_ns = timespec_diff(start, end);
 	const idmapping_status_t idmapping_status =
-		is_success ? IDMAPPING_STATUS_SUCCESS :
-			     IDMAPPING_STATUS_FAILURE;
+		is_success ? IDMAPPING_STATUS_SUCCESS
+			   : IDMAPPING_STATUS_FAILURE;
 	const int64_t resp_time_ms = resp_time_ns / NS_PER_MSEC;
 
 	monitoring__histogram_observe(

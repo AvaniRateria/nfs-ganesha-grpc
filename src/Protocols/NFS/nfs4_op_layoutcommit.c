@@ -143,8 +143,7 @@ enum nfs_req_result nfs4_op_layoutcommit(struct nfs_argop4 *op,
 	arg.type = layout_state->state_data.layout.state_layout_type;
 
 	STATELOCK_lock(data->current_obj);
-	glist_for_each(glist, &layout_state->state_data.layout.state_segments)
-	{
+	glist_for_each(glist, &layout_state->state_data.layout.state_segments) {
 		segment = glist_entry(glist, state_layout_segment_t,
 				      sls_state_segments);
 

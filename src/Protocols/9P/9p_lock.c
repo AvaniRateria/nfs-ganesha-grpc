@@ -154,8 +154,8 @@ int _9p_lock(struct _9p_request_data *req9p, u32 *plenout, char *preply)
 	case _9P_LOCK_TYPE_RDLCK:
 	case _9P_LOCK_TYPE_WRLCK:
 		/* Fill in plock */
-		lock.lock_type = (*type == _9P_LOCK_TYPE_WRLCK) ? FSAL_LOCK_W :
-								  FSAL_LOCK_R;
+		lock.lock_type = (*type == _9P_LOCK_TYPE_WRLCK) ? FSAL_LOCK_W
+								: FSAL_LOCK_R;
 		lock.lock_start = *start;
 		lock.lock_length = *length;
 

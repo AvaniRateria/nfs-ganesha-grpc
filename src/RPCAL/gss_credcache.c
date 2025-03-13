@@ -793,8 +793,9 @@ static int find_keytab_entry(krb5_context context, krb5_keytab kt,
 
 			if (strcmp(svcnames[j], "$") == 0)
 				continue;
-			code = gssd_search_krb5_keytab(
-				context, kt, realm, svcnames[j], &found, kte);
+			code = gssd_search_krb5_keytab(context, kt, realm,
+						       svcnames[j], &found,
+						       kte);
 			if (!code && found) {
 				LogFullDebug(
 					COMPONENT_NFS_CB,

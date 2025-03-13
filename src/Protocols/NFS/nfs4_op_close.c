@@ -73,8 +73,7 @@ void cleanup_layouts(compound_data_t *data)
 	 * return_on_close.
 	 */
 
-	glist_for_each(glist, &ostate->file.list_of_states)
-	{
+	glist_for_each(glist, &ostate->file.list_of_states) {
 		state_t *state = glist_entry(glist, state_t, state_list);
 		state_owner_t *owner = get_state_owner_ref(state);
 
@@ -94,8 +93,7 @@ void cleanup_layouts(compound_data_t *data)
 		dec_state_owner_ref(owner);
 	}
 
-	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states)
-	{
+	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states) {
 		state_t *state = glist_entry(glist, state_t, state_list);
 		bool deleted = false;
 		struct pnfs_segment entire = { .io_mode = LAYOUTIOMODE4_ANY,
@@ -179,9 +177,9 @@ enum nfs_req_result nfs4_op_close(struct nfs_argop4 *op, compound_data_t *data,
 	/* Check stateid correctness and get pointer to state */
 	nfs_status = nfs4_Check_Stateid(&arg_CLOSE4->open_stateid,
 					data->current_obj, &state_found, data,
-					data->minorversion == 0 ?
-						STATEID_SPECIAL_FOR_CLOSE_40 :
-						STATEID_SPECIAL_FOR_CLOSE_41,
+					data->minorversion == 0
+						? STATEID_SPECIAL_FOR_CLOSE_40
+						: STATEID_SPECIAL_FOR_CLOSE_41,
 					arg_CLOSE4->seqid,
 					data->minorversion == 0, close_tag);
 
@@ -243,10 +241,10 @@ enum nfs_req_result nfs4_op_close(struct nfs_argop4 *op, compound_data_t *data,
 
 	/* Clean all associated lock states */
 	glist_for_each_safe(glist, glistn,
-			    &state_found->state_data.share.share_lockstates)
-	{
-		state_t *lock_state = glist_entry(
-			glist, state_t, state_data.lock.state_sharelist);
+			    &state_found->state_data.share.share_lockstates) {
+		state_t *lock_state =
+			glist_entry(glist, state_t,
+				    state_data.lock.state_sharelist);
 
 		inc_state_t_ref(lock_state);
 

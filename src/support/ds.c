@@ -319,8 +319,7 @@ void remove_all_dss(void)
 	PTHREAD_RWLOCK_unlock(&server_by_id.sid_lock);
 
 	/* Now we can safely process the list without the lock */
-	glist_for_each_safe(glist, glistn, &tmplist)
-	{
+	glist_for_each_safe(glist, glistn, &tmplist) {
 		pds = glist_entry(glist, struct fsal_pnfs_ds, ds_list);
 
 		/* Remove and destroy the fsal_pnfs_ds */

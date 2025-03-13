@@ -120,8 +120,9 @@ static fsal_status_t lookup(struct fsal_obj_handle *parent, const char *path,
 	unsigned char globjhdl[GFAPI_HANDLE_LENGTH] = { '\0' };
 	char vol_uuid[GLAPI_UUID_LENGTH] = { '\0' };
 	struct glusterfs_handle *objhandle = NULL;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *parenthandle =
 		container_of(parent, struct glusterfs_handle, handle);
 	glusterfs_fsal_xstat_t buffxstat = { .e_acl = NULL, .i_acl = NULL };
@@ -216,8 +217,9 @@ static int glusterfs_fsal_get_sec_label(struct glusterfs_handle *glhandle,
 					struct fsal_attrlist *attrs)
 {
 	int rc = 0;
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 
 	if (FSAL_TEST_MASK(attrs->request_mask, ATTR4_SEC_LABEL) &&
 	    op_ctx_export_has_option(EXPORT_OPTION_SECLABEL_SET)) {
@@ -265,8 +267,9 @@ static fsal_status_t read_dirents(struct fsal_obj_handle *dir_hdl,
 	struct glfs_fd *glfd = NULL;
 	long offset = 0;
 	struct dirent *pde = NULL;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *objhandle =
 		container_of(dir_hdl, struct glusterfs_handle, handle);
 
@@ -452,8 +455,9 @@ static fsal_status_t makedir(struct fsal_obj_handle *dir_hdl, const char *name,
 	unsigned char globjhdl[GFAPI_HANDLE_LENGTH] = { '\0' };
 	char vol_uuid[GLAPI_UUID_LENGTH] = { '\0' };
 	struct glusterfs_handle *objhandle = NULL;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *parenthandle =
 		container_of(dir_hdl, struct glusterfs_handle, handle);
 #ifdef GLTIMING
@@ -554,8 +558,9 @@ static fsal_status_t makenode(struct fsal_obj_handle *dir_hdl, const char *name,
 	dev_t ndev = {
 		0,
 	};
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *parenthandle =
 		container_of(dir_hdl, struct glusterfs_handle, handle);
 	mode_t create_mode;
@@ -677,8 +682,9 @@ static fsal_status_t makesymlink(struct fsal_obj_handle *dir_hdl,
 	unsigned char globjhdl[GFAPI_HANDLE_LENGTH] = { '\0' };
 	char vol_uuid[GLAPI_UUID_LENGTH] = { '\0' };
 	struct glusterfs_handle *objhandle = NULL;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *parenthandle =
 		container_of(dir_hdl, struct glusterfs_handle, handle);
 #ifdef GLTIMING
@@ -763,8 +769,9 @@ static fsal_status_t readsymlink(struct fsal_obj_handle *obj_hdl,
 {
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *objhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 #ifdef GLTIMING
@@ -822,8 +829,9 @@ static fsal_status_t getattrs(struct fsal_obj_handle *obj_hdl,
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 	glusterfs_fsal_xstat_t buffxstat = { 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *objhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 #ifdef GLTIMING
@@ -944,8 +952,9 @@ static fsal_status_t linkfile(struct fsal_obj_handle *obj_hdl,
 {
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *objhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 	struct glusterfs_handle *dstparenthandle =
@@ -981,18 +990,21 @@ out:
  * @brief Implements GLUSTER FSAL objectoperation rename
  */
 
-static fsal_status_t
-renamefile(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
-	   const char *old_name, struct fsal_obj_handle *newdir_hdl,
-	   const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
-	   struct fsal_attrlist *olddir_post_attrs_out,
-	   struct fsal_attrlist *newdir_pre_attrs_out,
-	   struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t renamefile(struct fsal_obj_handle *obj_hdl,
+				struct fsal_obj_handle *olddir_hdl,
+				const char *old_name,
+				struct fsal_obj_handle *newdir_hdl,
+				const char *new_name,
+				struct fsal_attrlist *olddir_pre_attrs_out,
+				struct fsal_attrlist *olddir_post_attrs_out,
+				struct fsal_attrlist *newdir_pre_attrs_out,
+				struct fsal_attrlist *newdir_post_attrs_out)
 {
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *srcparenthandle =
 		container_of(olddir_hdl, struct glusterfs_handle, handle);
 	struct glusterfs_handle *dstparenthandle =
@@ -1036,8 +1048,9 @@ static fsal_status_t file_unlink(struct fsal_obj_handle *dir_hdl,
 {
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *parenthandle =
 		container_of(dir_hdl, struct glusterfs_handle, handle);
 #ifdef GLTIMING
@@ -1112,14 +1125,14 @@ void glusterfs_copy_my_fd(struct glusterfs_fd *src_fd,
 #endif
 }
 
-struct glfs_object *
-glusterfs_create_my_fd(struct glusterfs_handle *parenthandle, const char *name,
-		       fsal_openflags_t openflags, int posix_flags,
-		       mode_t unix_mode, struct stat *sb,
-		       struct glusterfs_fd *my_fd)
+struct glfs_object *glusterfs_create_my_fd(
+	struct glusterfs_handle *parenthandle, const char *name,
+	fsal_openflags_t openflags, int posix_flags, mode_t unix_mode,
+	struct stat *sb, struct glusterfs_fd *my_fd)
 {
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	gid_t **garray_copy = NULL;
 	struct glfs_object *glhandle = NULL;
 #ifdef GLTIMING
@@ -1189,8 +1202,9 @@ fsal_status_t glusterfs_close_my_fd(struct glusterfs_fd *my_fd)
 {
 	int rc = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 
 #ifdef GLTIMING
 	struct timespec s_time, e_time;
@@ -1296,8 +1310,9 @@ fsal_status_t glusterfs_reopen_func(struct fsal_obj_handle *obj_hdl,
 	struct glfs_fd *glfd;
 	int posix_flags = 0;
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 #ifdef GLTIMING
 	struct timespec s_time, e_time;
 
@@ -1631,8 +1646,9 @@ glusterfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
 {
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 	int p_flags = 0;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *myself, *parenthandle = NULL;
 	struct glusterfs_fd *my_fd = NULL;
 	struct glusterfs_fd tmp_fd = {};
@@ -2069,8 +2085,9 @@ static void glusterfs_read2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	ssize_t nb_read;
 	fsal_status_t status, status2;
 	int retval = 0;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	size_t total_size = 0;
 	uint64_t seek_descriptor = read_arg->offset;
 	int i;
@@ -2184,8 +2201,9 @@ static void glusterfs_write2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	struct glusterfs_fd *my_fd;
 	struct glusterfs_fd temp_fd = GLUSTERFS_FD_INIT;
 	struct fsal_fd *out_fd;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *myself;
 
 	myself = container_of(obj_hdl, struct glusterfs_handle, handle);
@@ -2269,8 +2287,9 @@ static fsal_status_t seek2(struct fsal_obj_handle *obj_hdl,
 	struct glusterfs_fd temp_fd = GLUSTERFS_FD_INIT;
 	struct fsal_fd *out_fd;
 	struct stat sbuf = { 0 };
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *myself;
 
 #ifdef GLTIMING
@@ -2366,8 +2385,9 @@ static fsal_status_t glusterfs_commit2(struct fsal_obj_handle *obj_hdl,
 	struct glusterfs_fd temp_fd = GLUSTERFS_FD_INIT;
 	struct fsal_fd *out_fd;
 	struct glusterfs_handle *myself = NULL;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 
 	myself = container_of(obj_hdl, struct glusterfs_handle, handle);
 
@@ -2432,8 +2452,9 @@ static fsal_status_t glusterfs_lock_op2(struct fsal_obj_handle *obj_hdl,
 	struct fsal_fd *out_fd;
 	bool bypass = false;
 	fsal_openflags_t openflags = FSAL_O_RDWR;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *myself;
 	bool open_for_locks;
 
@@ -2629,8 +2650,9 @@ static fsal_status_t glusterfs_lease_op2(struct fsal_obj_handle *obj_hdl,
 	struct glfs_lease lease = {
 		0,
 	};
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 
 	assert(state != NULL);
 
@@ -2742,8 +2764,9 @@ static fsal_status_t glusterfs_setattr2(struct fsal_obj_handle *obj_hdl,
 	struct glusterfs_fd *my_fd;
 	struct glusterfs_fd temp_fd = GLUSTERFS_FD_INIT;
 	struct fsal_fd *out_fd;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	glusterfs_fsal_xstat_t buffxstat = { 0 };
 	int attr_valid = 0;
 	int mask = 0;
@@ -2997,8 +3020,9 @@ static fsal_status_t getxattrs(struct fsal_obj_handle *obj_hdl,
 	int rc = 0;
 	int errsv = 0;
 	fsal_status_t status;
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 	struct glusterfs_handle *glhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 
@@ -3046,8 +3070,9 @@ static fsal_status_t setxattrs(struct fsal_obj_handle *obj_hdl,
 	int rc = 0;
 	int errsv = 0;
 	fsal_status_t status = { 0, 0 };
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 	struct glusterfs_handle *glhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 
@@ -3079,8 +3104,9 @@ static fsal_status_t removexattrs(struct fsal_obj_handle *obj_hdl,
 	int rc = 0;
 	int errsv = 0;
 	fsal_status_t status = { 0, 0 };
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 	struct glusterfs_handle *glhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 
@@ -3114,8 +3140,9 @@ static fsal_status_t listxattrs(struct fsal_obj_handle *obj_hdl,
 	char *buf = NULL;
 	component4 *entry = lr_names->xl4_entries;
 	fsal_status_t status = { 0, 0 };
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 	struct glusterfs_handle *glhandle =
 		container_of(obj_hdl, struct glusterfs_handle, handle);
 

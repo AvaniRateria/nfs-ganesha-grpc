@@ -161,8 +161,9 @@ static int comparator(const struct avltree_node *a,
  *         should wait indefinitely to be signalled.
  */
 
-static enum delayed_employment
-delayed_get_work(struct timespec *when, void (**func)(void *), void **arg)
+static enum delayed_employment delayed_get_work(struct timespec *when,
+						void (**func)(void *),
+						void **arg)
 {
 	struct avltree_node *first = avltree_first(&tree);
 	struct delayed_multi *mul;

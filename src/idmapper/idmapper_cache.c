@@ -746,8 +746,9 @@ bool idmapper_lookup_by_gid(const gid_t gid, const struct gsh_buffdesc **name)
 	bool found = false;
 
 	if (likely(found_node)) {
-		found_group = avltree_container_of(
-			found_node, struct cache_group, gid_node);
+		found_group = avltree_container_of(found_node,
+						   struct cache_group,
+						   gid_node);
 		if (found_group->gid == gid)
 			found = true;
 	}
@@ -758,8 +759,9 @@ bool idmapper_lookup_by_gid(const gid_t gid, const struct gsh_buffdesc **name)
 			return false;
 
 		atomic_store_voidptr(cache_slot, found_node);
-		found_group = avltree_container_of(
-			found_node, struct cache_group, gid_node);
+		found_group = avltree_container_of(found_node,
+						   struct cache_group,
+						   gid_node);
 	}
 
 	if (likely(name))

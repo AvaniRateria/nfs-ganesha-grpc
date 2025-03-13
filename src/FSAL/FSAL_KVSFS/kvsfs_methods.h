@@ -130,14 +130,16 @@ struct kvsfs_fsal_obj_handle *kvsfs_alloc_handle(struct kvsfs_file_handle *fh,
 						 struct fsal_export *exp_hdl);
 /* I/O management */
 /* OK */
-fsal_status_t
-kvsfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	    fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	    const char *name, struct fsal_attrlist *attr_set,
-	    fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	    struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	    struct fsal_attrlist *parent_pre_attrs_out,
-	    struct fsal_attrlist *parent_post_attrs_out);
+fsal_status_t kvsfs_open2(struct fsal_obj_handle *obj_hdl,
+			  struct state_t *state, fsal_openflags_t openflags,
+			  enum fsal_create_mode createmode, const char *name,
+			  struct fsal_attrlist *attr_set,
+			  fsal_verifier_t verifier,
+			  struct fsal_obj_handle **new_obj,
+			  struct fsal_attrlist *attrs_out,
+			  bool *caller_perm_check,
+			  struct fsal_attrlist *parent_pre_attrs_out,
+			  struct fsal_attrlist *parent_post_attrs_out);
 fsal_openflags_t kvsfs_status2(struct fsal_obj_handle *obj_hdl,
 			       struct state_t *state);
 fsal_status_t kvsfs_reopen2(struct fsal_obj_handle *obj_hdl,
@@ -171,10 +173,12 @@ fsal_status_t kvsfs_share_op(struct fsal_obj_handle *obj_hdl, void *p_owner,
 			     fsal_share_param_t request_share);
 
 /* extended attributes management */
-fsal_status_t
-kvsfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl, unsigned int cookie,
-		     fsal_xattrent_t *xattrs_tab, unsigned int xattrs_tabsize,
-		     unsigned int *p_nb_returned, int *end_of_list);
+fsal_status_t kvsfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl,
+				   unsigned int cookie,
+				   fsal_xattrent_t *xattrs_tab,
+				   unsigned int xattrs_tabsize,
+				   unsigned int *p_nb_returned,
+				   int *end_of_list);
 fsal_status_t kvsfs_getextattr_id_by_name(struct fsal_obj_handle *obj_hdl,
 					  const char *xattr_name,
 					  unsigned int *pxattr_id);

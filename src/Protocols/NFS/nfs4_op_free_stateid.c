@@ -97,9 +97,10 @@ enum nfs_req_result nfs4_op_free_stateid(struct nfs_argop4 *op,
 		return NFS_REQ_ERROR;
 	}
 
-	res_FREE_STATEID4->fsr_status = nfs4_Check_Stateid(
-		&arg_FREE_STATEID4->fsa_stateid, NULL, &state, data,
-		STATEID_SPECIAL_CURRENT, 0, false, "FREE_STATEID");
+	res_FREE_STATEID4->fsr_status =
+		nfs4_Check_Stateid(&arg_FREE_STATEID4->fsa_stateid, NULL,
+				   &state, data, STATEID_SPECIAL_CURRENT, 0,
+				   false, "FREE_STATEID");
 
 	if (res_FREE_STATEID4->fsr_status != NFS4_OK)
 		return NFS_REQ_ERROR;

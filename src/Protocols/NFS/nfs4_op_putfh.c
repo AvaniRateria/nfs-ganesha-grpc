@@ -71,8 +71,8 @@ static int nfs4_ds_putfh(compound_data_t *data)
 		LogInfoAlt(
 			COMPONENT_DISPATCH, COMPONENT_EXPORT,
 			"NFS4 Request from client (%s) has invalid server identifier %d",
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown",
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown",
 			ntohs(v4_handle->id.servers));
 
 		return NFS4ERR_STALE;
@@ -155,8 +155,8 @@ static int nfs4_mds_putfh(compound_data_t *data)
 		LogInfoAlt(
 			COMPONENT_DISPATCH, COMPONENT_EXPORT,
 			"NFS4 Request from client (%s) has invalid export identifier %d",
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown",
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown",
 			ntohs(v4_handle->id.exports));
 
 		return NFS4ERR_STALE;
@@ -203,8 +203,9 @@ static int nfs4_mds_putfh(compound_data_t *data)
 	fh_desc.addr = fhbuf;
 
 	/* adjust the handle opaque into a cache key */
-	fsal_status = export->exp_ops.wire_to_host(
-		export, FSAL_DIGEST_NFSV4, &fh_desc, v4_handle->fhflags1);
+	fsal_status = export->exp_ops.wire_to_host(export, FSAL_DIGEST_NFSV4,
+						   &fh_desc,
+						   v4_handle->fhflags1);
 	if (FSAL_IS_ERROR(fsal_status)) {
 		LogInfo(COMPONENT_FILEHANDLE, "wire_to_host failed %s",
 			msg_fsal_err(fsal_status.major));

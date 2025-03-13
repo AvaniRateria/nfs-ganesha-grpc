@@ -423,10 +423,12 @@ fsal_status_t reopen_func(struct fsal_obj_handle *objectHandle,
  *
  * @returns: FSAL status
  */
-static fsal_status_t
-openByHandle(struct fsal_obj_handle *objectHandle, struct state_t *state,
-	     fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	     fsal_verifier_t verifier, struct fsal_attrlist *attributes)
+static fsal_status_t openByHandle(struct fsal_obj_handle *objectHandle,
+				  struct state_t *state,
+				  fsal_openflags_t openflags,
+				  enum fsal_create_mode createmode,
+				  fsal_verifier_t verifier,
+				  struct fsal_attrlist *attributes)
 {
 	struct SaunaFSExport *export = NULL;
 	struct SaunaFSHandle *handle = NULL;
@@ -2414,10 +2416,11 @@ static fsal_status_t getxattrs(struct fsal_obj_handle *objectHandle,
 	handle = container_of(objectHandle, struct SaunaFSHandle, handle);
 
 	size_t curr_size = 0;
-	int retvalue = saunafs_getxattr(
-		export->fsInstance, &op_ctx->creds, handle->inode,
-		xattributeName->utf8string_val, xattributeValue->utf8string_len,
-		&curr_size, (uint8_t *)xattributeValue->utf8string_val);
+	int retvalue =
+		saunafs_getxattr(export->fsInstance, &op_ctx->creds,
+				 handle->inode, xattributeName->utf8string_val,
+				 xattributeValue->utf8string_len, &curr_size,
+				 (uint8_t *)xattributeValue->utf8string_val);
 
 	if (retvalue < 0) {
 		LogFullDebug(COMPONENT_FSAL,

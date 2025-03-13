@@ -261,8 +261,9 @@ static fsal_status_t createExport(struct fsal_module *module, void *parseNode,
 	export->export.fsal = module;
 	export->export.up_ops = operations;
 
-	export->pnfsDsEnabled = export->export.exp_ops.fs_supports(
-		&export->export, fso_pnfs_ds_supported);
+	export->pnfsDsEnabled =
+		export->export.exp_ops.fs_supports(&export->export,
+						   fso_pnfs_ds_supported);
 
 	if (export->pnfsDsEnabled) {
 		export->cache = createFileInfoCache(
@@ -309,8 +310,9 @@ static fsal_status_t createExport(struct fsal_module *module, void *parseNode,
 			 CTX_FULLPATH(op_ctx));
 	}
 
-	export->pnfsMdsEnabled = export->export.exp_ops.fs_supports(
-		&export->export, fso_pnfs_mds_supported);
+	export->pnfsMdsEnabled =
+		export->export.exp_ops.fs_supports(&export->export,
+						   fso_pnfs_mds_supported);
 
 	if (export->pnfsMdsEnabled) {
 		LogDebug(COMPONENT_PNFS, "pnfs mds was enabled for [%s]",

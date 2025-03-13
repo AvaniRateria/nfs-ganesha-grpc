@@ -182,11 +182,13 @@ static nfsstat4 ds_read(struct fsal_ds_handle *const ds_pub,
  *
  * @return An NFSv4.1 status code.
  */
-static nfsstat4
-ds_write(struct fsal_ds_handle *const ds_pub, const stateid4 *stateid,
-	 const offset4 offset, const count4 write_length, const void *buffer,
-	 const stable_how4 stability_wanted, count4 *const written_length,
-	 verifier4 *const writeverf, stable_how4 *const stability_got)
+static nfsstat4 ds_write(struct fsal_ds_handle *const ds_pub,
+			 const stateid4 *stateid, const offset4 offset,
+			 const count4 write_length, const void *buffer,
+			 const stable_how4 stability_wanted,
+			 count4 *const written_length,
+			 verifier4 *const writeverf,
+			 stable_how4 *const stability_got)
 {
 	/* The private 'full' export */
 	struct ceph_export *export =

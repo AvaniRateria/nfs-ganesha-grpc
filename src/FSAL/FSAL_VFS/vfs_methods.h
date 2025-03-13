@@ -238,10 +238,12 @@ fsal_status_t vfs_reopen_func(struct fsal_obj_handle *obj_hdl,
 			      fsal_openflags_t openflags,
 			      struct fsal_fd *fsal_fd);
 
-struct vfs_fsal_obj_handle *
-alloc_handle(int dirfd, vfs_file_handle_t *fh, struct fsal_filesystem *fs,
-	     struct stat *stat, vfs_file_handle_t *dir_fh, const char *path,
-	     struct fsal_export *exp_hdl);
+struct vfs_fsal_obj_handle *alloc_handle(int dirfd, vfs_file_handle_t *fh,
+					 struct fsal_filesystem *fs,
+					 struct stat *stat,
+					 vfs_file_handle_t *dir_fh,
+					 const char *path,
+					 struct fsal_export *exp_hdl);
 
 void free_vfs_fsal_obj_handle(struct vfs_fsal_obj_handle **hdl);
 
@@ -273,14 +275,16 @@ struct state_t *vfs_alloc_state(struct fsal_export *exp_hdl,
 fsal_status_t vfs_merge(struct fsal_obj_handle *orig_hdl,
 			struct fsal_obj_handle *dupe_hdl);
 
-fsal_status_t
-vfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	  fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	  const char *name, struct fsal_attrlist *attrib_set,
-	  fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	  struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	  struct fsal_attrlist *parent_pre_attrs_out,
-	  struct fsal_attrlist *parent_post_attrs_out);
+fsal_status_t vfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
+			fsal_openflags_t openflags,
+			enum fsal_create_mode createmode, const char *name,
+			struct fsal_attrlist *attrib_set,
+			fsal_verifier_t verifier,
+			struct fsal_obj_handle **new_obj,
+			struct fsal_attrlist *attrs_out,
+			bool *caller_perm_check,
+			struct fsal_attrlist *parent_pre_attrs_out,
+			struct fsal_attrlist *parent_post_attrs_out);
 
 fsal_openflags_t vfs_status2(struct fsal_obj_handle *obj_hdl,
 			     struct state_t *state);

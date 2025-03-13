@@ -63,8 +63,8 @@ static enum nfsstat3 nfs3_verify_exportid(struct LINK3args *l3_arg,
 		LogInfo(COMPONENT_DISPATCH,
 			"NFS%d LINK Request from client %s has badly formed handle for link dir",
 			req->rq_msg.cb_vers,
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		return NFS3ERR_BADHANDLE;
 	}
 

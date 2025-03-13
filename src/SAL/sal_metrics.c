@@ -77,8 +77,9 @@ static const char *get_xprt_custom_data_status(xprt_custom_data_status_t status)
 static void register_num_xprts_per_custom_data_status_metric(void)
 {
 	for (int i = 0; i < XPRT_CUSTOM_DATA_STATUS_COUNT; i++) {
-		const metric_label_t labels[] = { METRIC_LABEL(
-			"status", get_xprt_custom_data_status(i)) };
+		const metric_label_t labels[] = {
+			METRIC_LABEL("status", get_xprt_custom_data_status(i))
+		};
 
 		num_xprts_per_custom_data_status[i] =
 			monitoring__register_counter(
@@ -124,8 +125,9 @@ static const char *get_state_protection_type(state_protect_how4 sp_how)
 static void register_num_clients_per_state_protection_metric(void)
 {
 	for (int i = 0; i < SP4_COUNT; i++) {
-		const metric_label_t sp_labels[] = { METRIC_LABEL(
-			"sp_how", get_state_protection_type(i)) };
+		const metric_label_t sp_labels[] = {
+			METRIC_LABEL("sp_how", get_state_protection_type(i))
+		};
 
 		num_clients_per_state_protection[i] =
 			monitoring__register_counter(
@@ -158,8 +160,9 @@ static void register_client_metrics(void)
 
 	for (sal_metrics__lock_type lock_type = 0;
 	     lock_type < SAL_METRICS_LOCK_TYPE_COUNT; lock_type++) {
-		const metric_label_t lock_count_labels[] = { METRIC_LABEL(
-			"lock_type", lock_type_string[lock_type]) };
+		const metric_label_t lock_count_labels[] = {
+			METRIC_LABEL("lock_type", lock_type_string[lock_type])
+		};
 		num_locks_metric[lock_type] = monitoring__register_gauge(
 			"locks__count",
 			METRIC_METADATA("Total Number of Locks Record Count",

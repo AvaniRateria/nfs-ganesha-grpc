@@ -127,8 +127,9 @@ static nfsstat4 open4_validate_claim(compound_data_t *data,
 	nfsstat4 status = NFS4_OK;
 	/* does this claim require a grace period? */
 	bool want_grace = false;
-	bool fsal_grace_support = op_ctx->fsal_export->exp_ops.fs_supports(
-		op_ctx->fsal_export, fso_grace_method);
+	bool fsal_grace_support =
+		op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+							 fso_grace_method);
 	/* do we need a reference on the current state of grace? */
 	bool take_ref = !fsal_grace_support;
 
@@ -179,8 +180,8 @@ static nfsstat4 open4_validate_claim(compound_data_t *data,
 			if (nfs_get_grace_status(want_grace)) {
 				*grace_ref = true;
 			} else {
-				status = want_grace ? NFS4ERR_NO_GRACE :
-						      NFS4ERR_GRACE;
+				status = want_grace ? NFS4ERR_NO_GRACE
+						    : NFS4ERR_GRACE;
 			}
 		} else {
 			*grace_ref = false;
@@ -773,8 +774,9 @@ static void open4_ex(OPEN4args *arg, compound_data_t *data, OPEN4res *res_OPEN4,
 		}
 
 		/* Validate the utf8 filename */
-		res_OPEN4->status = nfs4_utf8string_scan(
-			&arg->claim.open_claim4_u.file, UTF8_SCAN_PATH_COMP);
+		res_OPEN4->status =
+			nfs4_utf8string_scan(&arg->claim.open_claim4_u.file,
+					     UTF8_SCAN_PATH_COMP);
 
 		if (res_OPEN4->status != NFS4_OK)
 			goto out;
@@ -1029,8 +1031,7 @@ retry_open_file:
 		/* Open upgrade */
 		LogFullDebug(COMPONENT_STATE, "Calling reopen2");
 
-		status = fsal_reopen2(file_obj, *file_state,
-				      openflags, true);
+		status = fsal_reopen2(file_obj, *file_state, openflags, true);
 
 		if (FSAL_IS_ERROR(status)) {
 			res_OPEN4->status = nfs4_Errno_status(status);
@@ -1328,9 +1329,9 @@ enum nfs_req_result nfs4_op_open(struct nfs_argop4 *op, compound_data_t *data,
 	LogDebug(COMPONENT_STATE, "OPEN Client id = %" PRIx64,
 		 arg_OPEN4->owner.clientid);
 
-	retval = nfs_client_id_get_confirmed(data->minorversion == 0 ?
-						     arg_OPEN4->owner.clientid :
-						     data->session->clientid,
+	retval = nfs_client_id_get_confirmed(data->minorversion == 0
+						     ? arg_OPEN4->owner.clientid
+						     : data->session->clientid,
 					     &clientid);
 
 	if (retval != CLIENT_ID_SUCCESS) {
@@ -1423,9 +1424,8 @@ enum nfs_req_result nfs4_op_open(struct nfs_argop4 *op, compound_data_t *data,
 
 	res_OPEN4->OPEN4res_u.resok4.rflags |= OPEN4_RESULT_LOCKTYPE_POSIX;
 	if (nfs_param.nfsv4_param.preserve_unlinked &&
-	    op_ctx->fsal_export->exp_ops.fs_supports(
-			op_ctx->fsal_export,
-			fso_preserve_unlinked))
+	    op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+						     fso_preserve_unlinked))
 		res_OPEN4->OPEN4res_u.resok4.rflags |=
 			OPEN4_RESULT_PRESERVE_UNLINKED;
 
@@ -1459,8 +1459,8 @@ enum nfs_req_result nfs4_op_open(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	res_OPEN4->OPEN4res_u.resok4.cinfo.atomic =
-		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE :
-									  FALSE;
+		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE
+									: FALSE;
 
 	/* Handle open stateid/seqid for success */
 	update_stateid(file_state, &res_OPEN4->OPEN4res_u.resok4.stateid, data,

@@ -226,9 +226,14 @@ struct config_item_list {
 	uint32_t value;
 };
 
+/* clang-format off */
+
 #define CONFIG_LIST_TOK(_token_, _flags_) { .token = _token_, .value = _flags_ }
 
 #define CONFIG_LIST_EOL { .token = NULL, .value = 0 }
+
+/* clang-format on */
+
 /**
  * @brief A config file parameter
  *
@@ -468,6 +473,8 @@ struct config_item {
  * network byte order.
  *
  */
+
+/* clang-format off */
 
 #define CONF_ITEM_NOOP(_name_)       \
 	{                            \
@@ -821,6 +828,8 @@ struct config_item {
 
 #define CONFIG_EOL { .name = NULL, .type = CONFIG_NULL }
 
+/* clang-format on */
+
 /**
  * @brief Configuration Block
  *
@@ -850,8 +859,9 @@ static inline bool is_prime(int v)
 		return true;
 	if (v % 2 == 0)
 		return false;
-	/* dont link with libm just for this */
+
 #ifdef LINK_LIBM
+	/* dont link with libm just for this */
 	m = (int)sqrt(v);
 #else
 	m = v - 1;

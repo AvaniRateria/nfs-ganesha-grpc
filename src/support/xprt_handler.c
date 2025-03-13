@@ -140,10 +140,10 @@ void remove_nfs41_session_from_xprt(SVCXPRT *xprt, nfs41_session_t *session)
 
 	PTHREAD_RWLOCK_wrlock(&sessions_holder->sessions_lock);
 
-	glist_for_each_safe(curr_node, next_node, &sessions_holder->sessions)
-	{
-		nfs41_session_list_entry_t *const curr_entry = glist_entry(
-			curr_node, nfs41_session_list_entry_t, node);
+	glist_for_each_safe(curr_node, next_node, &sessions_holder->sessions) {
+		nfs41_session_list_entry_t *const curr_entry =
+			glist_entry(curr_node, nfs41_session_list_entry_t,
+				    node);
 
 		if (curr_entry->session == session) {
 			dec_session_ref(curr_entry->session);
@@ -252,10 +252,10 @@ void dissociate_custom_data_from_xprt(SVCXPRT *xprt)
 	 * xprt, destroy the backchannel and release the connection_xprt held
 	 * by the session.
 	 */
-	glist_for_each_safe(curr_node, next_node, &duplicate_sessions)
-	{
-		nfs41_session_list_entry_t *curr_entry = glist_entry(
-			curr_node, nfs41_session_list_entry_t, node);
+	glist_for_each_safe(curr_node, next_node, &duplicate_sessions) {
+		nfs41_session_list_entry_t *curr_entry =
+			glist_entry(curr_node, nfs41_session_list_entry_t,
+				    node);
 
 		nfs41_Session_Destroy_Backchannel_For_Xprt(curr_entry->session,
 							   xprt);

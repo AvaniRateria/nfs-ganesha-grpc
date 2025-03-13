@@ -889,8 +889,9 @@ static fsal_status_t mem_create_obj(struct mem_fsal_obj_handle *parent,
 				    struct fsal_attrlist *parent_pre_attrs_out,
 				    struct fsal_attrlist *parent_post_attrs_out)
 {
-	struct mem_fsal_export *mfe = container_of(
-		op_ctx->fsal_export, struct mem_fsal_export, export);
+	struct mem_fsal_export *mfe = container_of(op_ctx->fsal_export,
+						   struct mem_fsal_export,
+						   export);
 	struct mem_fsal_obj_handle *hdl;
 	fsal_status_t status;
 
@@ -1456,18 +1457,22 @@ fsal_status_t mem_close(struct fsal_obj_handle *obj_hdl)
  *
  * @return FSAL status
  */
-static fsal_status_t
-mem_rename(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
-	   const char *old_name, struct fsal_obj_handle *newdir_hdl,
-	   const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
-	   struct fsal_attrlist *olddir_post_attrs_out,
-	   struct fsal_attrlist *newdir_pre_attrs_out,
-	   struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t mem_rename(struct fsal_obj_handle *obj_hdl,
+				struct fsal_obj_handle *olddir_hdl,
+				const char *old_name,
+				struct fsal_obj_handle *newdir_hdl,
+				const char *new_name,
+				struct fsal_attrlist *olddir_pre_attrs_out,
+				struct fsal_attrlist *olddir_post_attrs_out,
+				struct fsal_attrlist *newdir_pre_attrs_out,
+				struct fsal_attrlist *newdir_post_attrs_out)
 {
-	struct mem_fsal_obj_handle *mem_olddir = container_of(
-		olddir_hdl, struct mem_fsal_obj_handle, obj_handle);
-	struct mem_fsal_obj_handle *mem_newdir = container_of(
-		newdir_hdl, struct mem_fsal_obj_handle, obj_handle);
+	struct mem_fsal_obj_handle *mem_olddir =
+		container_of(olddir_hdl, struct mem_fsal_obj_handle,
+			     obj_handle);
+	struct mem_fsal_obj_handle *mem_newdir =
+		container_of(newdir_hdl, struct mem_fsal_obj_handle,
+			     obj_handle);
 	struct mem_fsal_obj_handle *mem_obj =
 		container_of(obj_hdl, struct mem_fsal_obj_handle, obj_handle);
 	struct mem_fsal_obj_handle *mem_lookup_dst = NULL;
@@ -1690,14 +1695,16 @@ exit:
  *
  * @return FSAL status.
  */
-fsal_status_t
-mem_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	  fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	  const char *name, struct fsal_attrlist *attrs_set,
-	  fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	  struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	  struct fsal_attrlist *parent_pre_attrs_out,
-	  struct fsal_attrlist *parent_post_attrs_out)
+fsal_status_t mem_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
+			fsal_openflags_t openflags,
+			enum fsal_create_mode createmode, const char *name,
+			struct fsal_attrlist *attrs_set,
+			fsal_verifier_t verifier,
+			struct fsal_obj_handle **new_obj,
+			struct fsal_attrlist *attrs_out,
+			bool *caller_perm_check,
+			struct fsal_attrlist *parent_pre_attrs_out,
+			struct fsal_attrlist *parent_post_attrs_out)
 {
 	fsal_status_t status = { 0, 0 };
 	struct fsal_fd *my_fd = NULL;
@@ -1895,12 +1902,14 @@ struct mem_async_arg {
 static void mem_async_complete(struct fridgethr_context *ctx)
 {
 	struct mem_async_arg *async_arg = ctx->arg;
-	struct mem_fsal_export *mem_export = container_of(
-		async_arg->fsal_export, struct mem_fsal_export, export);
+	struct mem_fsal_export *mem_export =
+		container_of(async_arg->fsal_export, struct mem_fsal_export,
+			     export);
 	uint32_t async_delay = atomic_fetch_uint32_t(&mem_export->async_delay);
 	fsal_status_t status;
-	struct mem_fsal_obj_handle *myself = container_of(
-		async_arg->obj_hdl, struct mem_fsal_obj_handle, obj_handle);
+	struct mem_fsal_obj_handle *myself =
+		container_of(async_arg->obj_hdl, struct mem_fsal_obj_handle,
+			     obj_handle);
 	struct req_op_context opctx;
 
 	/* Now check if we need to delay the call back */
@@ -1975,8 +1984,9 @@ void mem_read2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 }, status2;
 	uint64_t offset = read_arg->offset;
 	int i;
-	struct mem_fsal_export *mem_export = container_of(
-		op_ctx->fsal_export, struct mem_fsal_export, export);
+	struct mem_fsal_export *mem_export =
+		container_of(op_ctx->fsal_export, struct mem_fsal_export,
+			     export);
 	uint32_t async_type = atomic_fetch_uint32_t(&mem_export->async_type);
 	uint32_t async_stall_delay =
 		atomic_fetch_uint32_t(&mem_export->async_stall_delay);
@@ -2135,8 +2145,9 @@ void mem_write2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 }, status2;
 	uint64_t offset = write_arg->offset;
 	int i;
-	struct mem_fsal_export *mem_export = container_of(
-		op_ctx->fsal_export, struct mem_fsal_export, export);
+	struct mem_fsal_export *mem_export =
+		container_of(op_ctx->fsal_export, struct mem_fsal_export,
+			     export);
 	uint32_t async_type = atomic_fetch_uint32_t(&mem_export->async_type);
 	uint32_t async_stall_delay =
 		atomic_fetch_uint32_t(&mem_export->async_stall_delay);
@@ -2592,8 +2603,7 @@ fsal_status_t mem_create_handle(struct fsal_export *exp_hdl,
 
 	PTHREAD_RWLOCK_rdlock(&exp_hdl->fsal->fsm_lock);
 
-	glist_for_each(glist, &exp_hdl->fsal->handles)
-	{
+	glist_for_each(glist, &exp_hdl->fsal->handles) {
 		hdl = glist_entry(glist, struct fsal_obj_handle, handles);
 
 		my_hdl = container_of(hdl, struct mem_fsal_obj_handle,

@@ -238,16 +238,18 @@ nfsstat4 nfs4_sanity_check_saved_FH(compound_data_t *data, int required_type,
 
 /* File handle print function (mostly used for debugging) */
 
+/* clang-format off */
+
 #define LogNFS3_Operation(component, req, fh, format, args...)                \
 	do {                                                                  \
 		if (unlikely(component_log_level[component] >= NIV_DEBUG)) {  \
 			char str[LEN_FH_STR];                                 \
 			struct display_buffer dspbuf = { sizeof(str), str,    \
 							 str };               \
-                                                                              \
+									      \
 			display_opaque_bytes(&dspbuf, (fh)->data.data_val,    \
 					     (fh)->data.data_len);            \
-                                                                              \
+									      \
 			DisplayLogComponentLevel(                             \
 				component, __FILE__, __LINE__, __func__,      \
 				NIV_DEBUG,                                    \
@@ -267,12 +269,12 @@ nfsstat4 nfs4_sanity_check_saved_FH(compound_data_t *data, int required_type,
 			char str2[LEN_FH_STR];                                \
 			struct display_buffer dspbuf2 = { sizeof(str2), str2, \
 							  str2 };             \
-                                                                              \
+									      \
 			display_opaque_bytes(&dspbuf1, (fh1)->data.data_val,  \
 					     (fh1)->data.data_len);           \
 			display_opaque_bytes(&dspbuf2, (fh2)->data.data_val,  \
 					     (fh2)->data.data_len);           \
-                                                                              \
+									      \
 			DisplayLogComponentLevel(                             \
 				component, __FILE__, __LINE__, __func__,      \
 				NIV_DEBUG,                                    \
@@ -292,10 +294,10 @@ nfsstat4 nfs4_sanity_check_saved_FH(compound_data_t *data, int required_type,
 			char str[LEN_FH_STR];                              \
 			struct display_buffer dspbuf = { sizeof(str), str, \
 							 str };            \
-                                                                           \
+									   \
 			display_opaque_bytes(&dspbuf, (fh4)->nfs_fh4_val,  \
 					     (fh4)->nfs_fh4_len);          \
-                                                                           \
+									   \
 			LogFullDebug(COMPONENT_NFS_V4,                     \
 				     "%sFile Handle V4: Len=%u %s", label, \
 				     (fh4)->nfs_fh4_len, str);             \
@@ -308,45 +310,47 @@ nfsstat4 nfs4_sanity_check_saved_FH(compound_data_t *data, int required_type,
 			char str[LEN_FH_STR];                              \
 			struct display_buffer dspbuf = { sizeof(str), str, \
 							 str };            \
-                                                                           \
+									   \
 			display_opaque_bytes(&dspbuf,                      \
 					     &data->currentFH.nfs_fh4_val, \
 					     data->currentFH.nfs_fh4_len); \
-                                                                           \
+									   \
 			LogFullDebug(COMPONENT_NFS_V4,                     \
 				     "Current FH  Len=%u %s",              \
 				     data->currentFH.nfs_fh4_len, str);    \
-                                                                           \
+									   \
 			display_reset_buffer(&dspbuf);                     \
-                                                                           \
+									   \
 			display_opaque_bytes(&dspbuf,                      \
 					     &data->savedFH.nfs_fh4_val,   \
 					     data->savedFH.nfs_fh4_len);   \
-                                                                           \
+									   \
 			LogFullDebug(COMPONENT_NFS_V4,                     \
 				     "Saved FH    Len=%u %s",              \
 				     data->savedFH.nfs_fh4_len, str);      \
 		}                                                          \
 	} while (0)
 
-#define LogNFSACL_Operation(component, req, fh, format, args...)                \
-	do {                                                                    \
-		if (unlikely(component_log_level[component] >= NIV_DEBUG)) {    \
-			char str[LEN_FH_STR];                                   \
-			struct display_buffer dspbuf = { sizeof(str), str,      \
-							 str };                 \
-                                                                                \
-			display_opaque_bytes(&dspbuf, (fh)->data.data_val,      \
-					     (fh)->data.data_len);              \
-                                                                                \
-			DisplayLogComponentLevel(                               \
-				component, __FILE__, __LINE__, __func__,        \
-				NIV_DEBUG,                                      \
-				"REQUEST PROCESSING: Calling %s "               \
-				"File Handle V3: Len=%u %s" format,             \
-				nfsacl_func_desc[req->rq_msg.cb_proc].funcname, \
-				(fh)->data.data_len, str, ##args);              \
-		}                                                               \
+#define LogNFSACL_Operation(component, req, fh, format, args...)               \
+	do {                                                                   \
+		if (unlikely(component_log_level[component] >= NIV_DEBUG)) {   \
+			char str[LEN_FH_STR];                                  \
+			struct display_buffer dspbuf = { sizeof(str), str,     \
+							 str };                \
+									       \
+			display_opaque_bytes(&dspbuf, (fh)->data.data_val,     \
+					     (fh)->data.data_len);             \
+									       \
+			DisplayLogComponentLevel(                              \
+			       component, __FILE__, __LINE__, __func__,        \
+			       NIV_DEBUG,                                      \
+			       "REQUEST PROCESSING: Calling %s "               \
+			       "File Handle V3: Len=%u %s" format,             \
+			       nfsacl_func_desc[req->rq_msg.cb_proc].funcname, \
+			       (fh)->data.data_len, str, ##args);              \
+		}                                                              \
 	} while (0)
+
+/* clang-format on */
 
 #endif /* NFS_FILE_HANDLE_H */

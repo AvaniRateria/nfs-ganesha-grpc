@@ -106,9 +106,9 @@ static int fs_ng_create_recov_dir(void)
 	if (err == -1 && errno != EEXIST) {
 		err = errno;
 		LogCrit(COMPONENT_CLIENTID,
-			 "Failed to create v4 recovery dir (%s): %s (%d)",
-			 nfs_param.nfsv4_param.recov_root, strerror(errno),
-			 errno);
+			"Failed to create v4 recovery dir (%s): %s (%d)",
+			nfs_param.nfsv4_param.recov_root, strerror(errno),
+			errno);
 		return -err;
 	}
 
@@ -134,8 +134,8 @@ static int fs_ng_create_recov_dir(void)
 	if (err == -1 && errno != EEXIST) {
 		err = errno;
 		LogCrit(COMPONENT_CLIENTID,
-			 "Failed to create v4 recovery dir(%s): %s (%d)",
-			 v4_recov_dir, strerror(errno), errno);
+			"Failed to create v4 recovery dir(%s): %s (%d)",
+			v4_recov_dir, strerror(errno), errno);
 		return -err;
 	}
 
@@ -160,8 +160,8 @@ static int fs_ng_create_recov_dir(void)
 		if (err) {
 			err = errno;
 			LogCrit(COMPONENT_CLIENTID,
-				 "Failed to gethostname: %s (%d)",
-				 strerror(errno), errno);
+				"Failed to gethostname: %s (%d)",
+				strerror(errno), errno);
 			return -err;
 		}
 	}
@@ -206,8 +206,8 @@ static int fs_ng_create_recov_dir(void)
 	if (newdir != v4_recov_dir) {
 		err = errno;
 		LogCrit(COMPONENT_CLIENTID,
-			 "Failed to create v4 recovery dir(%s): %s (%d)",
-			 v4_recov_dir, strerror(errno), errno);
+			"Failed to create v4 recovery dir(%s): %s (%d)",
+			v4_recov_dir, strerror(errno), errno);
 		return -err;
 	}
 

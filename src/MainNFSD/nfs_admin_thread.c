@@ -738,6 +738,8 @@ static struct gsh_dbus_method *admin_methods[] = { &method_shutdown,
 						   &method_get_drc_info,
 						   NULL };
 
+/* clang-format off */
+
 #define HANDLE_VERSION_PROP(prop_name, prop_string)                           \
 	static bool dbus_prop_get_VERSION_##prop_name(DBusMessageIter *reply) \
 	{                                                                     \
@@ -747,7 +749,7 @@ static struct gsh_dbus_method *admin_methods[] = { &method_shutdown,
 			return false;                                         \
 		return true;                                                  \
 	}                                                                     \
-                                                                              \
+									      \
 	static struct gsh_dbus_prop VERSION_##prop_name##_prop = {            \
 		.name = "VERSION_" #prop_name,                                \
 		.access = DBUS_PROP_READ,                                     \
@@ -755,6 +757,8 @@ static struct gsh_dbus_method *admin_methods[] = { &method_shutdown,
 		.get = dbus_prop_get_VERSION_##prop_name,                     \
 		.set = NULL                                                   \
 	}
+
+/* clang-format on */
 
 #define VERSION_PROPERTY_ITEM(name) (&VERSION_##name##_prop)
 

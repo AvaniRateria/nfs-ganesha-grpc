@@ -48,13 +48,13 @@
 	})
 #else
 #define bstree_container_of(node, type, member) \
-	((type *)((char *)(node) - offsetof(type, member)))
+	((type *)((char *)(node)-offsetof(type, member)))
 #define rbtree_container_of(node, type, member) \
-	((type *)((char *)(node) - offsetof(type, member)))
+	((type *)((char *)(node)-offsetof(type, member)))
 #define avltree_container_of(node, type, member) \
-	((type *)((char *)(node) - offsetof(type, member)))
+	((type *)((char *)(node)-offsetof(type, member)))
 #define splaytree_container_of(node, type, member) \
-	((type *)((char *)(node) - offsetof(type, member)))
+	((type *)((char *)(node)-offsetof(type, member)))
 #endif /* __GNUC__ */
 
 /*
@@ -210,11 +210,10 @@ struct avltree {
  *
  * @returns The node found if any
  */
-static inline struct avltree_node *
-avltree_do_lookup(const struct avltree_node *key, const struct avltree *tree,
-		  struct avltree_node **pparent,
-		  struct avltree_node **unbalanced, int *is_left,
-		  avltree_cmp_fn_t cmp_fn)
+static inline struct avltree_node *avltree_do_lookup(
+	const struct avltree_node *key, const struct avltree *tree,
+	struct avltree_node **pparent, struct avltree_node **unbalanced,
+	int *is_left, avltree_cmp_fn_t cmp_fn)
 {
 	struct avltree_node *node = tree->root;
 	int res = 0;

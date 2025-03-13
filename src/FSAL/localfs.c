@@ -743,8 +743,7 @@ static void posix_find_parent(struct fsal_filesystem *this)
 	if (this->pathlen == 1 && this->path[0] == '/')
 		return;
 
-	glist_for_each(glist, &posix_file_systems)
-	{
+	glist_for_each(glist, &posix_file_systems) {
 		fs = glist_entry(glist, struct fsal_filesystem, filesystems);
 
 		/* If this path is longer than this path, then it
@@ -970,8 +969,9 @@ int populate_posix_file_systems(const char *path)
 	endmntent(fp);
 
 	/* build tree of POSIX file systems */
-	glist_for_each(glist, &posix_file_systems) posix_find_parent(
-		glist_entry(glist, struct fsal_filesystem, filesystems));
+	glist_for_each(glist, &posix_file_systems)
+		posix_find_parent(glist_entry(glist, struct fsal_filesystem,
+					      filesystems));
 
 out:
 	PTHREAD_RWLOCK_unlock(&fs_lock);
@@ -1087,8 +1087,7 @@ bool release_posix_file_system(struct fsal_filesystem *fs,
 	 *       thus release any descendants that are not claimed.
 	 */
 
-	glist_for_each_safe(glist, glistn, &fs->children)
-	{
+	glist_for_each_safe(glist, glistn, &fs->children) {
 		struct fsal_filesystem *child_fs;
 
 		child_fs = glist_entry(glist, struct fsal_filesystem, siblings);
@@ -1382,8 +1381,7 @@ bool is_filesystem_exported(struct fsal_filesystem *fs, struct fsal_export *exp)
 		     "Checking if FileSystem %s belongs to export %" PRIu16,
 		     fs->path, exp->export_id);
 
-	glist_for_each_safe(glist, glistn, &fs->exports)
-	{
+	glist_for_each_safe(glist, glistn, &fs->exports) {
 		map = glist_entry(glist, struct fsal_filesystem_export_map,
 				  on_exports);
 
@@ -1602,17 +1600,17 @@ static int process_claim(const char *path, int pathlen,
 		 * are children of our subtree. Such child claims must be
 		 * removed (they will become child claims of this claim).
 		 */
-		glist_for_each(export_glist, &this->exports)
-		{
+		glist_for_each(export_glist, &this->exports) {
 			struct glist_head *glist, *glistn;
 			struct fsal_filesystem_export_map *other_map;
 			struct gsh_refstr *map_fullpath;
 			size_t map_pathlen;
 			bool child;
 
-			other_map = glist_entry(
-				export_glist, struct fsal_filesystem_export_map,
-				on_exports);
+			other_map =
+				glist_entry(export_glist,
+					    struct fsal_filesystem_export_map,
+					    on_exports);
 
 			if (glist_empty(&other_map->child_maps)) {
 				/* This map has no child claims under it, so
@@ -1650,8 +1648,7 @@ static int process_claim(const char *path, int pathlen,
 			}
 
 			glist_for_each_safe(glist, glistn,
-					    &other_map->child_maps)
-			{
+					    &other_map->child_maps) {
 				struct fsal_filesystem_export_map *child_map;
 
 				child_map = glist_entry(
@@ -1673,8 +1670,7 @@ static int process_claim(const char *path, int pathlen,
 	}
 
 	/* Claim the children now */
-	glist_for_each(child_glist, &this->children)
-	{
+	glist_for_each(child_glist, &this->children) {
 		struct fsal_filesystem *child_fs;
 
 		child_fs = glist_entry(child_glist, struct fsal_filesystem,
@@ -1727,8 +1723,7 @@ static int process_claim(const char *path, int pathlen,
 			 * that export is a subtree of this export and thus
 			 * that export gets the child claims).
 			 */
-			glist_for_each(export_glist, &child_fs->exports)
-			{
+			glist_for_each(export_glist, &child_fs->exports) {
 				struct fsal_filesystem_export_map *other_map;
 				struct gsh_refstr *map_fullpath;
 				size_t map_pathlen;
@@ -1850,8 +1845,7 @@ int claim_posix_filesystems(const char *path, struct fsal_module *fsal,
 	dev = posix2fsal_devt(statbuf->st_dev);
 
 	/* Scan POSIX file systems to find export root fs */
-	glist_for_each(glist, &posix_file_systems)
-	{
+	glist_for_each(glist, &posix_file_systems) {
 		fs = glist_entry(glist, struct fsal_filesystem, filesystems);
 		if (fs->dev.major == dev.major && fs->dev.minor == dev.minor) {
 			root = fs;
@@ -1908,8 +1902,7 @@ static bool posix_showfs(DBusMessageIter *args, DBusMessage *reply,
 
 	PTHREAD_RWLOCK_rdlock(&fs_lock);
 	/* Traverse POSIX file systems to display dev ids */
-	glist_for_each(glist, &posix_file_systems)
-	{
+	glist_for_each(glist, &posix_file_systems) {
 		fs = glist_entry(glist, struct fsal_filesystem, filesystems);
 
 		dbus_message_iter_open_container(&sub_iter, DBUS_TYPE_STRUCT,

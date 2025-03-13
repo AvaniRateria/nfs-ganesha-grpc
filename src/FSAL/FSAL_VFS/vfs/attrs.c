@@ -323,8 +323,9 @@ fsal_status_t vfs_sub_getattrs(struct vfs_fsal_obj_handle *vfs_hdl, int fd,
 	}
 
 	/* Reallocating acldata into the required size */
-	acldata.aces = (fsal_ace_t *)gsh_realloc(
-		acldata.aces, new_count * sizeof(fsal_ace_t));
+	acldata.aces =
+		(fsal_ace_t *)gsh_realloc(acldata.aces,
+					  new_count * sizeof(fsal_ace_t));
 	acldata.naces = new_count;
 
 	attrib->acl = nfs4_acl_new_entry(&acldata, &aclstatus);

@@ -626,8 +626,7 @@ static struct log_facility *find_log_facility(const char *name)
 	struct glist_head *glist;
 	struct log_facility *facility;
 
-	glist_for_each(glist, &facility_list)
-	{
+	glist_for_each(glist, &facility_list) {
 		facility = glist_entry(glist, struct log_facility, lf_list);
 		if (!strcasecmp(name, facility->lf_name))
 			return facility;
@@ -834,8 +833,7 @@ int disable_log_facility(const char *name)
 		struct log_facility *found;
 
 		max_headers = LH_NONE;
-		glist_for_each(glist, &active_facility_list)
-		{
+		glist_for_each(glist, &active_facility_list) {
 			found = glist_entry(glist, struct log_facility,
 					    lf_active);
 			if (found->lf_headers > max_headers)
@@ -883,8 +881,7 @@ static int set_default_log_facility(const char *name)
 			struct log_facility *found;
 
 			max_headers = LH_NONE;
-			glist_for_each(glist, &active_facility_list)
-			{
+			glist_for_each(glist, &active_facility_list) {
 				found = glist_entry(glist, struct log_facility,
 						    lf_active);
 				if (found->lf_headers > max_headers)
@@ -1416,8 +1413,8 @@ static int display_log_component(struct display_buffer *dsp_log,
 		b_left = display_printf(dsp_log, "%s :", function);
 
 	if (b_left > 0 && logfields->disp_comp)
-		b_left = display_printf(
-			dsp_log, "%s :", LogComponents[component].comp_str);
+		b_left = display_printf(dsp_log, "%s :",
+					LogComponents[component].comp_str);
 
 	if (b_left > 0 && logfields->disp_level)
 		b_left = display_printf(dsp_log,
@@ -1481,8 +1478,7 @@ void display_log_component_level(log_components_t component, const char *file,
 
 	PTHREAD_RWLOCK_rdlock(&log_rwlock);
 
-	glist_for_each(glist, &active_facility_list)
-	{
+	glist_for_each(glist, &active_facility_list) {
 		facility = glist_entry(glist, struct log_facility, lf_active);
 
 		if (level <= facility->lf_max_level &&
@@ -1761,18 +1757,20 @@ static bool dbus_prop_set(log_components_t component, DBusMessageIter *arg)
  * expands to table entries and shim functions.
  */
 
+/* clang-format off */
+
 #define HANDLE_PROP(component)                                                 \
 	static bool dbus_prop_get_COMPONENT_##component(                       \
 		DBusMessageIter *reply)                                        \
 	{                                                                      \
 		return dbus_prop_get(COMPONENT_##component, reply);            \
 	}                                                                      \
-                                                                               \
+									       \
 	static bool dbus_prop_set_COMPONENT_##component(DBusMessageIter *args) \
 	{                                                                      \
 		return dbus_prop_set(COMPONENT_##component, args);             \
 	}                                                                      \
-                                                                               \
+									       \
 	static struct gsh_dbus_prop COMPONENT_##component##_prop = {           \
 		.name = "COMPONENT_" #component,                               \
 		.access = DBUS_PROP_READWRITE,                                 \
@@ -1780,6 +1778,8 @@ static bool dbus_prop_set(log_components_t component, DBusMessageIter *arg)
 		.get = dbus_prop_get_COMPONENT_##component,                    \
 		.set = dbus_prop_set_COMPONENT_##component                     \
 	}
+
+/* clang-format on */
 
 #define LOG_PROPERTY_ITEM(component) (&COMPONENT_##component##_prop)
 
@@ -2329,8 +2329,7 @@ static void *log_conf_init(void *link_mem, void *self_struct)
 			struct glist_head *glist, *glistn;
 
 			glist_for_each_safe(glist, glistn,
-					    &logger->facility_list)
-			{
+					    &logger->facility_list) {
 				struct facility_config *conf;
 
 				conf = glist_entry(glist,
@@ -2355,8 +2354,8 @@ static void apply_logger_config_levels(struct logger_config *logger)
 	enum log_components comp;
 	bool has_levels = logger->comp_log_level != NULL;
 	log_levels_t log_level_all =
-		has_levels ? logger->comp_log_level[COMPONENT_ALL] :
-			     NB_LOG_LEVEL;
+		has_levels ? logger->comp_log_level[COMPONENT_ALL]
+			   : NB_LOG_LEVEL;
 
 	/* Handle Default_Log_Level */
 	if (logger->default_log_level != default_log_level) {
@@ -2405,8 +2404,7 @@ static int log_conf_commit(void *node, void *link_mem, void *self_struct,
 	int errcnt = 0;
 	int rc;
 
-	glist_for_each_safe(glist, glistn, &logger->facility_list)
-	{
+	glist_for_each_safe(glist, glistn, &logger->facility_list) {
 		struct facility_config *conf;
 		bool facility_exists;
 
@@ -2474,11 +2472,10 @@ static int log_conf_commit(void *node, void *link_mem, void *self_struct,
 				err_type->resource = true;
 				errcnt++;
 			} else if (old_def != default_facility)
-				LogEvent(
-					COMPONENT_CONFIG,
-					"Switched default logger from %s to %s",
-					old_def->lf_name,
-					default_facility->lf_name);
+				LogEvent(COMPONENT_CONFIG,
+					 "Switched default logger from %s to %s",
+					 old_def->lf_name,
+					 default_facility->lf_name);
 		}
 		if (errcnt > 0 && !facility_exists) {
 			LogCrit(COMPONENT_CONFIG,
@@ -2636,9 +2633,8 @@ static enriched_backtrace_status get_code_location(const char *binary_path,
 	return ENRICHED_BT_SUCCUESS;
 }
 
-static enriched_backtrace_status
-get_binary_path_for_ip(unw_word_t ip, char *out_binary_path,
-		       unw_word_t *out_binary_base)
+static enriched_backtrace_status get_binary_path_for_ip(
+	unw_word_t ip, char *out_binary_path, unw_word_t *out_binary_base)
 {
 	unw_word_t start_addr, end_addr;
 	static char binary_path[BUFFER_WITH_PATH_LENGTH];
@@ -2720,12 +2716,13 @@ void gsh_libunwind_enriched_bt(void)
 		if (get_binary_path_for_ip_result == ENRICHED_BT_SUCCUESS) {
 			binary_path_to_log = binary_path;
 			relative_address = ip - binary_base;
-			get_code_location_result = get_code_location(
-				binary_path, relative_address, code_path);
+			get_code_location_result =
+				get_code_location(binary_path, relative_address,
+						  code_path);
 			code_path_to_log = (get_code_location_result ==
-					    ENRICHED_BT_SUCCUESS) ?
-						   code_path :
-						   unknown_code_path_msg;
+					    ENRICHED_BT_SUCCUESS)
+						   ? code_path
+						   : unknown_code_path_msg;
 		} else {
 			binary_path_to_log = unknown_binary_msg;
 			code_path_to_log = unknown_code_path_msg;
@@ -2735,9 +2732,9 @@ void gsh_libunwind_enriched_bt(void)
 			unw_get_proc_name(&cursor, procname,
 					  sizeof(procname) - 1, &offset_unused);
 		procname_to_log = (unw_get_proc_name_result == 0 ||
-				   unw_get_proc_name_result == -UNW_ENOMEM) ?
-					  procname :
-					  unknown_symbol_msg;
+				   unw_get_proc_name_result == -UNW_ENOMEM)
+					  ? procname
+					  : unknown_symbol_msg;
 
 		LogMajor(COMPONENT_INIT,
 			 " #%u %s at code path %s from binary %s", i,
@@ -2777,8 +2774,7 @@ void gsh_libunwind(void)
 
 	/* Find an active log facility */
 	PTHREAD_RWLOCK_rdlock(&log_rwlock);
-	glist_for_each(glist, &active_facility_list)
-	{
+	glist_for_each(glist, &active_facility_list) {
 		facility = glist_entry(glist, struct log_facility, lf_active);
 		if (facility->lf_func == log_to_file) {
 			fd = open((char *)facility->lf_private,
@@ -2809,11 +2805,10 @@ void gsh_libunwind(void)
 				if (n > 0)
 					write(fd, buffer, n);
 			} else {
-				LogMajor(
-					COMPONENT_INIT,
-					" #%u %s + %#llx [ip=%#llx] [sp=%#llx]",
-					i, procname, (long long)off,
-					(long long)ip, (long long)sp);
+				LogMajor(COMPONENT_INIT,
+					 " #%u %s + %#llx [ip=%#llx] [sp=%#llx]",
+					 i, procname, (long long)off,
+					 (long long)ip, (long long)sp);
 			}
 			break;
 		default:
@@ -2862,8 +2857,7 @@ void gsh_backtrace(void)
 	 * log the backtrace symbols.
 	 */
 	PTHREAD_RWLOCK_rdlock(&log_rwlock);
-	glist_for_each(glist, &active_facility_list)
-	{
+	glist_for_each(glist, &active_facility_list) {
 		facility = glist_entry(glist, struct log_facility, lf_active);
 		if (facility->lf_func == log_to_file) {
 			fd = open((char *)facility->lf_private,

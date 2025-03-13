@@ -253,10 +253,11 @@ void deleg_heuristics_recall(struct fsal_obj_handle *obj, state_owner_t *owner,
 	client->curr_deleg_grants--;
 
 	/* Update delegation stats for file. */
-	statistics->fds_avg_hold = advance_avg(
-		statistics->fds_avg_hold,
-		time(NULL) - statistics->fds_last_delegation,
-		statistics->fds_recall_count - 1, statistics->fds_recall_count);
+	statistics->fds_avg_hold =
+		advance_avg(statistics->fds_avg_hold,
+			    time(NULL) - statistics->fds_last_delegation,
+			    statistics->fds_recall_count - 1,
+			    statistics->fds_recall_count);
 }
 
 /**
@@ -345,9 +346,9 @@ bool should_we_grant_deleg(struct state_hdl *ostate, nfs_client_id_t *client,
 		case CLAIM_PREVIOUS:
 			*prerecall = true;
 			return args->claim.open_claim4_u.delegate_type ==
-					       OPEN_DELEGATE_NONE ?
-				       false :
-				       true;
+					       OPEN_DELEGATE_NONE
+				       ? false
+				       : true;
 		case CLAIM_DELEGATE_PREV:
 			*prerecall = true;
 			return true;
@@ -361,9 +362,9 @@ bool should_we_grant_deleg(struct state_hdl *ostate, nfs_client_id_t *client,
 		switch (claim) {
 		case CLAIM_PREVIOUS:
 			return args->claim.open_claim4_u.delegate_type ==
-					       OPEN_DELEGATE_NONE ?
-				       false :
-				       true;
+					       OPEN_DELEGATE_NONE
+				       ? false
+				       : true;
 		case CLAIM_DELEGATE_PREV:
 			return true;
 		default:
@@ -608,9 +609,9 @@ bool state_deleg_conflict_impl(struct fsal_obj_handle *obj, bool write)
 			COMPONENT_STATE,
 			"While trying to perform a %s op, found a conflicting %s delegation",
 			write ? "write" : "read",
-			(deleg_stats->fds_deleg_type == OPEN_DELEGATE_WRITE) ?
-				"WRITE" :
-				"READ");
+			(deleg_stats->fds_deleg_type == OPEN_DELEGATE_WRITE)
+				? "WRITE"
+				: "READ");
 		if (async_delegrecall(general_fridge, obj) != 0)
 			LogCrit(COMPONENT_STATE,
 				"Failed to start thread to recall delegation from conflicting operation.");
@@ -769,8 +770,7 @@ bool can_we_grant_deleg(struct state_hdl *ostate, state_t *open_state)
 	 * with any kind of NLM lock, and NLM write lock would conflict
 	 * with any kind of delegation.
 	 */
-	glist_for_each(glist, &ostate->file.lock_list)
-	{
+	glist_for_each(glist, &ostate->file.lock_list) {
 		lock_entry = glist_entry(glist, state_lock_entry_t, sle_list);
 		if (lock_entry->sle_lock.lock_type == FSAL_NO_LOCK)
 			continue; /* no lock, skip */

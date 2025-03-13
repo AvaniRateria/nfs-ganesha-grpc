@@ -192,10 +192,9 @@ static fsal_status_t lzfs_fsal_wire_to_host(struct fsal_export *exp_hdl,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_create_handle(struct fsal_export *exp_hdl, struct gsh_buffdesc *desc,
-			struct fsal_obj_handle **pub_handle,
-			struct fsal_attrlist *attrs_out)
+static fsal_status_t lzfs_fsal_create_handle(
+	struct fsal_export *exp_hdl, struct gsh_buffdesc *desc,
+	struct fsal_obj_handle **pub_handle, struct fsal_attrlist *attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *handle = NULL;
@@ -234,10 +233,9 @@ lzfs_fsal_create_handle(struct fsal_export *exp_hdl, struct gsh_buffdesc *desc,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_get_fs_dynamic_info(struct fsal_export *exp_hdl,
-			      struct fsal_obj_handle *obj_hdl,
-			      fsal_dynamicfsinfo_t *info)
+static fsal_status_t lzfs_fsal_get_fs_dynamic_info(
+	struct fsal_export *exp_hdl, struct fsal_obj_handle *obj_hdl,
+	fsal_dynamicfsinfo_t *info)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	int rc;

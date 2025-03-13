@@ -86,8 +86,9 @@ int up_process_event_object(struct glusterfs_fs *gl_fs,
 
 	switch (reason) {
 	case GLFS_EVENT_INODE_INVALIDATE:
-		fsal_status = event_func->invalidate_close(
-			event_func, &key, FSAL_UP_INVALIDATE_CACHE);
+		fsal_status =
+			event_func->invalidate_close(event_func, &key,
+						     FSAL_UP_INVALIDATE_CACHE);
 		rc = fsal_status.major;
 		if (FSAL_IS_ERROR(fsal_status) &&
 		    fsal_status.major != ERR_FSAL_NOENT) {

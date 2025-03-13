@@ -277,12 +277,14 @@ static fsal_status_t mdcache_mkdir(struct fsal_obj_handle *dir_hdl,
  * @note This returns an INITIAL ref'd entry on success
  * @return FSAL status
  */
-static fsal_status_t
-mdcache_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
-	       object_file_type_t nodetype, struct fsal_attrlist *attrib,
-	       struct fsal_obj_handle **handle, struct fsal_attrlist *attrs_out,
-	       struct fsal_attrlist *parent_pre_attrs_out,
-	       struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t mdcache_mknode(struct fsal_obj_handle *dir_hdl,
+				    const char *name,
+				    object_file_type_t nodetype,
+				    struct fsal_attrlist *attrib,
+				    struct fsal_obj_handle **handle,
+				    struct fsal_attrlist *attrs_out,
+				    struct fsal_attrlist *parent_pre_attrs_out,
+				    struct fsal_attrlist *parent_post_attrs_out)
 {
 	mdcache_entry_t *parent =
 		container_of(dir_hdl, mdcache_entry_t, obj_handle);
@@ -362,13 +364,12 @@ mdcache_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
  * @note This returns an INITIAL ref'd entry on success
  * @return FSAL status
  */
-static fsal_status_t
-mdcache_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
-		const char *link_path, struct fsal_attrlist *attrib,
-		struct fsal_obj_handle **handle,
-		struct fsal_attrlist *attrs_out,
-		struct fsal_attrlist *parent_pre_attrs_out,
-		struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t mdcache_symlink(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	const char *link_path, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **handle, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	mdcache_entry_t *parent =
 		container_of(dir_hdl, mdcache_entry_t, obj_handle);

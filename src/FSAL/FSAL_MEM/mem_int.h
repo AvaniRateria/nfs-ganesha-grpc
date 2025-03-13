@@ -162,13 +162,12 @@ fsal_status_t mem_update_export(struct fsal_module *fsal_hdl, void *parse_node,
 
 const char *str_async_type(uint32_t async_type);
 
-#define mem_free_handle(h)                                      \
-	do {                                                    \
-		GSH_UNIQUE_AUTO_TRACEPOINT(                     \
-			fsalmem, mem_free, TRACE_DEBUG,         \
-			"Freeing handle. hdl: {}, name: {}", h, \
-			TP_STR(h->m_name));                     \
-		_mem_free_handle(h);                            \
+#define mem_free_handle(h)                                                      \
+	do {                                                                    \
+		GSH_UNIQUE_AUTO_TRACEPOINT(fsalmem, mem_free, TRACE_DEBUG,      \
+					   "Freeing handle. hdl: {}, name: {}", \
+					   h, TP_STR(h->m_name));               \
+		_mem_free_handle(h);                                            \
 	} while (0)
 /**
  * @brief Free a MEM handle

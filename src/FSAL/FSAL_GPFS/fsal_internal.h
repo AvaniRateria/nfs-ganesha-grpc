@@ -196,11 +196,13 @@ fsal_status_t fsal_internal_rename_fh(int dirfd,
 				      const char *p_old_name,
 				      const char *p_new_name);
 
-fsal_status_t
-fsal_get_xstat_by_handle(int dirfd, struct gpfs_file_handle *p_handle,
-			 gpfsfsal_xstat_t *p_buffxstat, gpfs_acl_t *acl_buf,
-			 unsigned int acl_buflen, uint32_t *expire_time_attr,
-			 bool expire, bool use_acl);
+fsal_status_t fsal_get_xstat_by_handle(int dirfd,
+				       struct gpfs_file_handle *p_handle,
+				       gpfsfsal_xstat_t *p_buffxstat,
+				       gpfs_acl_t *acl_buf,
+				       unsigned int acl_buflen,
+				       uint32_t *expire_time_attr, bool expire,
+				       bool use_acl);
 
 fsal_status_t fsal_set_xstat_by_handle(int dirfd,
 				       struct gpfs_file_handle *p_handle,

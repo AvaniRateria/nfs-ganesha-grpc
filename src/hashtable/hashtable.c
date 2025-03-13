@@ -167,9 +167,8 @@ static hash_error_t key_locate(struct hash_table *ht,
 			     cache_offsetof(ht, rbthash));
 		if (cursor) {
 			data = RBT_OPAQ(cursor);
-			if (ht->parameter.compare_key(
-				    (struct gsh_buffdesc *)key, &(data->key)) ==
-			    0) {
+			if (ht->parameter.compare_key((struct gsh_buffdesc *)key,
+						      &(data->key)) == 0) {
 				goto out;
 			}
 		}

@@ -74,8 +74,9 @@ static fsal_status_t get_dynamic_info(struct fsal_export *exp_hdl,
 	fsal_status_t status;
 	struct statfs buffstatgpfs;
 	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	if (!infop) {
@@ -448,8 +449,9 @@ int open_root_fd(struct gpfs_filesystem *gpfs_fs)
 	LogFullDebug(COMPONENT_FSAL, "root export_fd %d path %s",
 		     gpfs_fs->root_fd, gpfs_fs->fs->path);
 
-	status = fsal_internal_get_handle_at(
-		gpfs_fs->root_fd, gpfs_fs->fs->path, &fh, gpfs_fs->root_fd);
+	status = fsal_internal_get_handle_at(gpfs_fs->root_fd,
+					     gpfs_fs->fs->path, &fh,
+					     gpfs_fs->root_fd);
 
 	if (FSAL_IS_ERROR(status)) {
 		retval = status.minor;

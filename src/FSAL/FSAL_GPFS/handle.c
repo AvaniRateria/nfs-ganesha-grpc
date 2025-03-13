@@ -470,8 +470,9 @@ static fsal_status_t read_dirents(struct fsal_obj_handle *dir_hdl,
 	int bpos, nread;
 	struct dirent64 *dentry;
 	char buf[BUF_SIZE];
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	if (whence != NULL)
@@ -553,13 +554,15 @@ done:
 	return fsalstat(fsal_error, retval);
 }
 
-static fsal_status_t
-renamefile(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
-	   const char *old_name, struct fsal_obj_handle *newdir_hdl,
-	   const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
-	   struct fsal_attrlist *olddir_post_attrs_out,
-	   struct fsal_attrlist *newdir_pre_attrs_out,
-	   struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t renamefile(struct fsal_obj_handle *obj_hdl,
+				struct fsal_obj_handle *olddir_hdl,
+				const char *old_name,
+				struct fsal_obj_handle *newdir_hdl,
+				const char *new_name,
+				struct fsal_attrlist *olddir_pre_attrs_out,
+				struct fsal_attrlist *olddir_post_attrs_out,
+				struct fsal_attrlist *newdir_pre_attrs_out,
+				struct fsal_attrlist *newdir_post_attrs_out)
 {
 	fsal_status_t status;
 
@@ -620,8 +623,9 @@ static fsal_status_t getxattrs(struct fsal_obj_handle *obj_hdl,
 	int errsv;
 	struct getxattr_arg gxarg;
 	struct gpfs_fsal_obj_handle *myself;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	myself = container_of(obj_hdl, struct gpfs_fsal_obj_handle, obj_handle);
@@ -664,8 +668,9 @@ static fsal_status_t setxattrs(struct fsal_obj_handle *obj_hdl,
 	int errsv;
 	struct setxattr_arg sxarg;
 	struct gpfs_fsal_obj_handle *myself;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	myself = container_of(obj_hdl, struct gpfs_fsal_obj_handle, obj_handle);
@@ -697,8 +702,9 @@ static fsal_status_t removexattrs(struct fsal_obj_handle *obj_hdl,
 	int errsv;
 	struct removexattr_arg rxarg;
 	struct gpfs_fsal_obj_handle *myself;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	myself = container_of(obj_hdl, struct gpfs_fsal_obj_handle, obj_handle);
@@ -733,8 +739,9 @@ static fsal_status_t listxattrs(struct fsal_obj_handle *obj_hdl,
 	struct listxattr_arg lxarg;
 	struct gpfs_fsal_obj_handle *myself;
 	component4 *entry = lr_names->xl4_entries;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	val = (char *)entry + la_maxcount;
@@ -1099,8 +1106,9 @@ fsal_status_t gpfs_lookup_path(struct fsal_export *exp_hdl, const char *path,
 	if (FSAL_IS_ERROR(fsal_status))
 		goto xstat_err;
 
-	fsal_status = gpfsfsal_xstat_2_fsal_attributes(
-		&buffxstat, &attributes, acl_buf, gpfs_export->use_acl);
+	fsal_status = gpfsfsal_xstat_2_fsal_attributes(&buffxstat, &attributes,
+						       acl_buf,
+						       gpfs_export->use_acl);
 	LogFullDebug(COMPONENT_FSAL, "fsid=0x%016" PRIx64 ".0x%016" PRIx64,
 		     attributes.fsid.major, attributes.fsid.minor);
 
@@ -1195,8 +1203,9 @@ fsal_status_t gpfs_create_handle(struct fsal_export *exp_hdl,
 	struct fsal_fsid__ fsid;
 	struct fsal_filesystem *fs;
 	struct gpfs_filesystem *gpfs_fs;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	*handle = NULL; /* poison it first */

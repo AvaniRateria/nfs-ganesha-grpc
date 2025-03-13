@@ -534,6 +534,6 @@ fsal_status_t vfs_update_export(struct fsal_module *fsal_hdl, void *parse_node,
 		invalid = true;
 	}
 
-	return invalid ? posix2fsal_status(EINVAL) :
-			 fsalstat(ERR_FSAL_NO_ERROR, 0);
+	return invalid ? posix2fsal_status(EINVAL)
+		       : fsalstat(ERR_FSAL_NO_ERROR, 0);
 }

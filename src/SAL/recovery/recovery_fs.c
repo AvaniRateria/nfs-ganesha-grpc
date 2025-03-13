@@ -164,7 +164,7 @@ int fs_create_recov_dir(void)
 
 		if (unlikely(node_size >= sizeof(node) || node_size < 0)) {
 			LogCrit(COMPONENT_CLIENTID,
-				 "snprintf returned unexpected %d", node_size);
+				"snprintf returned unexpected %d", node_size);
 			return -ENAMETOOLONG;
 		}
 	}
@@ -172,8 +172,7 @@ int fs_create_recov_dir(void)
 	err = mkdir(nfs_param.nfsv4_param.recov_root, 0755);
 	if (err == -1 && errno != EEXIST) {
 		err = errno;
-		LogCrit(
-			COMPONENT_CLIENTID,
+		LogCrit(COMPONENT_CLIENTID,
 			"Failed to create v4 recovery dir (%s), errno: %s (%d)",
 			nfs_param.nfsv4_param.recov_root, strerror(errno),
 			errno);
@@ -190,9 +189,9 @@ int fs_create_recov_dir(void)
 
 	if (v4_recov_dir_len >= sizeof(v4_recov_dir)) {
 		LogCrit(COMPONENT_CLIENTID,
-			 "v4 recovery dir path (%s/%s) is too long",
-			 nfs_param.nfsv4_param.recov_root,
-			 nfs_param.nfsv4_param.recov_dir);
+			"v4 recovery dir path (%s/%s) is too long",
+			nfs_param.nfsv4_param.recov_root,
+			nfs_param.nfsv4_param.recov_dir);
 		return -ENAMETOOLONG;
 	}
 
@@ -208,8 +207,8 @@ int fs_create_recov_dir(void)
 	if (err == -1 && errno != EEXIST) {
 		err = errno;
 		LogCrit(COMPONENT_CLIENTID,
-			 "Failed to create v4 recovery dir(%s), errno: %s (%d)",
-			 v4_recov_dir, strerror(errno), errno);
+			"Failed to create v4 recovery dir(%s), errno: %s (%d)",
+			v4_recov_dir, strerror(errno), errno);
 		return -err;
 	}
 
@@ -223,9 +222,9 @@ int fs_create_recov_dir(void)
 
 	if (v4_old_dir_len >= sizeof(v4_old_dir)) {
 		LogCrit(COMPONENT_CLIENTID,
-			 "v4 recovery dir path (%s/%s) is too long",
-			 nfs_param.nfsv4_param.recov_root,
-			 nfs_param.nfsv4_param.recov_old_dir);
+			"v4 recovery dir path (%s/%s) is too long",
+			nfs_param.nfsv4_param.recov_root,
+			nfs_param.nfsv4_param.recov_old_dir);
 		return -ENAMETOOLONG;
 	}
 
@@ -242,8 +241,8 @@ int fs_create_recov_dir(void)
 	if (err == -1 && errno != EEXIST) {
 		err = errno;
 		LogCrit(COMPONENT_CLIENTID,
-			 "Failed to create v4 recovery dir(%s), errno: %s (%d)",
-			 v4_old_dir, strerror(errno), errno);
+			"Failed to create v4 recovery dir(%s), errno: %s (%d)",
+			v4_old_dir, strerror(errno), errno);
 		return -err;
 	}
 	if (nfs_param.core_param.clustered) {
@@ -262,8 +261,7 @@ int fs_create_recov_dir(void)
 
 		if (err == -1 && errno != EEXIST) {
 			err = errno;
-			LogCrit(
-				COMPONENT_CLIENTID,
+			LogCrit(COMPONENT_CLIENTID,
 				"Failed to create v4 recovery dir(%s), errno: %s (%d)",
 				v4_recov_dir, strerror(errno), errno);
 			return -err;
@@ -273,8 +271,7 @@ int fs_create_recov_dir(void)
 
 		if (err == -1 && errno != EEXIST) {
 			err = errno;
-			LogCrit(
-				COMPONENT_CLIENTID,
+			LogCrit(COMPONENT_CLIENTID,
 				"Failed to create v4 recovery dir(%s), errno: %s (%d)",
 				v4_old_dir, strerror(errno), errno);
 			return -err;

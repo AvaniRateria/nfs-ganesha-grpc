@@ -87,8 +87,9 @@ static nfsstat4 lzfs_int_openfile(struct lzfs_fsal_export *lzfs_export,
 
 	lzfs_int_clear_fileinfo_cache(lzfs_export, 2);
 
-	lzfs_ds->cache_handle = liz_fileinfo_cache_acquire(
-		lzfs_export->fileinfo_cache, lzfs_ds->inode);
+	lzfs_ds->cache_handle =
+		liz_fileinfo_cache_acquire(lzfs_export->fileinfo_cache,
+					   lzfs_ds->inode);
 	if (lzfs_ds->cache_handle == NULL) {
 		return NFS4ERR_IO;
 	}
@@ -118,11 +119,10 @@ static nfsstat4 lzfs_int_openfile(struct lzfs_fsal_export *lzfs_export,
  *
  * \see fsal_api.h for more information
  */
-static nfsstat4
-lzfs_fsal_ds_handle_read(struct fsal_ds_handle *const ds_hdl,
-			 const stateid4 *stateid, const offset4 offset,
-			 const count4 requested_length, void *const buffer,
-			 count4 *const supplied_length, bool *const end_of_file)
+static nfsstat4 lzfs_fsal_ds_handle_read(
+	struct fsal_ds_handle *const ds_hdl, const stateid4 *stateid,
+	const offset4 offset, const count4 requested_length, void *const buffer,
+	count4 *const supplied_length, bool *const end_of_file)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_ds_handle *lzfs_ds;
@@ -262,12 +262,11 @@ static nfsstat4 lzfs_fsal_ds_handle_commit(struct fsal_ds_handle *const ds_hdl,
  *
  * \see fsal_api.h for more information
  */
-static nfsstat4
-lzfs_fsal_ds_read_plus(struct fsal_ds_handle *const ds_hdl,
-		       const stateid4 *stateid, const offset4 offset,
-		       const count4 requested_length, void *const buffer,
-		       const count4 supplied_length, bool *const end_of_file,
-		       struct io_info *info)
+static nfsstat4 lzfs_fsal_ds_read_plus(
+	struct fsal_ds_handle *const ds_hdl, const stateid4 *stateid,
+	const offset4 offset, const count4 requested_length, void *const buffer,
+	const count4 supplied_length, bool *const end_of_file,
+	struct io_info *info)
 {
 	LogCrit(COMPONENT_PNFS, "Unimplemented DS read_plus!");
 	return NFS4ERR_NOTSUPP;

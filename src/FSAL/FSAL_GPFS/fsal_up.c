@@ -231,9 +231,9 @@ void *GPFSFSAL_UP_Thread(void *Arg)
 			LogMidDebug(
 				COMPONENT_FSAL_UP,
 				"%s: owner %p pid %d type %d start %lld len %lld",
-				reason == INODE_LOCK_GRANTED ?
-					"inode lock granted" :
-					"inode lock again",
+				reason == INODE_LOCK_GRANTED
+					? "inode lock granted"
+					: "inode lock again",
 				fl.lock_owner, fl.flock.l_pid, fl.flock.l_type,
 				(long long)fl.flock.l_start,
 				(long long)fl.flock.l_len);
@@ -258,8 +258,9 @@ void *GPFSFSAL_UP_Thread(void *Arg)
 			LogDebug(COMPONENT_FSAL_UP,
 				 "delegation recall: flags:%x ino %" PRId64,
 				 flags, callback.buf->st_ino);
-			fsal_status = up_async_delegrecall(
-				general_fridge, event_func, &key, NULL, NULL);
+			fsal_status = up_async_delegrecall(general_fridge,
+							   event_func, &key,
+							   NULL, NULL);
 			break;
 
 		case LAYOUT_FILE_RECALL: /* Layout file recall Event */
@@ -394,8 +395,9 @@ void *GPFSFSAL_UP_Thread(void *Arg)
 				attr.expire_time_attr = expire_time_attr;
 
 				posix2fsal_attributes(&buf, &attr);
-				fsal_status = event_func->update(
-					event_func, &key, &attr, upflags);
+				fsal_status = event_func->update(event_func,
+								 &key, &attr,
+								 upflags);
 
 				if ((flags & UP_NLINK) &&
 				    (attr.numlinks == 0)) {
@@ -424,8 +426,9 @@ void *GPFSFSAL_UP_Thread(void *Arg)
 				flags, callback.buf->st_ino);
 
 			upflags = FSAL_UP_INVALIDATE_CACHE;
-			fsal_status = event_func->invalidate_close(
-				event_func, &key, upflags);
+			fsal_status = event_func->invalidate_close(event_func,
+								   &key,
+								   upflags);
 			break;
 
 		case THREAD_PAUSE:

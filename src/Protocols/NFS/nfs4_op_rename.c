@@ -177,12 +177,12 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	res_RENAME4->RENAME4res_u.resok4.source_cinfo.atomic =
-		is_olddir_pre_attrs_valid && is_olddir_post_attrs_valid ? TRUE :
-									  FALSE;
+		is_olddir_pre_attrs_valid && is_olddir_post_attrs_valid ? TRUE
+									: FALSE;
 
 	res_RENAME4->RENAME4res_u.resok4.target_cinfo.atomic =
-		is_newdir_pre_attrs_valid && is_newdir_post_attrs_valid ? TRUE :
-									  FALSE;
+		is_newdir_pre_attrs_valid && is_newdir_post_attrs_valid ? TRUE
+									: FALSE;
 
 	nfs_put_grace_status();
 

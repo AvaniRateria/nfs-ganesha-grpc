@@ -153,8 +153,7 @@ static int rados_ng_init(void)
 		ret = snprintf(host, sizeof(host), "node%d", node_id);
 
 		if (unlikely(ret >= sizeof(host))) {
-			LogCrit(COMPONENT_CLIENTID, "node%d too long",
-				node_id);
+			LogCrit(COMPONENT_CLIENTID, "node%d too long", node_id);
 			return -ENAMETOOLONG;
 		} else if (unlikely(ret < 0)) {
 			ret = errno;
@@ -183,8 +182,8 @@ static int rados_ng_init(void)
 		if (ret) {
 			ret = errno;
 			LogCrit(COMPONENT_CLIENTID,
-				 "Failed to gethostname: %s (%d)",
-				 strerror(errno), errno);
+				"Failed to gethostname: %s (%d)",
+				strerror(errno), errno);
 			return -ret;
 		}
 	}
@@ -203,7 +202,7 @@ static int rados_ng_init(void)
 	if (ret < 0) {
 		gsh_refstr_put(recov_oid);
 		LogCrit(COMPONENT_CLIENTID, "Failed to connect to cluster: %d",
-			 ret);
+			ret);
 		return ret;
 	}
 
@@ -302,9 +301,8 @@ void rados_ng_pop_clid_entry(char *key, char *val, size_t val_len,
 	gsh_free(dupval);
 }
 
-static void
-rados_ng_read_recov_clids_recover(add_clid_entry_hook add_clid_entry,
-				  add_rfh_entry_hook add_rfh_entry)
+static void rados_ng_read_recov_clids_recover(
+	add_clid_entry_hook add_clid_entry, add_rfh_entry_hook add_rfh_entry)
 {
 	int ret;
 	struct gsh_refstr *recov_oid;
@@ -326,10 +324,9 @@ rados_ng_read_recov_clids_recover(add_clid_entry_hook add_clid_entry,
 	}
 }
 
-static void
-rados_ng_read_recov_clids_takeover(nfs_grace_start_t *gsp,
-				   add_clid_entry_hook add_clid_entry,
-				   add_rfh_entry_hook add_rfh_entry)
+static void rados_ng_read_recov_clids_takeover(
+	nfs_grace_start_t *gsp, add_clid_entry_hook add_clid_entry,
+	add_rfh_entry_hook add_rfh_entry)
 {
 	int ret;
 	struct pop_args args = {
@@ -341,8 +338,8 @@ rados_ng_read_recov_clids_takeover(nfs_grace_start_t *gsp,
 
 	if (!gsp) {
 		takeover = false;
-		LogDebug(COMPONENT_CLIENTID,
-			 "Recovery object in use %s", rados_recov_oid->gr_val);
+		LogDebug(COMPONENT_CLIENTID, "Recovery object in use %s",
+			 rados_recov_oid->gr_val);
 		rados_ng_read_recov_clids_recover(add_clid_entry,
 						  add_rfh_entry);
 		return;
@@ -355,14 +352,13 @@ rados_ng_read_recov_clids_takeover(nfs_grace_start_t *gsp,
 			       "%s_recov", gsp->ipaddr);
 		if (unlikely(ret >= sizeof(object_takeover))) {
 			LogCrit(COMPONENT_CLIENTID,
-				       "object_takeover too long %s_recov",
-				       gsp->ipaddr);
+				"object_takeover too long %s_recov",
+				gsp->ipaddr);
 			no_cleanup = true;
 			return;
 		} else if (unlikely(ret < 0)) {
-			LogCrit(COMPONENT_CLIENTID,
-					"snprintf %d error %s (%d)", ret,
-					strerror(errno), errno);
+			LogCrit(COMPONENT_CLIENTID, "snprintf %d error %s (%d)",
+				ret, strerror(errno), errno);
 			no_cleanup = true;
 			return;
 		}
@@ -372,33 +368,31 @@ rados_ng_read_recov_clids_takeover(nfs_grace_start_t *gsp,
 			       "node%d_recov", gsp->nodeid);
 		if (unlikely(ret >= sizeof(object_takeover))) {
 			LogCrit(COMPONENT_CLIENTID,
-				       "object_takeover too long node%d_recov",
-				       gsp->nodeid);
+				"object_takeover too long node%d_recov",
+				gsp->nodeid);
 			no_cleanup = true;
 			return;
 		} else if (unlikely(ret < 0)) {
-			LogCrit(COMPONENT_CLIENTID,
-					"snprintf %d error %s (%d)", ret,
-					strerror(errno), errno);
+			LogCrit(COMPONENT_CLIENTID, "snprintf %d error %s (%d)",
+				ret, strerror(errno), errno);
 			no_cleanup = true;
 			return;
 		}
 		break;
 	default:
 		LogWarn(COMPONENT_CLIENTID,
-				"Recovery unknown/unsupported event %d",
-				gsp->event);
+			"Recovery unknown/unsupported event %d", gsp->event);
 		no_cleanup = true;
 		return;
 	}
 
 	takeover = true;
 
-	LogDebug(COMPONENT_CLIENTID,
-			"Recovery object in use %s", object_takeover);
+	LogDebug(COMPONENT_CLIENTID, "Recovery object in use %s",
+		 object_takeover);
 
 	ret = rados_kv_traverse(rados_ng_pop_clid_entry, &args,
-			object_takeover);
+				object_takeover);
 	if (ret < 0) {
 		if (gsp->event == EVENT_TAKE_IP)
 			LogWarn(COMPONENT_CLIENTID,
@@ -430,16 +424,16 @@ static void rados_ng_cleanup_old(void)
 		rcu_read_lock();
 		recov_oid = gsh_refstr_get(rcu_dereference(rados_recov_oid));
 		rcu_read_unlock();
-		LogDebug(COMPONENT_CLIENTID,
-			"Recovery object to be cleaned %s", recov_oid->gr_val);
+		LogDebug(COMPONENT_CLIENTID, "Recovery object to be cleaned %s",
+			 recov_oid->gr_val);
 		ret = rados_write_op_operate(grace_op, rados_recov_io_ctx,
-				     recov_oid->gr_val, NULL, 0);
+					     recov_oid->gr_val, NULL, 0);
 		gsh_refstr_put(recov_oid);
 	} else {
-		LogDebug(COMPONENT_CLIENTID,
-			"Recovery object to be cleaned %s", object_takeover);
+		LogDebug(COMPONENT_CLIENTID, "Recovery object to be cleaned %s",
+			 object_takeover);
 		ret = rados_write_op_operate(grace_op, rados_recov_io_ctx,
-				     object_takeover, NULL, 0);
+					     object_takeover, NULL, 0);
 	}
 	if (ret < 0) {
 		LogEvent(COMPONENT_CLIENTID,

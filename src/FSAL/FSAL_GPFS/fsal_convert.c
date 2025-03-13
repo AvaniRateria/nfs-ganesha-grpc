@@ -35,9 +35,8 @@
 #include <string.h>
 #include <fcntl.h>
 
-static fsal_status_t
-gpfs_acl_2_fsal_acl(struct fsal_attrlist *p_object_attributes,
-		    gpfs_acl_t *p_gpfsacl);
+static fsal_status_t gpfs_acl_2_fsal_acl(
+	struct fsal_attrlist *p_object_attributes, gpfs_acl_t *p_gpfsacl);
 
 /**
  *  @brief convert GPFS xstat to FSAl attributes
@@ -222,9 +221,8 @@ fsal_status_t gpfsfsal_xstat_2_fsal_attributes(gpfsfsal_xstat_t *gpfs_buf,
 
 /* Convert GPFS NFS4 ACLs to FSAL ACLs, and set the ACL
  * pointer of attribute. */
-static fsal_status_t
-gpfs_acl_2_fsal_acl(struct fsal_attrlist *p_object_attributes,
-		    gpfs_acl_t *p_gpfsacl)
+static fsal_status_t gpfs_acl_2_fsal_acl(
+	struct fsal_attrlist *p_object_attributes, gpfs_acl_t *p_gpfsacl)
 {
 	fsal_acl_status_t status;
 	fsal_acl_data_t acldata;
@@ -336,12 +334,12 @@ fsal_status_t fsal_acl_2_gpfs_acl(struct fsal_obj_handle *dir_hdl,
 			acl_buf->ace_v4[i].aceType, acl_buf->ace_v4[i].aceFlags,
 			acl_buf->ace_v4[i].aceMask,
 			(acl_buf->ace_v4[i].aceIFlags &
-			 FSAL_ACE_IFLAG_SPECIAL_ID) ?
-				1 :
-				0,
-			(acl_buf->ace_v4[i].aceFlags & FSAL_ACE_FLAG_GROUP_ID) ?
-				"gid" :
-				"uid",
+			 FSAL_ACE_IFLAG_SPECIAL_ID)
+				? 1
+				: 0,
+			(acl_buf->ace_v4[i].aceFlags & FSAL_ACE_FLAG_GROUP_ID)
+				? "gid"
+				: "uid",
 			acl_buf->ace_v4[i].aceWho);
 
 		/* It is invalid to set inherit flags on non dir objects */

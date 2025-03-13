@@ -1103,8 +1103,7 @@ static inline int lru_run_lane(int lane)
 	/* ACTIVE */
 	QLOCK(qlane);
 
-	glist_for_each_safe(glist, glistn, &q->q)
-	{
+	glist_for_each_safe(glist, glistn, &q->q) {
 		/* The entry being examined */
 		mdcache_lru_t *lru = NULL;
 		/* a cache entry */
@@ -1274,11 +1273,11 @@ static void lru_run(struct fridgethr_context *ctx)
 			LogFullDebug(COMPONENT_MDCACHE_LRU,
 				     "Actually release %zd entries", released);
 		} else {
-			LogFullDebug(
-				COMPONENT_MDCACHE_LRU,
-				"Entries used is %" PRIu64
-				" and low water mark: not releasing",
-				atomic_fetch_uint64_t(&lru_state.entries_used));
+			LogFullDebug(COMPONENT_MDCACHE_LRU,
+				     "Entries used is %" PRIu64
+				     " and low water mark: not releasing",
+				     atomic_fetch_uint64_t(
+					     &lru_state.entries_used));
 		}
 	}
 
@@ -1333,8 +1332,7 @@ static inline size_t chunk_lru_run_lane(size_t lane)
 	/* ACTIVE */
 	QLOCK(qlane);
 
-	glist_for_each_safe(glist, glistn, &q->q)
-	{
+	glist_for_each_safe(glist, glistn, &q->q) {
 		struct lru_q *q;
 
 		/* check per-lane work */
@@ -2245,10 +2243,9 @@ fsal_status_t dirmap_lru_init(struct mdcache_fsal_export *exp)
 
 	rc = fridgethr_init(&exp->dirmap_fridge, exp->name, &frp);
 	if (rc != 0) {
-		LogMajor(
-			COMPONENT_NFS_READDIR,
-			"Unable to initialize %s dirmap fridge, error code %d.",
-			exp->name, rc);
+		LogMajor(COMPONENT_NFS_READDIR,
+			 "Unable to initialize %s dirmap fridge, error code %d.",
+			 exp->name, rc);
 		return posix2fsal_status(rc);
 	}
 

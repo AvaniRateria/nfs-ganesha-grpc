@@ -76,8 +76,9 @@ fsal_status_t GPFSFSAL_lookup(struct fsal_obj_handle *parent,
 	struct gpfs_fsal_obj_handle *parent_hdl;
 	struct gpfs_filesystem *gpfs_fs;
 	struct fsal_fsid__ fsid;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	if (!parent || !filename)
@@ -188,9 +189,8 @@ fsal_status_t GPFSFSAL_lookup(struct fsal_obj_handle *parent,
 				COMPONENT_FSAL,
 				"Lookup of %s crosses filesystem boundary to file system %s into FSAL %s",
 				filename, (*new_fs)->path,
-				(*new_fs)->fsal != NULL ?
-					(*new_fs)->fsal->name :
-					"(none)");
+				(*new_fs)->fsal != NULL ? (*new_fs)->fsal->name
+							: "(none)");
 			return fsalstat(ERR_FSAL_XDEV, EXDEV);
 		} else {
 			LogDebug(

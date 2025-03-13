@@ -259,8 +259,7 @@ int get_nlm_state(enum state_type state_type, struct fsal_obj_handle *state_obj,
 
 nfsstat4 clientid_error_to_nfsstat(clientid_status_t err);
 
-static inline nfsstat4
-clientid_error_to_nfsstat_no_expire(clientid_status_t err)
+static inline nfsstat4 clientid_error_to_nfsstat_no_expire(clientid_status_t err)
 {
 	nfsstat4 rc = clientid_error_to_nfsstat(err);
 
@@ -613,12 +612,11 @@ void log_lock(log_components_t component, log_levels_t debug,
 
 #define LOCK_FMT \
 	"lock: [fileid = {},type = {},start = {},length = {}, blocked={}]"
-#define LOCK_VARS(_lock)                                                   \
-	((uint64_t)_lock->sle_obj->fileid), _lock->sle_lock.lock_type,     \
-		_lock->sle_lock.lock_start, (_lock)->sle_lock.lock_length, \
-		(_lock->sle_block_data ?                                   \
-			 _lock->sle_block_data->sbd_block_type :           \
-			 STATE_BLOCK_NONE)
+#define LOCK_VARS(_lock)                                                       \
+	((uint64_t)_lock->sle_obj->fileid), _lock->sle_lock.lock_type,         \
+		_lock->sle_lock.lock_start, (_lock)->sle_lock.lock_length,     \
+		(_lock->sle_block_data ? _lock->sle_block_data->sbd_block_type \
+				       : STATE_BLOCK_NONE)
 
 #define LOCK_AUTO_TRACEPOINT(_lock, event, log_level, format, ...)         \
 	GSH_AUTO_TRACEPOINT(lock, event, log_level, LOCK_FMT " | " format, \

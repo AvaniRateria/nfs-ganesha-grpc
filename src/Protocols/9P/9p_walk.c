@@ -235,11 +235,10 @@ int _9p_walk(struct _9p_request_data *req9p, u32 *plenout, char *preply)
 	_9p_setendptr(cursor, preply);
 	_9p_checkbound(cursor, preply, plenout);
 
-	LogDebug(
-		COMPONENT_9P,
-		"RWALK: tag=%u fid=%u newfid=%u nwqid=%u fileid=%llu pentry=%p",
-		(u32)*msgtag, *fid, *newfid, *nwqid,
-		(unsigned long long)pnewfid->qid.path, pnewfid->pentry);
+	LogDebug(COMPONENT_9P,
+		 "RWALK: tag=%u fid=%u newfid=%u nwqid=%u fileid=%llu pentry=%p",
+		 (u32)*msgtag, *fid, *newfid, *nwqid,
+		 (unsigned long long)pnewfid->qid.path, pnewfid->pentry);
 
 	return 1;
 }

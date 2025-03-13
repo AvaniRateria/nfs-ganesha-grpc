@@ -512,8 +512,9 @@ void uid2grp_clear_cache(void)
 	PTHREAD_RWLOCK_wrlock(&uid2grp_user_lock);
 
 	while ((node = avltree_first(&uname_tree))) {
-		struct cache_info *info = avltree_container_of(
-			node, struct cache_info, uname_node);
+		struct cache_info *info =
+			avltree_container_of(node, struct cache_info,
+					     uname_node);
 		uid2grp_remove_user(info);
 		removed_group_data_entries++;
 	}

@@ -199,11 +199,13 @@ exit:
 	return status;
 }
 
-static fsal_status_t
-kvsfs_open_by_name(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-		   const char *name, fsal_openflags_t openflags,
-		   int posix_flags, fsal_verifier_t verifier,
-		   struct fsal_attrlist *attrs_out, bool *cpm_check)
+static fsal_status_t kvsfs_open_by_name(struct fsal_obj_handle *obj_hdl,
+					struct state_t *state, const char *name,
+					fsal_openflags_t openflags,
+					int posix_flags,
+					fsal_verifier_t verifier,
+					struct fsal_attrlist *attrs_out,
+					bool *cpm_check)
 {
 	struct fsal_obj_handle *temp = NULL;
 	fsal_status_t status;
@@ -390,14 +392,16 @@ fsal_status_t kvsfs_close_func(struct fsal_obj_handle *obj_hdl,
  * @return FSAL status.
  */
 
-fsal_status_t
-kvsfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	    fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	    const char *name, struct fsal_attrlist *attr_set,
-	    fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	    struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	    struct fsal_attrlist *parent_pre_attrs_out,
-	    struct fsal_attrlist *parent_post_attrs_out)
+fsal_status_t kvsfs_open2(struct fsal_obj_handle *obj_hdl,
+			  struct state_t *state, fsal_openflags_t openflags,
+			  enum fsal_create_mode createmode, const char *name,
+			  struct fsal_attrlist *attr_set,
+			  fsal_verifier_t verifier,
+			  struct fsal_obj_handle **new_obj,
+			  struct fsal_attrlist *attrs_out,
+			  bool *caller_perm_check,
+			  struct fsal_attrlist *parent_pre_attrs_out,
+			  struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct fsal_export *export = op_ctx->fsal_export;
 	struct kvsfs_fsal_obj_handle *hdl = NULL;

@@ -172,10 +172,12 @@ fsal_status_t gpfs_merge(struct fsal_obj_handle *orig_hdl,
 	return status;
 }
 
-static fsal_status_t
-open_by_handle(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	       fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	       fsal_verifier_t verifier, struct fsal_attrlist *attrs_out)
+static fsal_status_t open_by_handle(struct fsal_obj_handle *obj_hdl,
+				    struct state_t *state,
+				    fsal_openflags_t openflags,
+				    enum fsal_create_mode createmode,
+				    fsal_verifier_t verifier,
+				    struct fsal_attrlist *attrs_out)
 {
 	struct fsal_export *export = op_ctx->fsal_export;
 	struct gpfs_fsal_obj_handle *gpfs_hdl;
@@ -433,14 +435,16 @@ static fsal_status_t open_by_name(struct fsal_obj_handle *obj_hdl,
  *
  * @return FSAL status.
  */
-fsal_status_t
-gpfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	   fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	   const char *name, struct fsal_attrlist *attr_set,
-	   fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	   struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	   struct fsal_attrlist *parent_pre_attrs_out,
-	   struct fsal_attrlist *parent_post_attrs_out)
+fsal_status_t gpfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
+			 fsal_openflags_t openflags,
+			 enum fsal_create_mode createmode, const char *name,
+			 struct fsal_attrlist *attr_set,
+			 fsal_verifier_t verifier,
+			 struct fsal_obj_handle **new_obj,
+			 struct fsal_attrlist *attrs_out,
+			 bool *caller_perm_check,
+			 struct fsal_attrlist *parent_pre_attrs_out,
+			 struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct gpfs_fsal_obj_handle *hdl = NULL;
 	struct fsal_export *export = op_ctx->fsal_export;
@@ -794,8 +798,9 @@ void gpfs_read2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	struct gpfs_fd *my_fd;
 	struct gpfs_fd temp_fd = { FSAL_FD_INIT, -1 };
 	struct fsal_fd *out_fd;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 	struct gpfs_fsal_obj_handle *myself;
 	int i;
@@ -905,8 +910,9 @@ void gpfs_write2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	struct gpfs_fd *my_fd;
 	struct gpfs_fd temp_fd = { FSAL_FD_INIT, -1 };
 	struct fsal_fd *out_fd;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 	struct gpfs_fsal_obj_handle *myself;
 	int i;
@@ -1169,8 +1175,9 @@ fsal_status_t gpfs_lock_op2(struct fsal_obj_handle *obj_hdl,
 	struct gpfs_fd temp_fd = { FSAL_FD_INIT, -1 };
 	struct fsal_fd *out_fd;
 	bool bypass = false;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 	struct gpfs_fsal_obj_handle *myself;
 
@@ -1343,8 +1350,9 @@ fsal_status_t gpfs_seek2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
 	struct fsal_fd *out_fd;
 	struct gpfs_io_info io_info = { 0 };
 	struct fseek_arg arg = { 0 };
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 	struct gpfs_fsal_obj_handle *myself;
 

@@ -556,11 +556,10 @@ static inline bool xdr_io_data_encode(XDR *xdrs, io_data *objp)
 		totlen += i_size;
 		remain -= i_size;
 
-		LogFullDebug(
-			COMPONENT_DISPATCH,
-			"iov %p [%d].iov_base %p iov_len %zu for %zu of %u",
-			objp->iov, i, objp->iov[i].iov_base, i_size, totlen,
-			objp->data_len);
+		LogFullDebug(COMPONENT_DISPATCH,
+			     "iov %p [%d].iov_base %p iov_len %zu for %zu of %u",
+			     objp->iov, i, objp->iov[i].iov_base, i_size,
+			     totlen, objp->data_len);
 	}
 
 	if (size != size2) {

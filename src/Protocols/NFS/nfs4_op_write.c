@@ -89,8 +89,8 @@ static enum nfs_req_result nfs4_complete_write(struct nfs4_write_data *data)
 done:
 
 	server_stats_io_done(write_arg->iov[0].iov_len, write_arg->io_amount,
-			     (data->res_WRITE4->status == NFS4_OK) ? true :
-								     false,
+			     (data->res_WRITE4->status == NFS4_OK) ? true
+								   : false,
 			     true /*is_write*/);
 
 	if (data->owner != NULL) {
@@ -424,11 +424,10 @@ enum nfs_req_result nfs4_op_write(struct nfs_argop4 *op, compound_data_t *data,
 			     offset, size, MaxOffsetWrite);
 
 		if ((offset + size) > MaxOffsetWrite) {
-			LogEvent(
-				COMPONENT_NFS_V4,
-				"A client tried to violate max file size %" PRIu64
-				" for exportid #%hu",
-				MaxOffsetWrite, op_ctx->ctx_export->export_id);
+			LogEvent(COMPONENT_NFS_V4,
+				 "A client tried to violate max file size %" PRIu64
+				 " for exportid #%hu",
+				 MaxOffsetWrite, op_ctx->ctx_export->export_id);
 			res_WRITE4->status = NFS4ERR_FBIG;
 			goto out;
 		}

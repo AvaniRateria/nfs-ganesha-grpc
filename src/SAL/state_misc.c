@@ -1040,8 +1040,7 @@ void uncache_nfs4_owner(struct state_nfs4_owner_t *nfs4_owner)
 	dec_state_owner_ref(owner);
 }
 
-static inline void
-refresh_nfs4_open_owner(struct state_nfs4_owner_t *nfs4_owner)
+static inline void refresh_nfs4_open_owner(struct state_nfs4_owner_t *nfs4_owner)
 {
 	time_t cache_expire;
 
@@ -1271,10 +1270,9 @@ bool hold_state_owner_ref(state_owner_t *owner)
 
 	if (str_valid) {
 		if (refcount == 0) {
-			LogFullDebug(
-				COMPONENT_STATE,
-				"Did not increment so_refcount from 0 {%s}",
-				str);
+			LogFullDebug(COMPONENT_STATE,
+				     "Did not increment so_refcount from 0 {%s}",
+				     str);
 		} else {
 			LogFullDebug(COMPONENT_STATE,
 				     "Increment so_refcount now=%d {%s}",
@@ -1337,8 +1335,7 @@ void dump_all_owners(void)
 			COMPONENT_STATE,
 			" ---------------------- State Owner List ----------------------");
 
-		glist_for_each(glist, &state_owners_all)
-		{
+		glist_for_each(glist, &state_owners_all) {
 			display_reset_buffer(&dspbuf);
 			display_owner(&dspbuf, glist_entry(glist, state_owner_t,
 							   so_all_owners));

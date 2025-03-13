@@ -92,10 +92,10 @@ static bool proc_export(struct gsh_export *export, void *arg)
 	if (glist_empty(clients))
 		clients = &export_opt.clients;
 
-	glist_for_each(glist_item, clients)
-	{
-		struct base_client_entry *client = glist_entry(
-			glist_item, struct base_client_entry, cle_list);
+	glist_for_each(glist_item, clients) {
+		struct base_client_entry *client =
+			glist_entry(glist_item, struct base_client_entry,
+				    cle_list);
 
 		group = gsh_calloc(1, sizeof(struct groupnode));
 

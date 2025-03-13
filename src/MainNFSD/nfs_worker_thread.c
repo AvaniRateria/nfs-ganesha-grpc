@@ -877,10 +877,11 @@ static enum xprt_stat nfs_rpc_process_request(nfs_request_t *reqdata,
 		LogFullDebug(COMPONENT_DISPATCH,
 			     "RPCSEC_GSS no_dispatch=%d gc->gc_proc=(%u) %s %s",
 			     no_dispatch, gc->gc_proc, str_gc_proc(gc->gc_proc),
-			     gc->gc_svc == RPCSEC_GSS_SVC_NONE	    ? "krb5" :
-			     gc->gc_svc == RPCSEC_GSS_SVC_INTEGRITY ? "krb5i" :
-			     gc->gc_svc == RPCSEC_GSS_SVC_PRIVACY   ? "krb5p" :
-								      "unknown");
+			     gc->gc_svc == RPCSEC_GSS_SVC_NONE	      ? "krb5"
+			     : gc->gc_svc == RPCSEC_GSS_SVC_INTEGRITY ? "krb5i"
+			     : gc->gc_svc == RPCSEC_GSS_SVC_PRIVACY
+				     ? "krb5p"
+				     : "unknown");
 #ifdef _USE_NFS_RDMA
 		if (get_port(svc_getrpclocal(xprt)) ==
 			    nfs_param.core_param.port[P_NFS_RDMA] &&
@@ -1472,9 +1473,9 @@ null_op:
 			nfs_rpc, op_start, TRACE_INFO,
 			"Op start. request: {}, func: {}, export_id: {}",
 			reqdata, TP_STR(reqdesc->funcname),
-			(op_ctx->ctx_export != NULL ?
-				 op_ctx->ctx_export->export_id :
-				 -1));
+			(op_ctx->ctx_export != NULL
+				 ? op_ctx->ctx_export->export_id
+				 : -1));
 
 		rc = reqdesc->service_function(arg_nfs, &reqdata->svc,
 					       reqdata->res_nfs);
@@ -1568,9 +1569,9 @@ enum xprt_stat drc_resume(struct svc_req *req)
 		 * so now we need to actually resend the response here.
 		 */
 		rc = process_dupreq(reqdata,
-				    op_ctx->client != NULL ?
-					    op_ctx->client->hostaddr_str :
-					    "<unknown client>");
+				    op_ctx->client != NULL
+					    ? op_ctx->client->hostaddr_str
+					    : "<unknown client>");
 
 		/* And now we need to try and finish this request. If we had
 		 * another XPRT_DIED and there's yet another duplicate request

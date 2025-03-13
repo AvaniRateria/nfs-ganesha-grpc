@@ -642,8 +642,9 @@ int nfs_rpc_create_chan_v40(nfs_client_id_t *clientid, uint32_t flags)
 	switch (clientid->cid_credential.flavor) {
 #ifdef _HAVE_GSSAPI
 	case RPCSEC_GSS:
-		chan->auth = nfs_rpc_callback_setup_gss(
-			chan, &clientid->cid_credential);
+		chan->auth =
+			nfs_rpc_callback_setup_gss(chan,
+						   &clientid->cid_credential);
 		break;
 #endif /* _HAVE_GSSAPI */
 	case AUTH_SYS:
@@ -910,8 +911,7 @@ rpc_call_channel_t *nfs_rpc_get_chan(nfs_client_id_t *clientid, uint32_t flags)
 	/* Get the first working back channel we have */
 	chan = NULL;
 	pthread_mutex_lock(&clientid->cid_mutex);
-	glist_for_each(glist, &clientid->cid_cb.v41.cb_session_list)
-	{
+	glist_for_each(glist, &clientid->cid_cb.v41.cb_session_list) {
 		session = glist_entry(glist, nfs41_session_t, session_link);
 		if (atomic_fetch_uint32_t(&session->flags) & session_bc_up) {
 			chan = &session->cb_chan;
@@ -1278,8 +1278,7 @@ static int nfs_rpc_v41_single(nfs_client_id_t *clientid, nfs_cb_argop4 *op,
 
 restart:
 	pthread_mutex_lock(&clientid->cid_mutex);
-	glist_for_each(glist, &clientid->cid_cb.v41.cb_session_list)
-	{
+	glist_for_each(glist, &clientid->cid_cb.v41.cb_session_list) {
 		nfs41_session_t *scur, *session;
 		slotid4 slot = 0;
 		slotid4 highest_slot = 0;

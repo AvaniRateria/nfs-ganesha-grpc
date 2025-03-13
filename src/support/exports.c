@@ -352,8 +352,7 @@ static void LogExportClients(log_levels_t level, int line, const char *func,
 
 	PTHREAD_RWLOCK_rdlock(&export->exp_lock);
 
-	glist_for_each(glist, &export->clients)
-	{
+	glist_for_each(glist, &export->clients) {
 		struct base_client_entry *client;
 
 		client = glist_entry(glist, struct base_client_entry, cle_list);
@@ -1157,8 +1156,8 @@ static int export_commit_common(void *node, void *link_mem, void *self_struct,
 			 * location.
 			 */
 			struct gsh_export *dup_pseudo_exp =
-				get_gsh_export_by_pseudo(
-					export->cfg_pseudopath, true);
+				get_gsh_export_by_pseudo(export->cfg_pseudopath,
+							 true);
 			if (dup_pseudo_exp) {
 				LogCrit(COMPONENT_CONFIG,
 					"Pseudo path (%s) is a duplicate",
@@ -1230,10 +1229,10 @@ static int export_commit_common(void *node, void *link_mem, void *self_struct,
 			LogDebug(COMPONENT_EXPORT,
 				 "Export %d NFSv4 changing from %s to %s",
 				 probe_exp->export_id,
-				 probe_exp->is_mounted ? "mounted" :
-							 "not mounted",
-				 mountable ? "can be mounted" :
-					     "can not be mounted");
+				 probe_exp->is_mounted ? "mounted"
+						       : "not mounted",
+				 mountable ? "can be mounted"
+					   : "can not be mounted");
 			mount_status_changed |= true;
 			mount_export |= mountable;
 		}
@@ -2507,7 +2506,8 @@ void log_all_exports(log_levels_t level, int line, const char *func)
 		level, __FILE__, line, func, NULL, true
 	};
 
-	foreach_gsh_export(log_an_export, false, &lep);
+	foreach_gsh_export(log_an_export, false, &lep)
+		;
 }
 
 /**
@@ -2767,10 +2767,10 @@ void exports_pkginit(void)
 	struct gsh_export *export;
 
 	glist_init(&errlist);
-	foreach_gsh_export(init_export_cb, true, &errlist);
+	foreach_gsh_export(init_export_cb, true, &errlist)
+		;
 
-	glist_for_each_safe(glist, glistn, &errlist)
-	{
+	glist_for_each_safe(glist, glistn, &errlist) {
 		export = glist_entry(glist, struct gsh_export, exp_list);
 		export_revert(export);
 	}
@@ -3240,8 +3240,9 @@ static inline bool is_ha_proxy_protocol_connection(const SVCXPRT *const xprt)
 static bool client_entry_match_op_ha_proxy_protocol(
 	const struct base_client_entry *const client)
 {
-	struct exportlist_client_entry *expclient = container_of(
-		client, struct exportlist_client_entry, client_entry);
+	struct exportlist_client_entry *expclient =
+		container_of(client, struct exportlist_client_entry,
+			     client_entry);
 
 	LogMidDebug_ExportClientListEntry("Check HA PROXY match: ", expclient);
 	if (expclient->ha_proxy_protocol_type ==

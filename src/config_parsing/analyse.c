@@ -205,8 +205,7 @@ static void print_node(FILE *output, struct config_node *node,
 	if (node->type == TYPE_BLOCK) {
 		fprintf(output, "%*s<BLOCK '%s' %s:%d>\n", indent, " ",
 			node->u.nterm.name, node->filename, node->linenumber);
-		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes)
-		{
+		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes) {
 			sub_node = glist_entry(nsi, struct config_node, node);
 			print_node(output, sub_node, indent + 3);
 		}
@@ -215,8 +214,7 @@ static void print_node(FILE *output, struct config_node *node,
 	} else if (node->type == TYPE_STMT) {
 		fprintf(output, "%*s<STMT '%s' %s:%d>\n", indent, " ",
 			node->u.nterm.name, node->filename, node->linenumber);
-		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes)
-		{
+		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes) {
 			sub_node = glist_entry(nsi, struct config_node, node);
 			print_node(output, sub_node, indent + 3);
 		}
@@ -225,11 +223,11 @@ static void print_node(FILE *output, struct config_node *node,
 	} else {
 		/* a statement value */
 		fprintf(output, "%*s(%s)'%s' '%s'\n", indent, " ",
-			(node->u.term.type != 0 ?
-				 config_term_type[node->u.term.type].name :
-				 "unknown"),
-			(node->u.term.op_code != NULL ? node->u.term.op_code :
-							" "),
+			(node->u.term.type != 0
+				 ? config_term_type[node->u.term.type].name
+				 : "unknown"),
+			(node->u.term.op_code != NULL ? node->u.term.op_code
+						      : " "),
 			node->u.term.varvalue);
 	}
 }
@@ -267,8 +265,7 @@ void print_parse_tree(FILE *output, struct config_root *tree)
 	fprintf(output, "   </TOKEN_TABLE>\n");
 	fprintf(output, "</SUMMARY>\n");
 	fprintf(output, "<PARSE_TREE>\n");
-	glist_for_each_safe(nsi, nsn, &tree->root.u.nterm.sub_nodes)
-	{
+	glist_for_each_safe(nsi, nsn, &tree->root.u.nterm.sub_nodes) {
 		node = glist_entry(nsi, struct config_node, node);
 		print_node(output, node, 3);
 	}
@@ -290,8 +287,7 @@ static void free_node(struct config_node *node)
 		struct config_node *sub_node;
 		struct glist_head *nsi, *nsn;
 
-		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes)
-		{
+		glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes) {
 			sub_node = glist_entry(nsi, struct config_node, node);
 			glist_del(&sub_node->node);
 			free_node(sub_node);
@@ -320,8 +316,7 @@ void free_parse_tree(struct config_root *tree)
 	struct config_node *node;
 	struct glist_head *nsi, *nsn;
 
-	glist_for_each_safe(nsi, nsn, &tree->root.u.nterm.sub_nodes)
-	{
+	glist_for_each_safe(nsi, nsn, &tree->root.u.nterm.sub_nodes) {
 		node = glist_entry(nsi, struct config_node, node);
 		glist_del(&node->node);
 		free_node(node);

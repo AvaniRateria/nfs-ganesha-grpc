@@ -368,8 +368,8 @@ static fsal_status_t create_handle(struct fsal_export *export_pub,
 		return ceph2fsal_error(rc);
 
 	rc = fsal_ceph_ll_getattr(export->cmount, i, &stx,
-				  attrs_out ? CEPH_STATX_ATTR_MASK :
-					      CEPH_STATX_HANDLE_MASK,
+				  attrs_out ? CEPH_STATX_ATTR_MASK
+					    : CEPH_STATX_HANDLE_MASK,
 				  &op_ctx->creds);
 	if (rc < 0)
 		return ceph2fsal_error(rc);

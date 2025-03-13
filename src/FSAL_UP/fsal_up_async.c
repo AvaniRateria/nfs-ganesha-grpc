@@ -79,8 +79,9 @@ static void queue_invalidate(struct fridgethr_context *ctx)
 	struct invalidate_args *args = ctx->arg;
 	fsal_status_t status;
 
-	status = args->vec->up_fsal_export->up_ops->invalidate(
-		args->vec, &args->obj, args->flags);
+	status = args->vec->up_fsal_export->up_ops->invalidate(args->vec,
+							       &args->obj,
+							       args->flags);
 
 	if (args->cb)
 		args->cb(args->cb_arg, status);
@@ -302,8 +303,8 @@ static void queue_layoutrecall(struct fridgethr_context *ctx)
 	status = args->vec->up_fsal_export->up_ops->layoutrecall(
 		args->vec, &args->handle, args->layout_type, args->changed,
 		&args->segment, args->cookie,
-		args->spec.how == layoutrecall_not_specced ? NULL :
-							     &args->spec);
+		args->spec.how == layoutrecall_not_specced ? NULL
+							   : &args->spec);
 
 	if (args->cb)
 		args->cb(args->cb_arg, status);
@@ -377,12 +378,11 @@ static void queue_notify_device(struct fridgethr_context *ctx)
 	gsh_free(args);
 }
 
-fsal_status_t
-up_async_notify_device(struct fridgethr *fr, const struct fsal_up_vector *vec,
-		       notify_deviceid_type4 notify_type,
-		       layouttype4 layout_type, struct pnfs_deviceid *devid,
-		       bool immediate, void (*cb)(void *, state_status_t),
-		       void *cb_arg)
+fsal_status_t up_async_notify_device(
+	struct fridgethr *fr, const struct fsal_up_vector *vec,
+	notify_deviceid_type4 notify_type, layouttype4 layout_type,
+	struct pnfs_deviceid *devid, bool immediate,
+	void (*cb)(void *, state_status_t), void *cb_arg)
 {
 	struct notify_device_args *args = NULL;
 	int rc = 0;

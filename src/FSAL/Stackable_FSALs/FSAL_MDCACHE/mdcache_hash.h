@@ -174,9 +174,8 @@ static inline int cih_fh_cmpf(const struct avltree_node *lhs,
  *
  * @return Pointer to node if found, else NULL.
  */
-static inline struct avltree_node *
-cih_fhcache_inline_lookup(const struct avltree *tree,
-			  const struct avltree_node *key)
+static inline struct avltree_node *cih_fhcache_inline_lookup(
+	const struct avltree *tree, const struct avltree_node *key)
 {
 	return avltree_inline_lookup(key, tree, cih_fh_cmpf);
 }

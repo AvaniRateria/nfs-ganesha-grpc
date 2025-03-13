@@ -48,8 +48,8 @@
 				"SQLite command failed in %s line %i",  \
 				__func__, __LINE__);                    \
 			LogCrit(COMPONENT_FSAL, "%s (%d)",              \
-				(_msg_str_ ? _msg_str_ :                \
-					     sqlite3_errmsg(_p_conn_)), \
+				(_msg_str_ ? _msg_str_                  \
+					   : sqlite3_errmsg(_p_conn_)), \
 				_code_);                                \
 			if (_msg_str_) {                                \
 				sqlite3_free(_msg_str_);                \
@@ -70,8 +70,8 @@
 				"SQLite command failed in %s line %i",  \
 				__func__, __LINE__);                    \
 			LogCrit(COMPONENT_FSAL, "%s (%d)",              \
-				(_msg_str_ ? _msg_str_ :                \
-					     sqlite3_errmsg(_p_conn_)), \
+				(_msg_str_ ? _msg_str_                  \
+					   : sqlite3_errmsg(_p_conn_)), \
 				_code_);                                \
 			if (_msg_str_) {                                \
 				sqlite3_free(_msg_str_);                \
@@ -210,14 +210,14 @@ static db_thread_info_t db_thread[MAX_DB];
 	 (((c) >= 'a') && ((c) <= 'f')))
 
 /* converts an hexa letter */
-#define HEXA2BYTE(c)                                                      \
-	((unsigned char)(((c) >= '0') && ((c) <= '9') ?                   \
-				 ((c) - '0') :                            \
-				 (((c) >= 'A') && ((c) <= 'F') ?          \
-					  ((c) - 'A' + 10) :              \
-					  (((c) >= 'a') && ((c) <= 'f') ? \
-						   ((c) - 'a' + 10) :     \
-						   0))))
+#define HEXA2BYTE(c)                                                        \
+	((unsigned char)(((c) >= '0') && ((c) <= '9')                       \
+				 ? ((c) - '0')                              \
+				 : (((c) >= 'A') && ((c) <= 'F')            \
+					    ? ((c) - 'A' + 10)              \
+					    : (((c) >= 'a') && ((c) <= 'f') \
+						       ? ((c) - 'a' + 10)   \
+						       : 0))))
 
 /**
  * @brief Read a hexadecimal string into memory

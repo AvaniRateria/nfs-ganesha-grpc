@@ -158,9 +158,8 @@ static void shuffle(void *data, size_t size, size_t itemSize)
  *
  * @returns: Randomized chunkservers list.
  */
-static sau_chunkserver_info_t *
-randomizedChunkserverList(struct SaunaFSExport *export,
-			  uint32_t *chunkserverCount)
+static sau_chunkserver_info_t *randomizedChunkserverList(
+	struct SaunaFSExport *export, uint32_t *chunkserverCount)
 {
 	sau_chunkserver_info_t *chunkserverInfo = NULL;
 
@@ -421,8 +420,7 @@ static nfsstat4 getdeviceinfo(struct fsal_module *module, XDR *xdrStream,
 
 	uint16_t export_id = deviceid->device_id2;
 
-	glist_for_each_safe(glist, glistn, &module->exports)
-	{
+	glist_for_each_safe(glist, glistn, &module->exports) {
 		exportHandle = glist_entry(glist, struct fsal_export, exports);
 
 		if (exportHandle->export_id == export_id) {
@@ -566,10 +564,11 @@ static nfsstat4 getdeviceinfo(struct fsal_module *module, XDR *xdrStream,
  *
  * @returns: Valid error codes in RFC 5661, p. 365-6.
  */
-static nfsstat4
-getdevicelist(struct fsal_export *exportHandle, layouttype4 type, void *opaque,
-	      bool (*callback)(void *opaque, const uint64_t identifier),
-	      struct fsal_getdevicelist_res *res)
+static nfsstat4 getdevicelist(struct fsal_export *exportHandle,
+			      layouttype4 type, void *opaque,
+			      bool (*callback)(void *opaque,
+					       const uint64_t identifier),
+			      struct fsal_getdevicelist_res *res)
 {
 	(void)exportHandle;
 	(void)type;

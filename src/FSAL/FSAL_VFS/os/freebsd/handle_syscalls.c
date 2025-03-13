@@ -76,18 +76,20 @@ void display_vfs_handle(struct display_buffer *dspbuf,
 	display_opaque_value(dspbuf, hdl->fh_fid.fid_data, hdl->fh_fid.fid_len);
 }
 
+/* clang-format off */
 #define LogVFSHandle(fh)                                                   \
 	do {                                                               \
 		if (isMidDebug(COMPONENT_FSAL)) {                          \
 			char buf[256] = "\0";                              \
 			struct display_buffer dspbuf = { sizeof(buf), buf, \
 							 buf };            \
-                                                                           \
+									   \
 			display_vfs_handle(&dspbuf, fh);                   \
-                                                                           \
+									   \
 			LogMidDebug(COMPONENT_FSAL, "%s", buf);            \
 		}                                                          \
 	} while (0)
+/* clang-format on */
 
 int vfs_fd_to_handle(int fd, struct fsal_filesystem *fs, vfs_file_handle_t *fh)
 {

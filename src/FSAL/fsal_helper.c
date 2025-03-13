@@ -105,9 +105,10 @@ static fsal_status_t check_open_permission(struct fsal_obj_handle *obj,
 	 * open("foo", O_RDWR | O_CREAT | O_EXCL, 0) to succeed).
 	 * For open reclaims ask for owner_skip.
 	 */
-	status = obj->obj_ops->test_access(
-		obj, access_mask, NULL, NULL,
-		exclusive_create || (openflags & FSAL_O_RECLAIM));
+	status =
+		obj->obj_ops->test_access(obj, access_mask, NULL, NULL,
+					  exclusive_create ||
+						  (openflags & FSAL_O_RECLAIM));
 
 	if (!FSAL_IS_ERROR(status)) {
 		*reason = "";
@@ -530,8 +531,9 @@ fsal_status_t fsal_setattr(struct fsal_obj_handle *obj, bool bypass,
 	if (FSAL_IS_ERROR(status))
 		return status;
 
-	is_superuser = op_ctx->fsal_export->exp_ops.is_superuser(
-		op_ctx->fsal_export, &op_ctx->creds);
+	is_superuser =
+		op_ctx->fsal_export->exp_ops.is_superuser(op_ctx->fsal_export,
+							  &op_ctx->creds);
 
 	/* Test for the following condition from chmod(2):
 	 *
@@ -1243,8 +1245,8 @@ static enum fsal_dir_result populate_dirent(const char *name,
 				LogMajor(
 					COMPONENT_FSAL,
 					"Failed to get root for %s, id=%d, status = %s",
-					ref_fullpath ? ref_fullpath->gr_val :
-						       "",
+					ref_fullpath ? ref_fullpath->gr_val
+						     : "",
 					junction_export->export_id,
 					fsal_err_txt(status));
 
@@ -1420,8 +1422,7 @@ fsal_status_t fsal_readdir(struct fsal_obj_handle *directory, uint64_t cookie,
  * @param[in] obj   File
  * @retval true if the file has file states, false otherwise
  */
-bool
-fsal_has_file_states(struct fsal_obj_handle *obj_hdl)
+bool fsal_has_file_states(struct fsal_obj_handle *obj_hdl)
 {
 	if (obj_hdl->type == REGULAR_FILE &&
 	    !glist_empty(&obj_hdl->state_hdl->file.list_of_states))
@@ -1499,9 +1500,8 @@ fsal_status_t fsal_remove(struct fsal_obj_handle *parent, const char *name,
 #endif /* ENABLE_RFC_ACL */
 
 	if (nfs_param.nfsv4_param.preserve_unlinked &&
-	    op_ctx->fsal_export->exp_ops.fs_supports(
-			op_ctx->fsal_export,
-			fso_preserve_unlinked)) {
+	    op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+						     fso_preserve_unlinked)) {
 		STATELOCK_lock(to_remove_obj);
 		if (fsal_has_file_states(to_remove_obj))
 			op_ctx->is_unlink_with_states = true;
@@ -1942,8 +1942,9 @@ void fsal_read2(struct fsal_obj_handle *obj_hdl, bool bypass,
 	assert(read_arg->iov_count == 1);
 
 	/* Check if someone else want's to allocate the buffer */
-	read_arg->iov[0].iov_base = get_buffer_for_io_response(
-		read_arg->iov[0].iov_len, read_arg->last_iov_buf_size);
+	read_arg->iov[0].iov_base =
+		get_buffer_for_io_response(read_arg->iov[0].iov_len,
+					   read_arg->last_iov_buf_size);
 
 	if (read_arg->iov[0].iov_base != NULL) {
 		/* Someone wanted to allocate the buffer, use it. */

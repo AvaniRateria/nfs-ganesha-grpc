@@ -976,13 +976,15 @@ static fsal_status_t linkfile(struct fsal_obj_handle *obj_hdl,
  * default case not supported
  */
 
-static fsal_status_t
-renamefile(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
-	   const char *old_name, struct fsal_obj_handle *newdir_hdl,
-	   const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
-	   struct fsal_attrlist *olddir_post_attrs_out,
-	   struct fsal_attrlist *newdir_pre_attrs_out,
-	   struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t renamefile(struct fsal_obj_handle *obj_hdl,
+				struct fsal_obj_handle *olddir_hdl,
+				const char *old_name,
+				struct fsal_obj_handle *newdir_hdl,
+				const char *new_name,
+				struct fsal_attrlist *olddir_pre_attrs_out,
+				struct fsal_attrlist *olddir_post_attrs_out,
+				struct fsal_attrlist *newdir_pre_attrs_out,
+				struct fsal_attrlist *newdir_post_attrs_out)
 {
 	LogCrit(COMPONENT_FSAL, "Invoking unsupported FSAL operation");
 	return fsalstat(ERR_FSAL_NOTSUPP, ENOTSUP);
@@ -1040,10 +1042,12 @@ static fsal_status_t file_fallocate(struct fsal_obj_handle *obj_hdl,
  * default case not supported
  */
 
-static fsal_status_t
-list_ext_attrs(struct fsal_obj_handle *obj_hdl, unsigned int cookie,
-	       fsal_xattrent_t *xattrs_tab, unsigned int xattrs_tabsize,
-	       unsigned int *p_nb_returned, int *end_of_list)
+static fsal_status_t list_ext_attrs(struct fsal_obj_handle *obj_hdl,
+				    unsigned int cookie,
+				    fsal_xattrent_t *xattrs_tab,
+				    unsigned int xattrs_tabsize,
+				    unsigned int *p_nb_returned,
+				    int *end_of_list)
 {
 	LogCrit(COMPONENT_FSAL, "Invoking unsupported FSAL operation");
 	return fsalstat(ERR_FSAL_NOTSUPP, ENOTSUP);
@@ -1614,11 +1618,13 @@ static nfsstat4 ds_read_plus(struct fsal_ds_handle *const ds_hdl,
  *
  * @return An NFSv4.1 status code.
  */
-static nfsstat4
-ds_write(struct fsal_ds_handle *const ds_hdl, const stateid4 *stateid,
-	 const offset4 offset, const count4 write_length, const void *buffer,
-	 const stable_how4 stability_wanted, count4 *const written_length,
-	 verifier4 *const writeverf, stable_how4 *const stability_got)
+static nfsstat4 ds_write(struct fsal_ds_handle *const ds_hdl,
+			 const stateid4 *stateid, const offset4 offset,
+			 const count4 write_length, const void *buffer,
+			 const stable_how4 stability_wanted,
+			 count4 *const written_length,
+			 verifier4 *const writeverf,
+			 stable_how4 *const stability_got)
 {
 	LogCrit(COMPONENT_PNFS, "Unimplemented DS write!");
 	return NFS4ERR_NOTSUPP;

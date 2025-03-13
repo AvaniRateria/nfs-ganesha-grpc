@@ -132,8 +132,9 @@ enum nfs_req_result nfs4_op_open_downgrade(struct nfs_argop4 *op,
 		     arg_OPEN_DOWNGRADE4->share_deny,
 		     arg_OPEN_DOWNGRADE4->share_access);
 
-	res_OPEN_DOWNGRADE4->status = nfs4_do_open_downgrade(
-		op, data, open_owner, state_found, &cause);
+	res_OPEN_DOWNGRADE4->status =
+		nfs4_do_open_downgrade(op, data, open_owner, state_found,
+				       &cause);
 
 	if (res_OPEN_DOWNGRADE4->status != NFS4_OK) {
 		LogEvent(COMPONENT_STATE, "Failed to open downgrade: %s",

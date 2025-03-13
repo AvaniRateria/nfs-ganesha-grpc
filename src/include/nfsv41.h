@@ -4353,9 +4353,10 @@ static inline bool xdr_device_addr4(XDR *xdrs, device_addr4 *objp)
 {
 	if (!xdr_layouttype4(xdrs, &objp->da_layout_type))
 		return false;
-	if (!inline_xdr_bytes(
-		    xdrs, (char **)&objp->da_addr_body.da_addr_body_val,
-		    &objp->da_addr_body.da_addr_body_len, XDR_BYTES_MAXLEN))
+	if (!inline_xdr_bytes(xdrs,
+			      (char **)&objp->da_addr_body.da_addr_body_val,
+			      &objp->da_addr_body.da_addr_body_len,
+			      XDR_BYTES_MAXLEN))
 		return false;
 	return true;
 }
@@ -4471,9 +4472,10 @@ static inline bool xdr_threshold_item4(XDR *xdrs, threshold_item4 *objp)
 		return false;
 	if (!xdr_bitmap4(xdrs, &objp->thi_hintset))
 		return false;
-	if (!inline_xdr_bytes(
-		    xdrs, (char **)&objp->thi_hintlist.thi_hintlist_val,
-		    &objp->thi_hintlist.thi_hintlist_len, XDR_BYTES_MAXLEN))
+	if (!inline_xdr_bytes(xdrs,
+			      (char **)&objp->thi_hintlist.thi_hintlist_val,
+			      &objp->thi_hintlist.thi_hintlist_len,
+			      XDR_BYTES_MAXLEN))
 		return false;
 	return true;
 }
@@ -5258,9 +5260,10 @@ static inline bool xdr_ssv_seal_cipher_tkn4(XDR *xdrs,
 	if (!inline_xdr_bytes(xdrs, (char **)&objp->ssct_iv.ssct_iv_val,
 			      &objp->ssct_iv.ssct_iv_len, XDR_BYTES_MAXLEN))
 		return false;
-	if (!inline_xdr_bytes(
-		    xdrs, (char **)&objp->ssct_encr_data.ssct_encr_data_val,
-		    &objp->ssct_encr_data.ssct_encr_data_len, XDR_BYTES_MAXLEN))
+	if (!inline_xdr_bytes(xdrs,
+			      (char **)&objp->ssct_encr_data.ssct_encr_data_val,
+			      &objp->ssct_encr_data.ssct_encr_data_len,
+			      XDR_BYTES_MAXLEN))
 		return false;
 	if (!inline_xdr_bytes(xdrs, (char **)&objp->ssct_hmac.ssct_hmac_val,
 			      &objp->ssct_hmac.ssct_hmac_len, XDR_BYTES_MAXLEN))
@@ -7263,9 +7266,8 @@ static inline bool xdr_gddrnf4_status(XDR *xdrs, gddrnf4_status *objp)
 	return true;
 }
 
-static inline bool
-xdr_GET_DIR_DELEGATION4res_non_fatal(XDR *xdrs,
-				     GET_DIR_DELEGATION4res_non_fatal *objp)
+static inline bool xdr_GET_DIR_DELEGATION4res_non_fatal(
+	XDR *xdrs, GET_DIR_DELEGATION4res_non_fatal *objp)
 {
 	if (!xdr_gddrnf4_status(xdrs, &objp->gddrnf_status))
 		return false;
@@ -8127,9 +8129,8 @@ static inline bool xdr_nfs_argop4(XDR *xdrs, nfs_argop4 *objp)
 					      .read = 0,
 					      .write = 0 };
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			      (struct nfs_request_lookahead *)xdrs->x_public :
-			      &slhd;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &slhd;
 
 	if (!xdr_nfs_opnum4(xdrs, &objp->argop))
 		return false;

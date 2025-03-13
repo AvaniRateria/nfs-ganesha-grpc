@@ -621,9 +621,8 @@ static void rados_kv_pop_clid_entry(char *key, char *val, size_t val_len,
 	gsh_refstr_put(old_oid);
 }
 
-static void
-rados_kv_read_recov_clids_recover(add_clid_entry_hook add_clid_entry,
-				  add_rfh_entry_hook add_rfh_entry)
+static void rados_kv_read_recov_clids_recover(
+	add_clid_entry_hook add_clid_entry, add_rfh_entry_hook add_rfh_entry)
 {
 	int ret;
 	struct gsh_refstr *recov_oid, *old_oid;

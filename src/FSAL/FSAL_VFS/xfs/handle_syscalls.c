@@ -59,18 +59,22 @@ void display_xfs_handle(struct display_buffer *dspbuf,
 			     hdl->ha_fid.fid_ino);
 }
 
+/* clang-format off */
+
 #define LogXFSHandle(fh)                                                   \
 	do {                                                               \
 		if (isMidDebug(COMPONENT_FSAL)) {                          \
 			char buf[256] = "\0";                              \
 			struct display_buffer dspbuf = { sizeof(buf), buf, \
 							 buf };            \
-                                                                           \
+									   \
 			display_xfs_handle(&dspbuf, fh);                   \
-                                                                           \
+									   \
 			LogMidDebug(COMPONENT_FSAL, "%s", buf);            \
 		}                                                          \
 	} while (0)
+
+/* clang-format on */
 
 static int xfs_fsal_bulkstat_inode(int fd, xfs_ino_t ino,
 				   struct xfs_bstat *bstat)

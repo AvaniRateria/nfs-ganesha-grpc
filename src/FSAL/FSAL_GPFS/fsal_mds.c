@@ -50,8 +50,9 @@ static void fs_layouttypes(struct fsal_export *export_hdl, int32_t *count,
 	struct open_arg arg;
 	static const layouttype4 supported_layout_type = LAYOUT4_NFSV4_1_FILES;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	/** @todo FSF: needs real getdeviceinfo that gets to the correct
@@ -217,8 +218,9 @@ static void fs_verifier(struct fsal_export *exp_hdl,
 	struct readlink_arg varg;
 	unsigned int rc = 0;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	varg.fd = export_fd;
@@ -287,8 +289,9 @@ static nfsstat4 layoutget(struct fsal_obj_handle *obj_hdl, XDR *loc_body,
 	/* Descriptor for DS handle */
 	struct gsh_buffdesc ds_desc;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	myself = container_of(obj_hdl, struct gpfs_fsal_obj_handle, obj_handle);
@@ -432,8 +435,9 @@ static nfsstat4 layoutreturn(struct fsal_obj_handle *obj_hdl, XDR *lrf_body,
 	/* The private 'full' object handle */
 	struct gpfs_file_handle *gpfs_handle;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	int rc = 0;
@@ -498,8 +502,9 @@ static nfsstat4 layoutcommit(struct fsal_obj_handle *obj_hdl, XDR *lou_body,
 	int rc = 0;
 	struct layoutcommit_arg targ;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	/* Sanity check on type */

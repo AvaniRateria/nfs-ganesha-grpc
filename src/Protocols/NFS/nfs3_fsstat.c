@@ -119,8 +119,9 @@ int nfs3_fsstat(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 		     dynamicinfo.total_files, dynamicinfo.free_files,
 		     dynamicinfo.avail_files);
 
-	nfs_SetPostOpAttr(
-		obj, &res->res_fsstat3.FSSTAT3res_u.resok.obj_attributes, NULL);
+	nfs_SetPostOpAttr(obj,
+			  &res->res_fsstat3.FSSTAT3res_u.resok.obj_attributes,
+			  NULL);
 
 	res->res_fsstat3.FSSTAT3res_u.resok.tbytes = dynamicinfo.total_bytes;
 	res->res_fsstat3.FSSTAT3res_u.resok.fbytes = dynamicinfo.free_bytes;

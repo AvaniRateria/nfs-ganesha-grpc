@@ -249,9 +249,9 @@ fsal_status_t vfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl,
 	}
 
 	/* get the path of the file in file system */
-	fd = (obj_hdl->type == DIRECTORY) ?
-		     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-		     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+	fd = (obj_hdl->type == DIRECTORY)
+		     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+		     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 	if (fd < 0)
 		return fsalstat(fe, -fd);
 
@@ -378,9 +378,9 @@ fsal_status_t vfs_getextattr_value_by_id(struct fsal_obj_handle *obj_hdl,
 		char attr_name[MAXPATHLEN];
 		fsal_errors_t fe;
 
-		fd = (obj_hdl->type == DIRECTORY) ?
-			     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-			     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+		fd = (obj_hdl->type == DIRECTORY)
+			     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+			     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 		if (fd < 0)
 			return fsalstat(fe, -fd);
 
@@ -513,9 +513,9 @@ fsal_status_t vfs_setextattr_value(struct fsal_obj_handle *obj_hdl,
 	obj_handle =
 		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
 
-	fd = (obj_hdl->type == DIRECTORY) ?
-		     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-		     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+	fd = (obj_hdl->type == DIRECTORY)
+		     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+		     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 	if (fd < 0)
 		return fsalstat(fe, -fd);
 
@@ -555,9 +555,9 @@ fsal_status_t vfs_setextattr_value_by_id(struct fsal_obj_handle *obj_hdl,
 	else if (xattr_id < XATTR_COUNT)
 		return fsalstat(ERR_FSAL_PERM, 0);
 
-	fd = (obj_hdl->type == DIRECTORY) ?
-		     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-		     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+	fd = (obj_hdl->type == DIRECTORY)
+		     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+		     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 	if (fd < 0)
 		return fsalstat(fe, -fd);
 
@@ -586,9 +586,9 @@ fsal_status_t vfs_remove_extattr_by_id(struct fsal_obj_handle *obj_hdl,
 
 	obj_handle =
 		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
-	fd = (obj_hdl->type == DIRECTORY) ?
-		     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-		     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+	fd = (obj_hdl->type == DIRECTORY)
+		     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+		     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 	if (fd < 0)
 		return fsalstat(fe, -fd);
 
@@ -623,9 +623,9 @@ fsal_status_t vfs_remove_extattr_by_name(struct fsal_obj_handle *obj_hdl,
 	obj_handle =
 		container_of(obj_hdl, struct vfs_fsal_obj_handle, obj_handle);
 
-	fd = (obj_hdl->type == DIRECTORY) ?
-		     vfs_fsal_open(obj_handle, O_DIRECTORY, &fe) :
-		     vfs_fsal_open(obj_handle, O_RDWR, &fe);
+	fd = (obj_hdl->type == DIRECTORY)
+		     ? vfs_fsal_open(obj_handle, O_DIRECTORY, &fe)
+		     : vfs_fsal_open(obj_handle, O_RDWR, &fe);
 	if (fd < 0)
 		return fsalstat(fe, -fd);
 

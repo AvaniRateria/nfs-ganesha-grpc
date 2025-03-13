@@ -313,10 +313,9 @@ state_status_t state_nlm_share(struct fsal_obj_handle *obj, int share_access,
 		       &state->state_export_list);
 	PTHREAD_RWLOCK_unlock(&op_ctx->ctx_export->exp_lock);
 
-	LogFullDebugAlt(
-		COMPONENT_STATE, COMPONENT_NLM,
-		"SHARE added state_t %p, share_access %u, share_deny %u", state,
-		new_access, new_deny);
+	LogFullDebugAlt(COMPONENT_STATE, COMPONENT_NLM,
+			"SHARE added state_t %p, share_access %u, share_deny %u",
+			state, new_access, new_deny);
 
 update:
 
@@ -342,8 +341,7 @@ void state_share_wipe(struct state_hdl *hstate)
 	struct glist_head *glist;
 	struct glist_head *glistn;
 
-	glist_for_each_safe(glist, glistn, &hstate->file.nlm_share_list)
-	{
+	glist_for_each_safe(glist, glistn, &hstate->file.nlm_share_list) {
 		state = glist_entry(glist, state_t, state_list);
 
 		remove_nlm_share(state);

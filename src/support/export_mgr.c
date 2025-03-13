@@ -358,8 +358,7 @@ struct gsh_export *get_gsh_export_by_path_locked(char *path, bool exact_match)
 	LogFullDebug(COMPONENT_EXPORT, "Searching for export matching path %s",
 		     path);
 
-	glist_for_each(glist, &exportlist)
-	{
+	glist_for_each(glist, &exportlist) {
 		struct gsh_refstr *ref_fullpath;
 
 		export = glist_entry(glist, struct gsh_export, exp_list);
@@ -486,8 +485,7 @@ struct gsh_export *get_gsh_export_by_pseudo_locked(char *path, bool exact_match)
 	LogFullDebug(COMPONENT_EXPORT,
 		     "Searching for export matching pseudo path %s", path);
 
-	glist_for_each(glist, &exportlist)
-	{
+	glist_for_each(glist, &exportlist) {
 		struct gsh_refstr *ref_pseudopath;
 
 		export = glist_entry(glist, struct gsh_export, exp_list);
@@ -609,8 +607,7 @@ struct gsh_export *get_gsh_export_by_tag(char *tag)
 
 	PTHREAD_RWLOCK_rdlock(&export_by_id.eid_lock);
 
-	glist_for_each(glist, &exportlist)
-	{
+	glist_for_each(glist, &exportlist) {
 		export = glist_entry(glist, struct gsh_export, exp_list);
 
 		if (export->FS_tag != NULL && !strcmp(export->FS_tag, tag))
@@ -809,8 +806,7 @@ bool foreach_gsh_export(bool (*cb)(struct gsh_export *exp, void *state),
 		PTHREAD_RWLOCK_wrlock(&export_by_id.eid_lock);
 	else
 		PTHREAD_RWLOCK_rdlock(&export_by_id.eid_lock);
-	glist_for_each_safe(glist, glistn, &exportlist)
-	{
+	glist_for_each_safe(glist, glistn, &exportlist) {
 		export = glist_entry(glist, struct gsh_export, exp_list);
 		rc = cb(export, state);
 		if (!rc)
@@ -1487,8 +1483,7 @@ static bool gsh_export_displayexport(DBusMessageIter *args, DBusMessage *reply,
 	dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(siyyiuuuuu)",
 					 &client_array_iter.export_iter);
 	PTHREAD_RWLOCK_rdlock(&export->exp_lock);
-	glist_for_each(glist, &export->clients)
-	{
+	glist_for_each(glist, &export->clients) {
 		struct base_client_entry *client;
 		struct exportlist_client_entry *expclient;
 
@@ -1611,8 +1606,7 @@ void reset_export_stats(void)
 	struct export_stats *exp;
 
 	PTHREAD_RWLOCK_rdlock(&export_by_id.eid_lock);
-	glist_for_each(glist, &exportlist)
-	{
+	glist_for_each(glist, &exportlist) {
 		export = glist_entry(glist, struct gsh_export, exp_list);
 		exp = container_of(export, struct export_stats, export);
 		reset_gsh_stats(&exp->st);
@@ -2227,8 +2221,7 @@ static void reset_fsal_stats(void)
 	/* Next module */
 	struct glist_head *mn = NULL;
 
-	glist_for_each_safe(mi, mn, &fsal_list)
-	{
+	glist_for_each_safe(mi, mn, &fsal_list) {
 		/* The module to reset stats */
 		struct fsal_module *m =
 			glist_entry(mi, struct fsal_module, fsals);

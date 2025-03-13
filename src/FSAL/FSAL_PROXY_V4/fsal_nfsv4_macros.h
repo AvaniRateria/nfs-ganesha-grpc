@@ -53,7 +53,10 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #endif
 
-#define TIMEOUTRPC { 2, 0 }
+#define TIMEOUTRPC   \
+	{            \
+		2, 0 \
+	}
 
 #define PRINT_HANDLE(tag, handle)                                           \
 	do {                                                                \
@@ -99,13 +102,14 @@
 		op->nfs_argop4_u.opreclaim_complete.rca_one_fs = false; \
 	} while (0)
 
+/* clang-format off */
 #define COMPOUNDV4_ARG_ADD_OP_CREATE_SESSION(opcnt, argarray, cid, seqid,   \
 					     info, sec_parms4)              \
 	do {                                                                \
 		struct channel_attrs4 *fore_attrs;                          \
 		struct channel_attrs4 *back_attrs;                          \
 		CREATE_SESSION4args *opcreate_session;                      \
-                                                                            \
+									    \
 		nfs_argop4 *op = argarray + opcnt;                          \
 		opcnt++;                                                    \
 		op->argop = NFS4_OP_CREATE_SESSION;                         \
@@ -138,6 +142,7 @@
 		opcreate_session->csa_sec_parms.csa_sec_parms_val =         \
 			(sec_parms4);                                       \
 	} while (0)
+/* clang-format on */
 
 #define COMPOUNDV4_ARG_ADD_OP_PUTROOTFH(opcnt, argarray)   \
 	do {                                               \
@@ -378,8 +383,9 @@
 		op->nfs_argop4_u.opopen.claim = __claim;                     \
 	} while (0)
 
-#define COMPOUNDV4_ARG_ADD_OP_OPEN_CREATE(                                   \
-	opcnt, args, inname, inattrs, inclientid, __owner_val, __owner_len)  \
+#define COMPOUNDV4_ARG_ADD_OP_OPEN_CREATE(opcnt, args, inname, inattrs,      \
+					  inclientid, __owner_val,           \
+					  __owner_len)                       \
 	do {                                                                 \
 		nfs_argop4 *op = args + opcnt;                               \
 		opcnt++;                                                     \
@@ -549,19 +555,20 @@
 		op->nfs_argop4_u.opwrite.data.iov = iniov;               \
 	} while (0)
 
-#define COMPOUNDV4_ARG_ADD_OP_WRITE_STATELESS(                       \
-	opcnt, argarray, inoffset, iniovcnt, iniov, inlen, instable) \
-	do {                                                         \
-		nfs_argop4 *op = argarray + opcnt;                   \
-		opcnt++;                                             \
-		op->argop = NFS4_OP_WRITE;                           \
-		op->nfs_argop4_u.opwrite.stable = instable;          \
-		memset(&op->nfs_argop4_u.opwrite.stateid, 0,         \
-		       sizeof(stateid4));                            \
-		op->nfs_argop4_u.opwrite.offset = inoffset;          \
-		op->nfs_argop4_u.opwrite.data.data_len = inlen;      \
-		op->nfs_argop4_u.opwrite.data.iovcnt = iniovcnt;     \
-		op->nfs_argop4_u.opwrite.data.iov = iniov;           \
+#define COMPOUNDV4_ARG_ADD_OP_WRITE_STATELESS(opcnt, argarray, inoffset, \
+					      iniovcnt, iniov, inlen,    \
+					      instable)                  \
+	do {                                                             \
+		nfs_argop4 *op = argarray + opcnt;                       \
+		opcnt++;                                                 \
+		op->argop = NFS4_OP_WRITE;                               \
+		op->nfs_argop4_u.opwrite.stable = instable;              \
+		memset(&op->nfs_argop4_u.opwrite.stateid, 0,             \
+		       sizeof(stateid4));                                \
+		op->nfs_argop4_u.opwrite.offset = inoffset;              \
+		op->nfs_argop4_u.opwrite.data.data_len = inlen;          \
+		op->nfs_argop4_u.opwrite.data.iovcnt = iniovcnt;         \
+		op->nfs_argop4_u.opwrite.data.iov = iniov;               \
 	} while (0)
 
 #define COMPOUNDV4_ARG_ADD_OP_COMMIT(opcnt, argoparray, inoffset, inlen) \

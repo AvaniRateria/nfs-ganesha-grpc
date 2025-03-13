@@ -302,20 +302,20 @@ int display_fsal_ace(struct display_buffer *dspbuf, int ace_number,
 
 	/* ACE type. */
 	if (b_left > 0)
-		b_left = display_cat(dspbuf,
-				     IS_FSAL_ACE_ALLOW(*pace) ? " allow" :
-				     IS_FSAL_ACE_DENY(*pace)  ? " deny" :
-				     IS_FSAL_ACE_AUDIT(*pace) ? " audit" :
-								" ?");
+		b_left = display_cat(dspbuf, IS_FSAL_ACE_ALLOW(*pace) ? " allow"
+					     : IS_FSAL_ACE_DENY(*pace) ? " deny"
+					     : IS_FSAL_ACE_AUDIT(*pace)
+						     ? " audit"
+						     : " ?");
 
 	/* ACE who and its type. */
 	if (b_left > 0 && IS_FSAL_ACE_SPECIAL_ID(*pace))
 		b_left = display_cat(
-			dspbuf,
-			IS_FSAL_ACE_SPECIAL_OWNER(*pace)    ? " owner@" :
-			IS_FSAL_ACE_SPECIAL_GROUP(*pace)    ? " group@" :
-			IS_FSAL_ACE_SPECIAL_EVERYONE(*pace) ? " everyone@" :
-							      "");
+			dspbuf, IS_FSAL_ACE_SPECIAL_OWNER(*pace)   ? " owner@"
+				: IS_FSAL_ACE_SPECIAL_GROUP(*pace) ? " group@"
+				: IS_FSAL_ACE_SPECIAL_EVERYONE(*pace)
+					? " everyone@"
+					: "");
 
 	if (b_left > 0 && !IS_FSAL_ACE_SPECIAL_ID(*pace)) {
 		if (IS_FSAL_ACE_GROUP_ID(*pace))
@@ -607,8 +607,9 @@ fsal_check_access_acl(struct user_cred *creds, fsal_aceperm_t v4mask,
 					(pace->perm & missing_access &
 					 (FSAL_ACE_PERM_WRITE_ATTR |
 					  FSAL_ACE_PERM_WRITE_ACL |
-					  FSAL_ACE_PERM_WRITE_OWNER)) != 0 ?
-						ERR_FSAL_PERM :
+					  FSAL_ACE_PERM_WRITE_OWNER)) != 0
+						? ERR_FSAL_PERM
+						:
 #endif /* ENABLE_RFC_ACL */
 						ERR_FSAL_ACCESS,
 					is_dir, creds);
@@ -750,8 +751,8 @@ static fsal_status_t fsal_check_access_no_acl(
 			LogFullDebug(COMPONENT_NFS_V4_ACL,
 				     "Root is granted access.");
 		}
-		return rc ? fsalstat(ERR_FSAL_NO_ERROR, 0) :
-			    fsalstat(ERR_FSAL_ACCESS, 0);
+		return rc ? fsalstat(ERR_FSAL_NO_ERROR, 0)
+			  : fsalstat(ERR_FSAL_ACCESS, 0);
 	}
 
 	/* If the uid of the file matches the uid of the user,
@@ -791,8 +792,8 @@ static fsal_status_t fsal_check_access_no_acl(
 	LogFullDebug(COMPONENT_NFS_V4_ACL,
 		     "Mask=0X%x, Access Type=0X%x Allowed=0X%x Denied=0X%x %s",
 		     mask, access_type, mask & access_type, ~mask & access_type,
-		     (mask & access_type) == access_type ? "ALLOWED" :
-							   "DENIED");
+		     (mask & access_type) == access_type ? "ALLOWED"
+							 : "DENIED");
 
 	if (allowed != NULL)
 		*allowed = mask & access_type;
@@ -801,9 +802,9 @@ static fsal_status_t fsal_check_access_no_acl(
 		*denied = ~mask & access_type;
 
 	/* Success if mask covers all the requested bits */
-	return (mask & access_type) == access_type ?
-		       fsalstat(ERR_FSAL_NO_ERROR, 0) :
-		       fsalstat(ERR_FSAL_ACCESS, 0);
+	return (mask & access_type) == access_type
+		       ? fsalstat(ERR_FSAL_NO_ERROR, 0)
+		       : fsalstat(ERR_FSAL_ACCESS, 0);
 }
 
 /* test_access

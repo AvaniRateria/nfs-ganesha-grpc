@@ -663,8 +663,9 @@ int rados_grace_lift_bulk(rados_ioctx_t io_ctx, const char *oid, int nodes,
 		if (remove)
 			rados_write_op_omap_rm_keys(wop, keys, k);
 		else
-			rados_write_op_omap_set(
-				wop, keys, (const char *const *)vals, lens, k);
+			rados_write_op_omap_set(wop, keys,
+						(const char *const *)vals, lens,
+						k);
 
 		/*
 		 * If number of omap records we're setting or removing is the

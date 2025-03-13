@@ -104,8 +104,9 @@ static bool nfs_rpc_cbsim_get_v40_client_ids(DBusMessageIter *args,
 			pdata = RBT_OPAQ(pn);
 			pclientid = pdata->val.addr;
 			clientid = pclientid->cid_clientid;
-			dbus_message_iter_append_basic(
-				&sub_iter, DBUS_TYPE_UINT64, &clientid);
+			dbus_message_iter_append_basic(&sub_iter,
+						       DBUS_TYPE_UINT64,
+						       &clientid);
 			RBT_INCREMENT(pn);
 		}
 		PTHREAD_RWLOCK_unlock(&(ht->partitions[i].ht_lock));
@@ -169,8 +170,9 @@ static bool nfs_rpc_cbsim_get_session_ids(DBusMessageIter *args,
 			b64_ntop((unsigned char *)session_data->session_id,
 				 NFS4_SESSIONID_SIZE, session_id,
 				 (2 * NFS4_SESSIONID_SIZE));
-			dbus_message_iter_append_basic(
-				&sub_iter, DBUS_TYPE_STRING, &session_id);
+			dbus_message_iter_append_basic(&sub_iter,
+						       DBUS_TYPE_STRING,
+						       &session_id);
 			RBT_INCREMENT(pn);
 		}
 		PTHREAD_RWLOCK_unlock(&(ht->partitions[i].ht_lock));

@@ -239,9 +239,9 @@ retry:
 			state->export->export_id, state->st_fullpath,
 			state->st_pseudopath, name,
 			msg_fsal_err(fsal_status.major),
-			fsal_status.major == ERR_FSAL_NOENT ?
-				" (can't create directory on non-PSEUDO FSAL)" :
-				"");
+			fsal_status.major == ERR_FSAL_NOENT
+				? " (can't create directory on non-PSEUDO FSAL)"
+				: "");
 		return false;
 	}
 
@@ -691,9 +691,10 @@ void pseudo_unmount_export_tree(struct gsh_export *export)
 
 		PTHREAD_RWLOCK_rdlock(&export->exp_lock);
 		/* Find a sub_mounted export */
-		sub_mounted_export = glist_first_entry(
-			&export->mounted_exports_list, struct gsh_export,
-			mounted_exports_node);
+		sub_mounted_export =
+			glist_first_entry(&export->mounted_exports_list,
+					  struct gsh_export,
+					  mounted_exports_node);
 		if (sub_mounted_export == NULL) {
 			/* If none, break out of the loop */
 			PTHREAD_RWLOCK_unlock(&export->exp_lock);
@@ -785,8 +786,7 @@ void prune_pseudofs_subtree(struct gsh_export *export, uint64_t generation,
 	 * be unmounted during this time, so glistn continues to be valid.
 	 */
 	PTHREAD_RWLOCK_rdlock(&export->exp_lock);
-	glist_for_each_safe(glist, glistn, &export->mounted_exports_list)
-	{
+	glist_for_each_safe(glist, glistn, &export->mounted_exports_list) {
 		/* Find a sub_mounted export */
 		child_export = glist_entry(glist, struct gsh_export,
 					   mounted_exports_node);
@@ -816,12 +816,11 @@ void prune_pseudofs_subtree(struct gsh_export *export, uint64_t generation,
 		LogDebug(COMPONENT_EXPORT,
 			 "Export %d pseudo %s unmounted because %s",
 			 export->export_id, ref_pseudopath->gr_val,
-			 export->config_gen < generation ?
-				 "it is defunct" :
-			 export->update_prune_unmount ?
-				 "update indicates unmount" :
-			 ancestor_is_defunct ? "ancestor is defunct" :
-					       "????");
+			 export->config_gen < generation ? "it is defunct"
+			 : export->update_prune_unmount
+				 ? "update indicates unmount"
+			 : ancestor_is_defunct ? "ancestor is defunct"
+					       : "????");
 
 		pseudo_unmount_export(export);
 

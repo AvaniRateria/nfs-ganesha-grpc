@@ -155,8 +155,8 @@ enum nfs_req_result nfs4_op_layoutreturn(struct nfs_argop4 *op,
 		res_LAYOUTRETURN4->lorr_status = nfs4_return_one_state(
 			data->current_obj,
 			arg_LAYOUTRETURN4->lora_layoutreturn.lr_returntype,
-			arg_LAYOUTRETURN4->lora_reclaim ? circumstance_reclaim :
-							  circumstance_client,
+			arg_LAYOUTRETURN4->lora_reclaim ? circumstance_reclaim
+							: circumstance_client,
 			layout_state, spec, lr_layout->lrf_body.lrf_body_len,
 			lr_layout->lrf_body.lrf_body_val, &deleted);
 
@@ -239,8 +239,7 @@ again:
 		state_list =
 			&clientid_owner->so_owner.so_nfs4_owner.so_state_list;
 
-		glist_for_each_safe(glist, glistn, state_list)
-		{
+		glist_for_each_safe(glist, glistn, state_list) {
 			layout_state =
 				glist_entry(glist, state_t, state_owner_list);
 			if (first == NULL)
@@ -302,9 +301,9 @@ again:
 				obj,
 				arg_LAYOUTRETURN4->lora_layoutreturn
 					.lr_returntype,
-				arg_LAYOUTRETURN4->lora_reclaim ?
-					circumstance_reclaim :
-					circumstance_client,
+				arg_LAYOUTRETURN4->lora_reclaim
+					? circumstance_reclaim
+					: circumstance_client,
 				layout_state, spec, 0, NULL, &deleted);
 
 			STATELOCK_unlock(obj);
@@ -385,8 +384,7 @@ void handle_recalls(struct fsal_layoutreturn_arg *arg, struct state_hdl *ostate,
 		&state->state_data.layout.state_segments;
 
 	glist_for_each_safe(recall_iter, recall_next,
-			    &ostate->file.layoutrecall_list)
-	{
+			    &ostate->file.layoutrecall_list) {
 		/* The current recall state */
 		struct state_layout_recall_file *r;
 		/* Iteration on states */
@@ -397,8 +395,7 @@ void handle_recalls(struct fsal_layoutreturn_arg *arg, struct state_hdl *ostate,
 		r = glist_entry(recall_iter, struct state_layout_recall_file,
 				entry_link);
 
-		glist_for_each_safe(state_iter, state_next, &r->state_list)
-		{
+		glist_for_each_safe(state_iter, state_next, &r->state_list) {
 			struct recall_state_list *s;
 			/* Iteration on segments */
 			struct glist_head *seg_iter = NULL;
@@ -412,8 +409,7 @@ void handle_recalls(struct fsal_layoutreturn_arg *arg, struct state_hdl *ostate,
 			if (s->state != state)
 				continue;
 
-			glist_for_each(seg_iter, state_segments)
-			{
+			glist_for_each(seg_iter, state_segments) {
 				struct state_layout_segment *g;
 
 				g = glist_entry(seg_iter,
@@ -537,8 +533,7 @@ nfsstat4 nfs4_return_one_state(struct fsal_obj_handle *obj,
 		/* The _safe version of glist_for_each allows us to
 		 * delete segments while we iterate.
 		 */
-		glist_for_each_safe(seg_iter, seg_next, state_segments)
-		{
+		glist_for_each_safe(seg_iter, seg_next, state_segments) {
 			/* The current segment in iteration */
 			g = glist_entry(seg_iter, state_layout_segment_t,
 					sls_state_segments);

@@ -37,8 +37,7 @@ static void print_glist(struct glist_head *head)
 	struct myteststruct *entry;
 	struct glist_head *glist;
 
-	glist_for_each(glist, head)
-	{
+	glist_for_each(glist, head) {
 		entry = glist_entry(glist, struct myteststruct, glist);
 		printf("The value is %d\n", entry->value);
 	}

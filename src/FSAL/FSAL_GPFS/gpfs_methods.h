@@ -109,14 +109,16 @@ struct gpfs_fsal_obj_handle *alloc_handle(struct gpfs_file_handle *fh,
 					  struct fsal_attrlist *attributes,
 					  const char *link_content,
 					  struct fsal_export *exp_hdl);
-fsal_status_t
-gpfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	   fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	   const char *name, struct fsal_attrlist *attrib_set,
-	   fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	   struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	   struct fsal_attrlist *parent_pre_attrs_out,
-	   struct fsal_attrlist *parent_post_attrs_out);
+fsal_status_t gpfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
+			 fsal_openflags_t openflags,
+			 enum fsal_create_mode createmode, const char *name,
+			 struct fsal_attrlist *attrib_set,
+			 fsal_verifier_t verifier,
+			 struct fsal_obj_handle **new_obj,
+			 struct fsal_attrlist *attrs_out,
+			 bool *caller_perm_check,
+			 struct fsal_attrlist *parent_pre_attrs_out,
+			 struct fsal_attrlist *parent_post_attrs_out);
 fsal_openflags_t gpfs_status2(struct fsal_obj_handle *obj_hdl,
 			      struct state_t *state);
 fsal_status_t gpfs_reopen2(struct fsal_obj_handle *obj_hdl,

@@ -465,8 +465,8 @@ static bool xdr_encode_nfs4_princ(XDR *xdrs, uint32_t id, bool group)
 			"Idmapping is disabled, encode-nfs4-principal skipped");
 		return false;
 	}
-	PTHREAD_RWLOCK_rdlock(group ? &idmapper_group_lock :
-				      &idmapper_user_lock);
+	PTHREAD_RWLOCK_rdlock(group ? &idmapper_group_lock
+				    : &idmapper_user_lock);
 	if (group)
 		success = idmapper_lookup_by_gid(id, &found);
 	else
@@ -479,12 +479,12 @@ static bool xdr_encode_nfs4_princ(XDR *xdrs, uint32_t id, bool group)
 		   hash table, no matter what our lookup method. */
 		success = inline_xdr_bytes(xdrs, (char **)&found->addr,
 					   &not_a_size_t, UINT32_MAX);
-		PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock :
-					      &idmapper_user_lock);
+		PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock
+					    : &idmapper_user_lock);
 		return success;
 	} else {
-		PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock :
-					      &idmapper_user_lock);
+		PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock
+					    : &idmapper_user_lock);
 		int rc;
 		size_t size;
 		bool looked_up = false;
@@ -614,8 +614,8 @@ static bool xdr_encode_nfs4_princ(XDR *xdrs, uint32_t id, bool group)
 			}
 			now_mono(&e_time);
 			idmapper_monitoring__external_request(
-				group ? IDMAPPING_GID_TO_GROUP :
-					IDMAPPING_UID_TO_UIDGID,
+				group ? IDMAPPING_GID_TO_GROUP
+				      : IDMAPPING_UID_TO_UIDGID,
 				IDMAPPING_NFSIDMAP, rc == 0, &s_time, &e_time);
 			if (rc == 0) {
 				new_name.len = strlen(namebuff);
@@ -623,8 +623,8 @@ static bool xdr_encode_nfs4_princ(XDR *xdrs, uint32_t id, bool group)
 			} else {
 				LogInfo(COMPONENT_IDMAPPER,
 					"%s failed with code %d.",
-					(group ? "nfs4_gid_to_name" :
-						 "nfs4_uid_to_name"),
+					(group ? "nfs4_gid_to_name"
+					       : "nfs4_uid_to_name"),
 					rc);
 			}
 #else /* USE_NFSIDMAP */
@@ -976,8 +976,8 @@ static bool idmapname2id(char *name, size_t len, uint32_t *id,
 		now_mono(&e_time);
 	}
 	idmapper_monitoring__external_request(
-		group ? IDMAPPING_GROUPNAME_TO_GROUP :
-			IDMAPPING_USERNAME_TO_UIDGID,
+		group ? IDMAPPING_GROUPNAME_TO_GROUP
+		      : IDMAPPING_USERNAME_TO_UIDGID,
 		IDMAPPING_NFSIDMAP, rc == 0, &s_time, &e_time);
 
 	if (rc == 0) {
@@ -1015,27 +1015,27 @@ static bool name2id(const struct gsh_buffdesc *name, uint32_t *id, bool group,
 	bool got_gid = false;
 	bool looked_up = false;
 
-	PTHREAD_RWLOCK_rdlock(group ? &idmapper_group_lock :
-				      &idmapper_user_lock);
+	PTHREAD_RWLOCK_rdlock(group ? &idmapper_group_lock
+				    : &idmapper_user_lock);
 	if (group)
 		success = idmapper_lookup_by_gname(name, id);
 	else
 		success = idmapper_lookup_by_uname(name, id, NULL, false);
-	PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock :
-				      &idmapper_user_lock);
+	PTHREAD_RWLOCK_unlock(group ? &idmapper_group_lock
+				    : &idmapper_user_lock);
 
 	if (success)
 		return true;
 
 	/* Lookup negative cache */
-	PTHREAD_RWLOCK_rdlock(group ? &idmapper_negative_cache_group_lock :
-				      &idmapper_negative_cache_user_lock);
+	PTHREAD_RWLOCK_rdlock(group ? &idmapper_negative_cache_group_lock
+				    : &idmapper_negative_cache_user_lock);
 	if (group)
 		success = idmapper_negative_cache_lookup_group_by_name(name);
 	else
 		success = idmapper_negative_cache_lookup_user_by_name(name);
-	PTHREAD_RWLOCK_unlock(group ? &idmapper_negative_cache_group_lock :
-				      &idmapper_negative_cache_user_lock);
+	PTHREAD_RWLOCK_unlock(group ? &idmapper_negative_cache_group_lock
+				    : &idmapper_negative_cache_user_lock);
 
 	if (success) {
 		*id = anon;

@@ -94,8 +94,9 @@ enum nfs_req_result nfs4_op_verify(struct nfs_argop4 *op, compound_data_t *data,
 
 	fsal_prepare_attrs(&attrs, 0);
 
-	res_VERIFY4->status = bitmap4_to_attrmask_t(
-		&arg_VERIFY4->obj_attributes.attrmask, &attrs.request_mask);
+	res_VERIFY4->status =
+		bitmap4_to_attrmask_t(&arg_VERIFY4->obj_attributes.attrmask,
+				      &attrs.request_mask);
 
 	if (res_VERIFY4->status != NFS4_OK)
 		return NFS_REQ_ERROR;

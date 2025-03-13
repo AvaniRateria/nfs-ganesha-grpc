@@ -647,14 +647,16 @@ exit:
  * @return FSAL status.
  */
 
-fsal_status_t
-vfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-	  fsal_openflags_t openflags, enum fsal_create_mode createmode,
-	  const char *name, struct fsal_attrlist *attrib_set,
-	  fsal_verifier_t verifier, struct fsal_obj_handle **new_obj,
-	  struct fsal_attrlist *attrs_out, bool *caller_perm_check,
-	  struct fsal_attrlist *parent_pre_attrs_out,
-	  struct fsal_attrlist *parent_post_attrs_out)
+fsal_status_t vfs_open2(struct fsal_obj_handle *obj_hdl, struct state_t *state,
+			fsal_openflags_t openflags,
+			enum fsal_create_mode createmode, const char *name,
+			struct fsal_attrlist *attrib_set,
+			fsal_verifier_t verifier,
+			struct fsal_obj_handle **new_obj,
+			struct fsal_attrlist *attrs_out,
+			bool *caller_perm_check,
+			struct fsal_attrlist *parent_pre_attrs_out,
+			struct fsal_attrlist *parent_post_attrs_out)
 {
 	int posix_flags = 0;
 	int fd, dir_fd;
@@ -1603,8 +1605,8 @@ fsal_status_t vfs_fallocate(struct fsal_obj_handle *obj_hdl,
 	}
 
 	ret = fallocate(my_fd->fd,
-			allocate ? 0 :
-				   FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+			allocate ? 0
+				 : FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
 			offset, length);
 
 	if (ret < 0) {
@@ -1934,8 +1936,8 @@ fsal_status_t vfs_getattr2(struct fsal_obj_handle *obj_hdl,
 			COMPONENT_FSAL,
 			"FSAL %s getattr for handle belonging to FSAL %s, ignoring",
 			obj_hdl->fsal->name,
-			obj_hdl->fs->fsal != NULL ? obj_hdl->fs->fsal->name :
-						    "(none)");
+			obj_hdl->fs->fsal != NULL ? obj_hdl->fs->fsal->name
+						  : "(none)");
 		goto out;
 	}
 
@@ -2027,8 +2029,8 @@ fsal_status_t vfs_setattr2(struct fsal_obj_handle *obj_hdl, bool bypass,
 			COMPONENT_FSAL,
 			"FSAL %s operation for handle belonging to FSAL %s, return EXDEV",
 			obj_hdl->fsal->name,
-			obj_hdl->fs->fsal != NULL ? obj_hdl->fs->fsal->name :
-						    "(none)");
+			obj_hdl->fs->fsal != NULL ? obj_hdl->fs->fsal->name
+						  : "(none)");
 		return fsalstat(posix2fsal_error(EXDEV), EXDEV);
 	}
 
@@ -2182,9 +2184,9 @@ fsal_status_t vfs_setattr2(struct fsal_obj_handle *obj_hdl, bool bypass,
 					my_fd->fd, myself->u.unopenable.name,
 					fsal2unix_mode(attrib_set->mode), 0);
 			else
-				retval = fchmod(
-					my_fd->fd,
-					fsal2unix_mode(attrib_set->mode));
+				retval = fchmod(my_fd->fd,
+						fsal2unix_mode(
+							attrib_set->mode));
 
 			if (retval != 0) {
 				func = "chmod";
@@ -2195,14 +2197,12 @@ fsal_status_t vfs_setattr2(struct fsal_obj_handle *obj_hdl, bool bypass,
 
 	/**  CHOWN  **/
 	if (FSAL_TEST_MASK(attrib_set->valid_mask, ATTR_OWNER | ATTR_GROUP)) {
-		uid_t user =
-			FSAL_TEST_MASK(attrib_set->valid_mask, ATTR_OWNER) ?
-				(int)attrib_set->owner :
-				-1;
-		gid_t group =
-			FSAL_TEST_MASK(attrib_set->valid_mask, ATTR_GROUP) ?
-				(int)attrib_set->group :
-				-1;
+		uid_t user = FSAL_TEST_MASK(attrib_set->valid_mask, ATTR_OWNER)
+				     ? (int)attrib_set->owner
+				     : -1;
+		gid_t group = FSAL_TEST_MASK(attrib_set->valid_mask, ATTR_GROUP)
+				      ? (int)attrib_set->group
+				      : -1;
 
 		if (vfs_unopenable_type(obj_hdl->type))
 			retval = fchownat(my_fd->fd, myself->u.unopenable.name,
@@ -2266,8 +2266,9 @@ fsal_status_t vfs_setattr2(struct fsal_obj_handle *obj_hdl, bool bypass,
 
 	/** SUBFSAL **/
 	if (myself->sub_ops && myself->sub_ops->setattrs) {
-		status = myself->sub_ops->setattrs(
-			myself, my_fd->fd, attrib_set->valid_mask, attrib_set);
+		status = myself->sub_ops->setattrs(myself, my_fd->fd,
+						   attrib_set->valid_mask,
+						   attrib_set);
 		if (FSAL_IS_ERROR(status))
 			goto out;
 	}

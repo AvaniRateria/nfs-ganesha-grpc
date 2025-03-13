@@ -129,10 +129,9 @@ static fsal_status_t mem_async_pkginit(void)
 	/* spawn MEM_ASYNC background thread */
 	code = fridgethr_init(&mem_async_fridge, "MEM_ASYNC_fridge", &frp);
 	if (code != 0) {
-		LogMajor(
-			COMPONENT_FSAL,
-			"Unable to initialize MEM_ASYNC fridge, error code %d.",
-			code);
+		LogMajor(COMPONENT_FSAL,
+			 "Unable to initialize MEM_ASYNC fridge, error code %d.",
+			 code);
 	}
 
 	LogEvent(COMPONENT_FSAL,

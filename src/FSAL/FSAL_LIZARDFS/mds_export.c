@@ -94,9 +94,8 @@ static void shuffle(void *base, size_t num, size_t size)
 	}
 }
 
-static liz_chunkserver_info_t *
-lzfs_int_get_randomized_chunkserver_list(struct lzfs_fsal_export *lzfs_export,
-					 uint32_t *chunkserver_count)
+static liz_chunkserver_info_t *lzfs_int_get_randomized_chunkserver_list(
+	struct lzfs_fsal_export *lzfs_export, uint32_t *chunkserver_count)
 {
 	liz_chunkserver_info_t *chunkserver_info = NULL;
 	int rc;
@@ -196,8 +195,9 @@ static int lzfs_int_fill_chunk_ds_list(XDR *da_addr_body,
 		}
 
 		// encode ds entry
-		nfsstat4 nfs_status = FSAL_encode_v4_multipath(
-			da_addr_body, server_count, host);
+		nfsstat4 nfs_status = FSAL_encode_v4_multipath(da_addr_body,
+							       server_count,
+							       host);
 		if (nfs_status != NFS4_OK) {
 			return -1;
 		}
@@ -234,8 +234,9 @@ static int lzfs_int_fill_unused_ds_list(
 		*chunkserver_index =
 			(*chunkserver_index + 1) % chunkserver_count;
 
-		nfsstat4 nfs_status = FSAL_encode_v4_multipath(
-			da_addr_body, server_count, host);
+		nfsstat4 nfs_status = FSAL_encode_v4_multipath(da_addr_body,
+							       server_count,
+							       host);
 		if (nfs_status != NFS4_OK) {
 			return -1;
 		}
@@ -292,12 +293,12 @@ static nfsstat4 lzfs_fsal_getdeviceinfo(struct fsal_module *fsal_hdl,
 
 	uint16_t export_id = deviceid->device_id2;
 
-	glist_for_each_safe(glist, glistn, &fsal_hdl->exports)
-	{
+	glist_for_each_safe(glist, glistn, &fsal_hdl->exports) {
 		export_hdl = glist_entry(glist, struct fsal_export, exports);
 		if (export_hdl->export_id == export_id) {
-			lzfs_export = container_of(
-				export_hdl, struct lzfs_fsal_export, export);
+			lzfs_export = container_of(export_hdl,
+						   struct lzfs_fsal_export,
+						   export);
 			break;
 		}
 	}
@@ -323,8 +324,9 @@ static nfsstat4 lzfs_fsal_getdeviceinfo(struct fsal_module *fsal_hdl,
 		goto generic_err;
 	}
 
-	chunkserver_info = lzfs_int_get_randomized_chunkserver_list(
-		lzfs_export, &chunkserver_count);
+	chunkserver_info =
+		lzfs_int_get_randomized_chunkserver_list(lzfs_export,
+							 &chunkserver_count);
 	if (chunkserver_info == NULL || chunkserver_count == 0) {
 		LogCrit(COMPONENT_PNFS,
 			"Failed to get LizardFS layout for export=%" PRIu16

@@ -311,12 +311,11 @@ up_async_layoutrecall(struct fridgethr *fr, const struct fsal_up_vector *vec,
 		      bool changed, const struct pnfs_segment *segment,
 		      void *cookie, struct layoutrecall_spec *spec,
 		      void (*cb)(void *, state_status_t), void *cb_arg);
-fsal_status_t
-up_async_notify_device(struct fridgethr *fr, const struct fsal_up_vector *vec,
-		       notify_deviceid_type4 notify_type,
-		       layouttype4 layout_type, struct pnfs_deviceid *devid,
-		       bool immediate, void (*cb)(void *, state_status_t),
-		       void *cb_arg);
+fsal_status_t up_async_notify_device(
+	struct fridgethr *fr, const struct fsal_up_vector *vec,
+	notify_deviceid_type4 notify_type, layouttype4 layout_type,
+	struct pnfs_deviceid *devid, bool immediate,
+	void (*cb)(void *, state_status_t), void *cb_arg);
 fsal_status_t up_async_delegrecall(struct fridgethr *fr,
 				   const struct fsal_up_vector *vec,
 				   struct gsh_buffdesc *handle,

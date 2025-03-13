@@ -143,8 +143,7 @@ state_status_t state_lookup_layout_state(struct fsal_obj_handle *obj,
 	/* The state under inspection in the loop */
 	state_t *state_iter = NULL;
 
-	glist_for_each(glist_iter, &obj->state_hdl->file.list_of_states)
-	{
+	glist_for_each(glist_iter, &obj->state_hdl->file.list_of_states) {
 		state_iter = glist_entry(glist_iter, state_t, state_list);
 		if (state_iter->state_type == STATE_TYPE_LAYOUT &&
 		    state_same_owner(state_iter, owner) &&
@@ -178,9 +177,9 @@ again:
 	PTHREAD_MUTEX_lock(&client_owner->so_mutex);
 	so_mutex_held = true;
 
-	glist_for_each_safe(glist, glistn,
-			    &client_owner->so_owner.so_nfs4_owner.so_state_list)
-	{
+	glist_for_each_safe(
+		glist, glistn,
+		&client_owner->so_owner.so_nfs4_owner.so_state_list) {
 		bool deleted = false;
 		struct pnfs_segment entire = { .io_mode = LAYOUTIOMODE4_ANY,
 					       .offset = 0,

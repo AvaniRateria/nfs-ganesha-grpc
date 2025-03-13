@@ -718,8 +718,8 @@ fsal_status_t fsal_remove_access(struct fsal_obj_handle *dir_hdl,
 			dir_hdl,
 			FSAL_MODE_MASK_SET(FSAL_W_OK) |
 				FSAL_ACE4_MASK_SET(
-					isdir ? FSAL_ACE_PERM_ADD_SUBDIRECTORY :
-						FSAL_ACE_PERM_ADD_FILE),
+					isdir ? FSAL_ACE_PERM_ADD_SUBDIRECTORY
+					      : FSAL_ACE_PERM_ADD_FILE),
 			NULL, NULL, false);
 
 		if (FSAL_IS_ERROR(fsal_status)) {
@@ -1588,9 +1588,9 @@ void fd_lru_run(struct fridgethr_context *ctx)
 		 " and high water mark is %" PRIi32 " %s",
 		 currentopen, fd_lru_state.fds_lowat, fd_lru_state.fds_hiwat,
 		 ((currentopen >= fd_lru_state.fds_lowat) ||
-		  (Cache_FDs == false)) ?
-			 "(reaping)" :
-			 "(not reaping)");
+		  (Cache_FDs == false))
+			 ? "(reaping)"
+			 : "(not reaping)");
 
 	if (currentopen < fd_lru_state.fds_lowat) {
 		if (atomic_fetch_uint32_t(&fd_lru_state.fd_state) > FD_LOW) {
@@ -1628,10 +1628,10 @@ void fd_lru_run(struct fridgethr_context *ctx)
 
 		fdratepersec =
 			((curr_time <= fd_lru_state.prev_time) ||
-			 (formeropen < fd_lru_state.prev_fd_count)) ?
-				1 :
-				(formeropen - fd_lru_state.prev_fd_count) /
-					(curr_time - fd_lru_state.prev_time);
+			 (formeropen < fd_lru_state.prev_fd_count))
+				? 1
+				: (formeropen - fd_lru_state.prev_fd_count) /
+					  (curr_time - fd_lru_state.prev_time);
 
 		LogFullDebug(COMPONENT_FSAL,
 			     "fdrate:%u fdcount:%" PRIu32 " slept for %" PRIu64
@@ -1697,9 +1697,9 @@ void fd_lru_run(struct fridgethr_context *ctx)
 	fd_lru_state.prev_time = time(NULL);
 
 	fdnorm = (fdratepersec + fds_avg) / fds_avg;
-	fddelta = (currentopen > fd_lru_state.fds_lowat) ?
-			  (currentopen - fd_lru_state.fds_lowat) :
-			  0;
+	fddelta = (currentopen > fd_lru_state.fds_lowat)
+			  ? (currentopen - fd_lru_state.fds_lowat)
+			  : 0;
 	fdmulti = (fddelta * 10) / fds_avg;
 	fdmulti = fdmulti ? fdmulti : 1;
 	fdwait_ratio = fd_lru_state.fds_hiwat /
@@ -2212,9 +2212,9 @@ static inline bool cant_reopen(struct fsal_fd *fsal_fd, bool may_open,
 	    open_fds >= fd_lru_state.fds_hard_limit) {
 		LogAtLevel(COMPONENT_FSAL,
 			   atomic_fetch_uint32_t(&fd_lru_state.fd_state) !=
-					   FD_LIMIT ?
-				   NIV_CRIT :
-				   NIV_DEBUG,
+					   FD_LIMIT
+				   ? NIV_CRIT
+				   : NIV_DEBUG,
 			   "FD Hard Limit (%" PRIu32
 			   ") Exceeded (fsal_fd_global_counter = %" PRIi32
 			   "), waking LRU thread.",
@@ -2230,9 +2230,9 @@ static inline bool cant_reopen(struct fsal_fd *fsal_fd, bool may_open,
 	    open_fds >= fd_lru_state.fds_hiwat) {
 		LogAtLevel(COMPONENT_FSAL,
 			   atomic_fetch_uint32_t(&fd_lru_state.fd_state) ==
-					   FD_LOW ?
-				   NIV_INFO :
-				   NIV_DEBUG,
+					   FD_LOW
+				   ? NIV_INFO
+				   : NIV_DEBUG,
 			   "FDs above high water mark (%" PRIu32
 			   ", fsal_fd_global_counter = %" PRIi32
 			   "), waking LRU thread.",
@@ -2277,9 +2277,9 @@ fsal_status_t wait_to_start_io(struct fsal_obj_handle *obj_hdl,
 	    open_fds >= fd_lru_state.fds_hard_limit) {
 		LogAtLevel(COMPONENT_FSAL,
 			   atomic_fetch_uint32_t(&fd_lru_state.fd_state) !=
-					   FD_LIMIT ?
-				   NIV_CRIT :
-				   NIV_DEBUG,
+					   FD_LIMIT
+				   ? NIV_CRIT
+				   : NIV_DEBUG,
 			   "FD Hard Limit (%" PRIu32
 			   ") Exceeded (fsal_fd_global_counter = %" PRIi32
 			   "), waking LRU thread.",
@@ -2600,8 +2600,9 @@ skip_global_fd:
 		 * any synchronization as the tmp_fd is private to the
 		 * particular operation.
 		 */
-		status = fsal_reopen_fd(
-			obj_hdl, open_any ? FSAL_O_READ : openflags, tmp_fd);
+		status = fsal_reopen_fd(obj_hdl,
+					open_any ? FSAL_O_READ : openflags,
+					tmp_fd);
 
 		if (!FSAL_IS_ERROR(status)) {
 			tmp_fd->close_on_complete = true;
@@ -2762,9 +2763,9 @@ fsal_status_t fsal_start_io(struct fsal_fd **out_fd,
 		if (FSAL_IS_ERROR(status)) {
 			LogCrit(COMPONENT_FSAL,
 				"Open for locking failed for access %s",
-				openflags == FSAL_O_RDWR ? "Read/Write" :
-				openflags == FSAL_O_READ ? "Read" :
-							   "Write");
+				openflags == FSAL_O_RDWR   ? "Read/Write"
+				: openflags == FSAL_O_READ ? "Read"
+							   : "Write");
 		} else {
 			LogFullDebug(COMPONENT_FSAL, "Opened state_fd %p",
 				     state_fd);

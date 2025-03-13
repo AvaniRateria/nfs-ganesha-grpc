@@ -451,9 +451,9 @@ void posix2fsal_attributes(const struct stat *buffstat,
 
 	if (FSAL_TEST_MASK(fsalattr->valid_mask, ATTR_CHANGE)) {
 		fsalattr->change =
-			gsh_time_cmp(&fsalattr->mtime, &fsalattr->ctime) > 0 ?
-				      timespec_to_nsecs(&fsalattr->mtime) :
-				      timespec_to_nsecs(&fsalattr->ctime);
+			gsh_time_cmp(&fsalattr->mtime, &fsalattr->ctime) > 0
+				? timespec_to_nsecs(&fsalattr->mtime)
+				: timespec_to_nsecs(&fsalattr->ctime);
 	}
 
 	if (FSAL_TEST_MASK(fsalattr->valid_mask, ATTR_SPACEUSED))

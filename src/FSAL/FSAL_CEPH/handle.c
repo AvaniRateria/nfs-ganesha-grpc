@@ -456,13 +456,12 @@ ceph_fsal_mkdir(struct fsal_obj_handle *dir_hdl, const char *name,
  *
  * @return FSAL status.
  */
-static fsal_status_t
-ceph_fsal_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
-		 object_file_type_t nodetype, struct fsal_attrlist *attrib,
-		 struct fsal_obj_handle **new_obj,
-		 struct fsal_attrlist *attrs_out,
-		 struct fsal_attrlist *parent_pre_attrs_out,
-		 struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t ceph_fsal_mknode(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	object_file_type_t nodetype, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **new_obj, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 #ifdef USE_FSAL_CEPH_MKNOD
 	/* Generic status return */
@@ -585,13 +584,12 @@ ceph_fsal_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
  * @return FSAL status.
  */
 
-static fsal_status_t
-ceph_fsal_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
-		  const char *link_path, struct fsal_attrlist *attrib,
-		  struct fsal_obj_handle **new_obj,
-		  struct fsal_attrlist *attrs_out,
-		  struct fsal_attrlist *parent_pre_attrs_out,
-		  struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t ceph_fsal_symlink(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	const char *link_path, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **new_obj, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	/* Generic status return */
 	int rc = 0;
@@ -771,11 +769,10 @@ out_err:
  * @return FSAL status.
  */
 
-static fsal_status_t
-ceph_fsal_link(struct fsal_obj_handle *handle_pub,
-	       struct fsal_obj_handle *destdir_pub, const char *name,
-	       struct fsal_attrlist *destdir_pre_attrs_out,
-	       struct fsal_attrlist *destdir_post_attrs_out)
+static fsal_status_t ceph_fsal_link(
+	struct fsal_obj_handle *handle_pub, struct fsal_obj_handle *destdir_pub,
+	const char *name, struct fsal_attrlist *destdir_pre_attrs_out,
+	struct fsal_attrlist *destdir_post_attrs_out)
 {
 	/* Generic status return */
 	int rc = 0;
@@ -819,14 +816,13 @@ ceph_fsal_link(struct fsal_obj_handle *handle_pub,
  * @return FSAL status.
  */
 
-static fsal_status_t
-ceph_fsal_rename(struct fsal_obj_handle *obj_hdl,
-		 struct fsal_obj_handle *olddir_pub, const char *old_name,
-		 struct fsal_obj_handle *newdir_pub, const char *new_name,
-		 struct fsal_attrlist *olddir_pre_attrs_out,
-		 struct fsal_attrlist *olddir_post_attrs_out,
-		 struct fsal_attrlist *newdir_pre_attrs_out,
-		 struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t ceph_fsal_rename(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_pub,
+	const char *old_name, struct fsal_obj_handle *newdir_pub,
+	const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
+	struct fsal_attrlist *olddir_post_attrs_out,
+	struct fsal_attrlist *newdir_pre_attrs_out,
+	struct fsal_attrlist *newdir_post_attrs_out)
 {
 	/* Generic status return */
 	int rc = 0;
@@ -873,11 +869,10 @@ ceph_fsal_rename(struct fsal_obj_handle *obj_hdl,
  * @return FSAL status.
  */
 
-static fsal_status_t
-ceph_fsal_unlink(struct fsal_obj_handle *dir_pub,
-		 struct fsal_obj_handle *obj_pub, const char *name,
-		 struct fsal_attrlist *parent_pre_attrs_out,
-		 struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t ceph_fsal_unlink(
+	struct fsal_obj_handle *dir_pub, struct fsal_obj_handle *obj_pub,
+	const char *name, struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	/* Generic status return */
 	int rc = 0;
@@ -2565,8 +2560,8 @@ static fsal_status_t ceph_fsal_lock_op2(struct fsal_obj_handle *obj_hdl,
 
 	if (retval < 0) {
 		LogDebug(COMPONENT_FSAL, "%s returned %d %s",
-			 lock_op == FSAL_OP_LOCKT ? "ceph_ll_getlk" :
-						    "ceph_ll_setlk",
+			 lock_op == FSAL_OP_LOCKT ? "ceph_ll_getlk"
+						  : "ceph_ll_setlk",
 			 -retval, strerror(-retval));
 
 		if (conflicting_lock != NULL) {

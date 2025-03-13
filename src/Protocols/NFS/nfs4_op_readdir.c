@@ -636,8 +636,9 @@ enum nfs_req_result nfs4_op_readdir(struct nfs_argop4 *op,
 
 		fsal_prepare_attrs(&attrs, ATTR_CHANGE);
 
-		fsal_status = data->current_obj->obj_ops->getattrs(
-			data->current_obj, &attrs);
+		fsal_status =
+			data->current_obj->obj_ops->getattrs(data->current_obj,
+							     &attrs);
 
 		if (FSAL_IS_ERROR(fsal_status)) {
 			res_READDIR4->status = nfs4_Errno_status(fsal_status);

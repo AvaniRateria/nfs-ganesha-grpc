@@ -93,9 +93,10 @@ static inline int fsal_ceph_ll_lookup(struct ceph_mount_info *cmount,
 	if (!perms)
 		return -ENOMEM;
 
-	ret = ceph_ll_lookup(
-		cmount, parent, name, out, stx,
-		full ? CEPH_STATX_ATTR_MASK : CEPH_STATX_HANDLE_MASK, 0, perms);
+	ret = ceph_ll_lookup(cmount, parent, name, out, stx,
+			     full ? CEPH_STATX_ATTR_MASK
+				  : CEPH_STATX_HANDLE_MASK,
+			     0, perms);
 	ceph_userperm_destroy(perms);
 	return ret;
 }
@@ -112,9 +113,10 @@ static inline int fsal_ceph_ll_mkdir(struct ceph_mount_info *cmount,
 	if (!perms)
 		return -ENOMEM;
 
-	ret = ceph_ll_mkdir(
-		cmount, parent, name, mode, out, stx,
-		full ? CEPH_STATX_ATTR_MASK : CEPH_STATX_HANDLE_MASK, 0, perms);
+	ret = ceph_ll_mkdir(cmount, parent, name, mode, out, stx,
+			    full ? CEPH_STATX_ATTR_MASK
+				 : CEPH_STATX_HANDLE_MASK,
+			    0, perms);
 	ceph_userperm_destroy(perms);
 	return ret;
 }
@@ -131,9 +133,10 @@ static inline int fsal_ceph_ll_mknod(struct ceph_mount_info *cmount,
 	if (!perms)
 		return -ENOMEM;
 
-	ret = ceph_ll_mknod(
-		cmount, parent, name, mode, rdev, out, stx,
-		full ? CEPH_STATX_ATTR_MASK : CEPH_STATX_HANDLE_MASK, 0, perms);
+	ret = ceph_ll_mknod(cmount, parent, name, mode, rdev, out, stx,
+			    full ? CEPH_STATX_ATTR_MASK
+				 : CEPH_STATX_HANDLE_MASK,
+			    0, perms);
 	ceph_userperm_destroy(perms);
 	return ret;
 }
@@ -150,9 +153,10 @@ static inline int fsal_ceph_ll_symlink(struct ceph_mount_info *cmount,
 	if (!perms)
 		return -ENOMEM;
 
-	ret = ceph_ll_symlink(
-		cmount, parent, name, link_path, out, stx,
-		full ? CEPH_STATX_ATTR_MASK : CEPH_STATX_HANDLE_MASK, 0, perms);
+	ret = ceph_ll_symlink(cmount, parent, name, link_path, out, stx,
+			      full ? CEPH_STATX_ATTR_MASK
+				   : CEPH_STATX_HANDLE_MASK,
+			      0, perms);
 	ceph_userperm_destroy(perms);
 	return ret;
 }
@@ -184,9 +188,10 @@ static inline int fsal_ceph_ll_create(struct ceph_mount_info *cmount,
 	if (!perms)
 		return -ENOMEM;
 
-	ret = ceph_ll_create(
-		cmount, parent, name, mode, oflags, outp, fhp, stx,
-		full ? CEPH_STATX_ATTR_MASK : CEPH_STATX_HANDLE_MASK, 0, perms);
+	ret = ceph_ll_create(cmount, parent, name, mode, oflags, outp, fhp, stx,
+			     full ? CEPH_STATX_ATTR_MASK
+				  : CEPH_STATX_HANDLE_MASK,
+			     0, perms);
 	ceph_userperm_destroy(perms);
 	return ret;
 }

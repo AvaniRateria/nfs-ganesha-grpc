@@ -243,11 +243,10 @@ static void proxyv3_nlm_fill_common_args(struct proxyv3_obj_handle *obj,
  * @brief A little helper to perform an NLM RPC via proxyv3_nlm_call.
  */
 
-static fsal_status_t
-proxyv3_nlm_commonrpc(rpcproc_t nlmProc, const char *procName,
-		      xdrproc_t encFunc, void *args, xdrproc_t decFunc,
-		      void *result, nlm4_stats *status, struct netobj *cookie,
-		      struct nlm4_lock *lock)
+static fsal_status_t proxyv3_nlm_commonrpc(
+	rpcproc_t nlmProc, const char *procName, xdrproc_t encFunc, void *args,
+	xdrproc_t decFunc, void *result, nlm4_stats *status,
+	struct netobj *cookie, struct nlm4_lock *lock)
 {
 	LogDebug(COMPONENT_FSAL,
 		 "Issuing an %s. Lock info: offset %" PRIu64 ", len %" PRIu64,
@@ -310,8 +309,8 @@ static fsal_status_t proxyv3_nlm_test(struct proxyv3_obj_handle *obj,
 	 * clear if you're supposed to fill in state_owner with that info...
 	 */
 
-	conflicting_lock->lock_type = (holder->exclusive) ? FSAL_LOCK_W :
-							    FSAL_LOCK_R;
+	conflicting_lock->lock_type = (holder->exclusive) ? FSAL_LOCK_W
+							  : FSAL_LOCK_R;
 	conflicting_lock->lock_start = holder->l_offset;
 	conflicting_lock->lock_length = holder->l_len;
 

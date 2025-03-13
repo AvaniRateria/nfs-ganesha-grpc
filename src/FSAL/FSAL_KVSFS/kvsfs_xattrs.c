@@ -78,10 +78,12 @@ int print_vfshandle(struct fsal_obj_handle *obj_hdl, caddr_t buffer_addr,
 	return 0;
 } /* print_fid */
 
-fsal_status_t
-kvsfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl, unsigned int argcookie,
-		     fsal_xattrent_t *xattrs_tab, unsigned int xattrs_tabsize,
-		     unsigned int *p_nb_returned, int *end_of_list)
+fsal_status_t kvsfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl,
+				   unsigned int argcookie,
+				   fsal_xattrent_t *xattrs_tab,
+				   unsigned int xattrs_tabsize,
+				   unsigned int *p_nb_returned,
+				   int *end_of_list)
 {
 	return fsalstat(ERR_FSAL_NO_ERROR, 0);
 }

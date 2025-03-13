@@ -319,10 +319,9 @@ enum nfs_req_result nfs4_op_setclientid_confirm(struct nfs_argop4 *op,
 				display_opaque_bytes(&dspbuf,
 						     conf->cid_verifier,
 						     NFS4_VERIFIER_SIZE);
-				display_printf(
-					&dspbuf,
-					" doesn't match verifier=%s for ",
-					str_verifier);
+				display_printf(&dspbuf,
+					       " doesn't match verifier=%s for ",
+					       str_verifier);
 				display_client_id_rec(&dspbuf, conf);
 
 				LogDebug(COMPONENT_CLIENTID, "Confirm %s", str);

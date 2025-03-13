@@ -227,18 +227,17 @@ struct gsh_export {
 };
 
 /* Use macro to define this to get around include file order. */
-#define ctx_export_path(ctx)                                              \
-	((nfs_param.core_param.mount_path_pseudo) ? CTX_PSEUDOPATH(ctx) : \
-						    CTX_FULLPATH(ctx))
+#define ctx_export_path(ctx)                                            \
+	((nfs_param.core_param.mount_path_pseudo) ? CTX_PSEUDOPATH(ctx) \
+						  : CTX_FULLPATH(ctx))
 
 /* If op_ctx request is NFS_V4 always use pseudopath, otherwise use fullpath
  * for export.
  */
-#define op_ctx_export_path(ctx)                                     \
-	((ctx->nfs_vers == NFS_V4) ||                               \
-			 (nfs_param.core_param.mount_path_pseudo) ? \
-		 CTX_PSEUDOPATH(ctx) :                              \
-		 CTX_FULLPATH(ctx))
+#define op_ctx_export_path(ctx)                                                \
+	((ctx->nfs_vers == NFS_V4) || (nfs_param.core_param.mount_path_pseudo) \
+		 ? CTX_PSEUDOPATH(ctx)                                         \
+		 : CTX_FULLPATH(ctx))
 
 /**
  * @brief Structure to make it easier to access the fullpath and pseudopath for
@@ -257,15 +256,14 @@ struct tmp_export_paths {
 
 #define TMP_FULLPATH(tmp) ((tmp)->tmp_fullpath->gr_val)
 
-#define tmp_export_path(tmp)                                              \
-	((nfs_param.core_param.mount_path_pseudo) ? TMP_PSEUDOPATH(tmp) : \
-						    TMP_FULLPATH(tmp))
+#define tmp_export_path(tmp)                                            \
+	((nfs_param.core_param.mount_path_pseudo) ? TMP_PSEUDOPATH(tmp) \
+						  : TMP_FULLPATH(tmp))
 
-#define op_ctx_tmp_export_path(ctx, tmp)                            \
-	((ctx->nfs_vers == NFS_V4) ||                               \
-			 (nfs_param.core_param.mount_path_pseudo) ? \
-		 TMP_PSEUDOPATH(tmp) :                              \
-		 TMP_FULLPATH(tmp))
+#define op_ctx_tmp_export_path(ctx, tmp)                                       \
+	((ctx->nfs_vers == NFS_V4) || (nfs_param.core_param.mount_path_pseudo) \
+		 ? TMP_PSEUDOPATH(tmp)                                         \
+		 : TMP_FULLPATH(tmp))
 
 static inline void tmp_get_exp_paths(struct tmp_export_paths *tmp,
 				     struct gsh_export *exp)

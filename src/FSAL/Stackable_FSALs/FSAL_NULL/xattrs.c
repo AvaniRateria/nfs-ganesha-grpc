@@ -45,16 +45,20 @@
 #include "FSAL/fsal_commonlib.h"
 #include "nullfs_methods.h"
 
-fsal_status_t
-nullfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl, unsigned int argcookie,
-		      fsal_xattrent_t *xattrs_tab, unsigned int xattrs_tabsize,
-		      unsigned int *p_nb_returned, int *end_of_list)
+fsal_status_t nullfs_list_ext_attrs(struct fsal_obj_handle *obj_hdl,
+				    unsigned int argcookie,
+				    fsal_xattrent_t *xattrs_tab,
+				    unsigned int xattrs_tabsize,
+				    unsigned int *p_nb_returned,
+				    int *end_of_list)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -70,11 +74,13 @@ fsal_status_t nullfs_getextattr_id_by_name(struct fsal_obj_handle *obj_hdl,
 					   const char *xattr_name,
 					   unsigned int *pxattr_id)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -92,11 +98,13 @@ fsal_status_t nullfs_getextattr_value_by_id(struct fsal_obj_handle *obj_hdl,
 					    size_t buffer_size,
 					    size_t *p_output_size)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -115,11 +123,13 @@ fsal_status_t nullfs_getextattr_value_by_name(struct fsal_obj_handle *obj_hdl,
 					      size_t buffer_size,
 					      size_t *p_output_size)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -136,11 +146,13 @@ fsal_status_t nullfs_setextattr_value(struct fsal_obj_handle *obj_hdl,
 				      const char *xattr_name, void *buffer_addr,
 				      size_t buffer_size, int create)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -157,11 +169,13 @@ fsal_status_t nullfs_setextattr_value_by_id(struct fsal_obj_handle *obj_hdl,
 					    void *buffer_addr,
 					    size_t buffer_size)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -176,11 +190,13 @@ fsal_status_t nullfs_setextattr_value_by_id(struct fsal_obj_handle *obj_hdl,
 fsal_status_t nullfs_remove_extattr_by_id(struct fsal_obj_handle *obj_hdl,
 					  unsigned int xattr_id)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -195,11 +211,13 @@ fsal_status_t nullfs_remove_extattr_by_id(struct fsal_obj_handle *obj_hdl,
 fsal_status_t nullfs_remove_extattr_by_name(struct fsal_obj_handle *obj_hdl,
 					    const char *xattr_name)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;

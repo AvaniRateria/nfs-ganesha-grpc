@@ -448,8 +448,7 @@ static void release_all_session_connections(nfs41_session_t *session)
 	/* Take connections write-lock */
 	PTHREAD_RWLOCK_wrlock(&session->conn_lock);
 
-	glist_for_each_safe(curr_node, next_node, &session->connection_xprts)
-	{
+	glist_for_each_safe(curr_node, next_node, &session->connection_xprts) {
 		connection_xprt_t *const curr_entry =
 			glist_entry(curr_node, connection_xprt_t, node);
 		SVCXPRT *const xprt = curr_entry->xprt;
@@ -522,8 +521,7 @@ bool check_session_conn(nfs41_session_t *session, compound_data_t *data,
 
 retry:
 
-	glist_for_each(curr_node, &session->connection_xprts)
-	{
+	glist_for_each(curr_node, &session->connection_xprts) {
 		connection_xprt_t *const curr_entry =
 			glist_entry(curr_node, connection_xprt_t, node);
 
@@ -633,8 +631,7 @@ void nfs41_Session_Remove_Connection(nfs41_session_t *session, SVCXPRT *xprt)
 	display_xprt_sockaddr(&xprt_db, xprt);
 	PTHREAD_RWLOCK_wrlock(&session->conn_lock);
 
-	glist_for_each(curr_node, &session->connection_xprts)
-	{
+	glist_for_each(curr_node, &session->connection_xprts) {
 		connection_xprt_t *const curr_entry =
 			glist_entry(curr_node, connection_xprt_t, node);
 
@@ -757,8 +754,7 @@ int nfs41_Session_Destroy_All_Connections(nfs41_session_t *session)
 	LogInfo(COMPONENT_SESSIONS, "Found %d connections for the session",
 		num_connections);
 
-	glist_for_each(curr_node, &session->connection_xprts)
-	{
+	glist_for_each(curr_node, &session->connection_xprts) {
 		connection_xprt_t *const curr_entry =
 			glist_entry(curr_node, connection_xprt_t, node);
 		connection_xprt_t *const new_entry =
@@ -773,8 +769,7 @@ int nfs41_Session_Destroy_All_Connections(nfs41_session_t *session)
 	PTHREAD_RWLOCK_unlock(&session->conn_lock);
 
 	/* Now for each xprt, destroy it */
-	glist_for_each_safe(curr_node, next_node, &connections_copy)
-	{
+	glist_for_each_safe(curr_node, next_node, &connections_copy) {
 		connection_xprt_t *const curr_entry =
 			glist_entry(curr_node, connection_xprt_t, node);
 

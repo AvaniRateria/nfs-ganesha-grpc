@@ -110,8 +110,9 @@ enum nfs_req_result nfs4_op_create(struct nfs_argop4 *op, compound_data_t *data,
 	 * inode creation or not */
 	exp_hdl = op_ctx->fsal_export;
 
-	fsal_status = exp_hdl->exp_ops.check_quota(
-		exp_hdl, CTX_FULLPATH(op_ctx), FSAL_QUOTA_INODES);
+	fsal_status = exp_hdl->exp_ops.check_quota(exp_hdl,
+						   CTX_FULLPATH(op_ctx),
+						   FSAL_QUOTA_INODES);
 
 	if (FSAL_IS_ERROR(fsal_status)) {
 		res_CREATE4->status = NFS4ERR_DQUOT;
@@ -170,8 +171,9 @@ enum nfs_req_result nfs4_op_create(struct nfs_argop4 *op, compound_data_t *data,
 	 */
 	if (arg_CREATE4->createattrs.attrmask.bitmap4_len != 0) {
 		/* Arguments were supplied, extract them */
-		convrc = nfs4_Fattr_To_FSAL_attr(
-			&sattr, &arg_CREATE4->createattrs, data);
+		convrc = nfs4_Fattr_To_FSAL_attr(&sattr,
+						 &arg_CREATE4->createattrs,
+						 data);
 
 		if (convrc != NFS4_OK) {
 			res_CREATE4->status = convrc;
@@ -305,8 +307,8 @@ enum nfs_req_result nfs4_op_create(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	res_CREATE4->CREATE4res_u.resok4.cinfo.atomic =
-		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE :
-									  FALSE;
+		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE
+									: FALSE;
 
 	LogFullDebug(COMPONENT_NFS_V4,
 		     "CREATE CINFO before = %" PRIu64 "  after = %" PRIu64
@@ -332,13 +334,12 @@ out:
 		obj_new->obj_ops->put_ref(obj_new);
 	}
 
-	GSH_AUTO_TRACEPOINT(
-		nfs4, op_create_end, TRACE_INFO,
-		"CREATE res: status={} before={} after={} atomic={}",
-		res_CREATE4->status,
-		res_CREATE4->CREATE4res_u.resok4.cinfo.before,
-		res_CREATE4->CREATE4res_u.resok4.cinfo.after,
-		res_CREATE4->CREATE4res_u.resok4.cinfo.atomic);
+	GSH_AUTO_TRACEPOINT(nfs4, op_create_end, TRACE_INFO,
+			    "CREATE res: status={} before={} after={} atomic={}",
+			    res_CREATE4->status,
+			    res_CREATE4->CREATE4res_u.resok4.cinfo.before,
+			    res_CREATE4->CREATE4res_u.resok4.cinfo.after,
+			    res_CREATE4->CREATE4res_u.resok4.cinfo.atomic);
 	return nfsstat4_to_nfs_req_result(res_CREATE4->status);
 } /* nfs4_op_create */
 

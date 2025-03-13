@@ -95,8 +95,9 @@ struct fsal_obj_handle *nfs3_FhandleToCache(nfs_fh3 *fh3, nfsstat3 *status,
 	fh_desc.addr = fhbuf;
 
 	/* adjust the wire handle opaque into a host-handle */
-	fsal_status = export->exp_ops.wire_to_host(
-		export, FSAL_DIGEST_NFSV3, &fh_desc, v3_handle->fhflags1);
+	fsal_status = export->exp_ops.wire_to_host(export, FSAL_DIGEST_NFSV3,
+						   &fh_desc,
+						   v3_handle->fhflags1);
 
 	if (!FSAL_IS_ERROR(fsal_status))
 		fsal_status = export->exp_ops.create_handle(export, &fh_desc,

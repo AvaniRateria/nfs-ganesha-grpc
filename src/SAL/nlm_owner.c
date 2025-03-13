@@ -104,9 +104,9 @@ int display_nsm_client(struct display_buffer *dspbuf, state_nsm_client_t *key)
 
 	return display_printf(dspbuf, " ssc_client=%p %s ssc_refcount=%d",
 			      key->ssc_client,
-			      atomic_fetch_int32_t(&key->ssc_monitored) ?
-				      "monitored" :
-				      "unmonitored",
+			      atomic_fetch_int32_t(&key->ssc_monitored)
+				      ? "monitored"
+				      : "unmonitored",
 			      atomic_fetch_int32_t(&key->ssc_refcount));
 }
 

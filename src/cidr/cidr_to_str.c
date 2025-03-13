@@ -183,9 +183,8 @@ char *cidr_to_str(const CIDR *block, int flags)
 					pflen -= 96;
 
 				(void)sprintf(tmpbuf, "%u",
-					      (flags & CIDR_USEV6) ?
-						      pflen + 96 :
-						      pflen);
+					      (flags & CIDR_USEV6) ? pflen + 96
+								   : pflen);
 
 				strcat(toret, tmpbuf);
 			}

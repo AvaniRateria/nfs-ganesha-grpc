@@ -156,9 +156,8 @@ enum condition_wait_t {
 };
 
 /* Assumes the client mutex is held */
-static inline enum condition_wait_t
-condition_timedwait(connection_manager__client_t *client,
-		    struct timespec timeout)
+static inline enum condition_wait_t condition_timedwait(
+	connection_manager__client_t *client, struct timespec timeout)
 {
 	const int rc = pthread_cond_timedwait(&client->cond_change,
 					      &client->mutex, &timeout);
@@ -214,10 +213,9 @@ static enum connection_manager__register_t callback_default_register_connection(
 	return CONNECTION_MANAGER__REGISTER__REFUSED;
 }
 
-static void
-callback_default_deregister_connection(void *context,
-				       const sockaddr_t *client_address,
-				       const char *client_address_str)
+static void callback_default_deregister_connection(
+	void *context, const sockaddr_t *client_address,
+	const char *client_address_str)
 {
 	LogWarn(COMPONENT_XPRT,
 		"%s: Client connected before Connection Manager callback was registered",
@@ -227,11 +225,11 @@ callback_default_deregister_connection(void *context,
 			    TP_STR(client_address_str));
 }
 
-#define DEFAULT_CALLBACK_CONTEXT                      \
-	{ /*user_context=*/                           \
-	  NULL, callback_default_drain_other_servers, \
-	  callback_default_register_connection,       \
-	  callback_default_deregister_connection      \
+#define DEFAULT_CALLBACK_CONTEXT                               \
+	{ /*user_context=*/                                    \
+		NULL, callback_default_drain_other_servers,    \
+			callback_default_register_connection,  \
+			callback_default_deregister_connection \
 	}
 
 static pthread_rwlock_t callback_lock = RWLOCK_INITIALIZER;
@@ -331,8 +329,7 @@ try_drain_self(connection_manager__client_t *client, uint32_t timeout_sec)
 
 	const struct glist_head *node;
 	/* start draining connections */
-	glist_for_each(node, &client->connections)
-	{
+	glist_for_each(node, &client->connections) {
 		connection_manager__connection_t *const connection =
 			glist_entry(node, connection_manager__connection_t,
 				    node);
@@ -396,8 +393,7 @@ try_drain_self(connection_manager__client_t *client, uint32_t timeout_sec)
 		return CONNECTION_MANAGER__DRAIN__SUCCESS;
 
 	/* Check for stuck connections */
-	glist_for_each(node, &client->connections)
-	{
+	glist_for_each(node, &client->connections) {
 		const connection_manager__connection_t *const connection =
 			glist_entry(node, connection_manager__connection_t,
 				    node);
@@ -416,9 +412,9 @@ try_drain_self(connection_manager__client_t *client, uint32_t timeout_sec)
 		}
 	}
 
-	return wait_result == CONDITION_WAIT__TIMEOUT ?
-		       CONNECTION_MANAGER__DRAIN__FAILED_TIMEOUT :
-		       CONNECTION_MANAGER__DRAIN__FAILED;
+	return wait_result == CONDITION_WAIT__TIMEOUT
+		       ? CONNECTION_MANAGER__DRAIN__FAILED_TIMEOUT
+		       : CONNECTION_MANAGER__DRAIN__FAILED;
 }
 
 enum connection_manager__drain_t
@@ -443,8 +439,8 @@ connection_manager__drain_and_disconnect_local(sockaddr_t *client_address)
 				 ok ? address_for_debugging : "<unknown>");
 			GSH_AUTO_TRACEPOINT(PROV_NAME, disco_local_no_client,
 					    TRACE_INFO, "Client not found: {}",
-					    TP_STR(ok ? address_for_debugging :
-							"<unknown>"));
+					    TP_STR(ok ? address_for_debugging
+						      : "<unknown>"));
 		}
 		result = CONNECTION_MANAGER__DRAIN__SUCCESS_NO_CONNECTIONS;
 		goto out;
@@ -484,9 +480,9 @@ connection_manager__drain_and_disconnect_local(sockaddr_t *client_address)
 				       "Already self draining, waiting");
 		wait_for_state_change(client);
 		result = (client->state ==
-			  CONNECTION_MANAGER__CLIENT_STATE__DRAINED) ?
-				 CONNECTION_MANAGER__DRAIN__SUCCESS :
-				 CONNECTION_MANAGER__DRAIN__FAILED;
+			  CONNECTION_MANAGER__CLIENT_STATE__DRAINED)
+				 ? CONNECTION_MANAGER__DRAIN__SUCCESS
+				 : CONNECTION_MANAGER__DRAIN__FAILED;
 		break;
 	}
 	default: {

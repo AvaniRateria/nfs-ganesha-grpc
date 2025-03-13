@@ -152,18 +152,20 @@ int display_vfs_handle(struct display_buffer *dspbuf,
 				    fh->handle_len - handle_cursor);
 }
 
+/* clang-format off */
 #define LogVFSHandle(fh)                                                   \
 	do {                                                               \
 		if (isMidDebug(COMPONENT_FSAL)) {                          \
 			char buf[256] = "\0";                              \
 			struct display_buffer dspbuf = { sizeof(buf), buf, \
 							 buf };            \
-                                                                           \
+									   \
 			display_vfs_handle(&dspbuf, fh);                   \
-                                                                           \
+									   \
 			LogMidDebug(COMPONENT_FSAL, "%s", buf);            \
 		}                                                          \
 	} while (0)
+/* clang-format on */
 
 int vfs_map_name_to_handle_at(int fd, struct fsal_filesystem *fs,
 			      const char *path, vfs_file_handle_t *fh,

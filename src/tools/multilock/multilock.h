@@ -160,6 +160,8 @@ struct response;
 
 long get_global_tag(bool increment);
 
+/* clang-format off */
+
 #define array_strcpy(dest, src)                       \
 	do {                                          \
 		strncpy(dest, src, sizeof(dest) - 1); \
@@ -170,7 +172,7 @@ long get_global_tag(bool increment);
 	do {                                    \
 		if (len >= sizeof(dest))        \
 			len = sizeof(dest) - 1; \
-                                                \
+						\
 		memcpy(dest, src, len);         \
 		dest[len] = '\0';               \
 	} while (0)
@@ -179,7 +181,7 @@ long get_global_tag(bool increment);
 	do {                                               \
 		int left = sizeof(buf);                    \
 		int lx = snprintf(buf, left, fmt, ##args); \
-                                                           \
+							   \
 		left -= lx;                                \
 	} while (0)
 
@@ -215,6 +217,8 @@ long get_global_tag(bool increment);
 		fflush(stdout);              \
 		exit(ret);                   \
 	} while (0)
+
+/* clang-format on */
 
 char *get_command(char *line, enum commands *cmd);
 char *get_tag(char *line, struct response *resp, int required,

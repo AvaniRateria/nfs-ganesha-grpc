@@ -165,8 +165,7 @@ const char *clientid_error_to_str(clientid_status_t err)
  * @return Corresponding string.
  */
 
-const char *
-clientid_confirm_state_to_str(nfs_clientid_confirm_state_t confirmed)
+const char *clientid_confirm_state_to_str(nfs_clientid_confirm_state_t confirmed)
 {
 	switch (confirmed) {
 	case CONFIRMED_CLIENT_ID:
@@ -203,9 +202,9 @@ int display_client_id_rec(struct display_buffer *dspbuf,
 	if (b_left <= 0)
 		return b_left;
 
-	b_left = display_printf(
-		dspbuf, "} %s ClientRec={",
-		clientid_confirm_state_to_str(clientid->cid_confirmed));
+	b_left = display_printf(dspbuf, "} %s ClientRec={",
+				clientid_confirm_state_to_str(
+					clientid->cid_confirmed));
 
 	if (b_left <= 0)
 		return b_left;
@@ -362,10 +361,10 @@ void free_client_id(nfs_client_id_t *clientid)
 		struct glist_head *glistn = NULL;
 
 		glist_for_each_safe(glist, glistn,
-				    &clientid->cid_cb.v41.cb_session_list)
-		{
-			nfs41_session_t *session = glist_entry(
-				glist, nfs41_session_t, session_link);
+				    &clientid->cid_cb.v41.cb_session_list) {
+			nfs41_session_t *session = glist_entry(glist,
+							       nfs41_session_t,
+							       session_link);
 			if (!nfs41_Session_Del(session)) {
 				char str[LOG_BUFF_LEN] = "\0";
 				struct display_buffer dspbuf = { sizeof(str),
@@ -909,8 +908,7 @@ bool clientid_has_state(nfs_client_id_t *clientid)
 	 */
 
 	/* Check if any open owners have active open state. */
-	glist_for_each(glist, &clientid->cid_openowners)
-	{
+	glist_for_each(glist, &clientid->cid_openowners) {
 		live_state = owner_has_state(
 			glist_entry(glist, state_owner_t,
 				    so_owner.so_nfs4_owner.so_perclient));
@@ -969,8 +967,7 @@ void print_expired_client_list(void)
 	struct glist_head *expired_client_n = NULL;
 
 	glist_for_each_safe(expired_client_i, expired_client_n,
-			    &expired_client_ids_list)
-	{
+			    &expired_client_ids_list) {
 		char str[LOG_BUFF_LEN] = "\0";
 		struct display_buffer dspbuf = { sizeof(str), str, str };
 
@@ -1004,8 +1001,7 @@ void remove_client_from_expired_client_list(nfs_client_id_t *active_clientid)
 	PTHREAD_MUTEX_lock(&expired_client_ids_list_lock);
 
 	glist_for_each_safe(expired_client_i, expired_client_n,
-			    &expired_client_ids_list)
-	{
+			    &expired_client_ids_list) {
 		struct nfs_client_id_t *expired_client =
 			glist_entry(expired_client_i, struct nfs_client_id_t,
 				    expired_client);
@@ -1323,10 +1319,10 @@ bool nfs_client_id_expire(nfs_client_id_t *clientid, bool make_stale,
 		struct glist_head *glistn = NULL;
 
 		glist_for_each_safe(glist, glistn,
-				    &clientid->cid_cb.v41.cb_session_list)
-		{
-			nfs41_session_t *session = glist_entry(
-				glist, nfs41_session_t, session_link);
+				    &clientid->cid_cb.v41.cb_session_list) {
+			nfs41_session_t *session = glist_entry(glist,
+							       nfs41_session_t,
+							       session_link);
 
 			if (!nfs41_Session_Del(session)) {
 				display_reset_buffer(&dspbuf);
@@ -1428,8 +1424,7 @@ int reap_expired_client_list(nfs_client_id_t *conflicted_client)
 
 	/* Let's start cleaning */
 	glist_for_each_safe(expired_client_i, expired_client_n,
-			    &expired_client_ids_list)
-	{
+			    &expired_client_ids_list) {
 		char str[LOG_BUFF_LEN] = "\0";
 		struct display_buffer dspbuf = { sizeof(str), str, str };
 
@@ -2184,8 +2179,7 @@ int destroy_all_client_connections(const struct gsh_client *gsh_client)
 
 			glist_for_each_safe(
 				curr_node, next_node,
-				&clientid->cid_cb.v41.cb_session_list)
-			{
+				&clientid->cid_cb.v41.cb_session_list) {
 				nfs41_session_t *const session =
 					glist_entry(curr_node, nfs41_session_t,
 						    session_link);

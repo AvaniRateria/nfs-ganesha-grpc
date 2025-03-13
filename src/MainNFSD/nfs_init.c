@@ -1221,9 +1221,9 @@ static void lower_my_caps(void)
 static void do_malloc_trim(void *param)
 {
 	LogDebug(COMPONENT_MAIN,
-		 malloc_trim(0) ?
-			 "malloc_trim() released some memory" :
-			 "malloc_trim() was not able to release memory");
+		 malloc_trim(0)
+			 ? "malloc_trim() released some memory"
+			 : "malloc_trim() was not able to release memory");
 	(void)delayed_submit(do_malloc_trim, 0, THIRTY_MIN);
 }
 #endif

@@ -394,13 +394,12 @@ static fsal_status_t kvsfs_merge(struct fsal_obj_handle *orig_hdl,
  *  anyway (default is 0777) because open uses that target's mode
  */
 
-static fsal_status_t
-kvsfs_makesymlink(struct fsal_obj_handle *dir_hdl, const char *name,
-		  const char *link_path, struct fsal_attrlist *attrib,
-		  struct fsal_obj_handle **handle,
-		  struct fsal_attrlist *attrsout,
-		  struct fsal_attrlist *parent_pre_attrs_out,
-		  struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t kvsfs_makesymlink(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	const char *link_path, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **handle, struct fsal_attrlist *attrsout,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct kvsfs_fsal_obj_handle *myself, *hdl;
 	fsal_errors_t fsal_error = ERR_FSAL_NO_ERROR;
@@ -501,11 +500,10 @@ out:
 	return fsalstat(fsal_error, -retval);
 }
 
-static fsal_status_t
-kvsfs_linkfile(struct fsal_obj_handle *obj_hdl,
-	       struct fsal_obj_handle *destdir_hdl, const char *name,
-	       struct fsal_attrlist *destdir_pre_attrs_out,
-	       struct fsal_attrlist *destdir_post_attrs_out)
+static fsal_status_t kvsfs_linkfile(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *destdir_hdl,
+	const char *name, struct fsal_attrlist *destdir_pre_attrs_out,
+	struct fsal_attrlist *destdir_post_attrs_out)
 {
 	struct kvsfs_fsal_obj_handle *myself, *destdir;
 	int retval = 0;

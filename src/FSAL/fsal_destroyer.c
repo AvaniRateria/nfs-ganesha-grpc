@@ -59,8 +59,7 @@ static void shutdown_handles(struct fsal_module *fsal)
 		return;
 
 	LogDebug(COMPONENT_FSAL, "Extra file handles hanging around.");
-	glist_for_each_safe(hi, hn, &fsal->handles)
-	{
+	glist_for_each_safe(hi, hn, &fsal->handles) {
 		struct fsal_obj_handle *h =
 			glist_entry(hi, struct fsal_obj_handle, handles);
 		LogDebug(COMPONENT_FSAL, "Releasing handle");
@@ -85,8 +84,7 @@ static void shutdown_pnfs_ds(struct fsal_module *fsal)
 		return;
 
 	LogDebug(COMPONENT_FSAL, "Extra pNFS Data Servers hanging around.");
-	glist_for_each_safe(glist, glistn, &fsal->servers)
-	{
+	glist_for_each_safe(glist, glistn, &fsal->servers) {
 		struct fsal_pnfs_ds *ds =
 			glist_entry(glist, struct fsal_pnfs_ds, server);
 		int32_t refcount;
@@ -135,8 +133,7 @@ void destroy_fsals(void)
 	int rc = 0;
 	char *fsal_name;
 
-	glist_for_each_safe(mi, mn, &fsal_list)
-	{
+	glist_for_each_safe(mi, mn, &fsal_list) {
 		/* The module to destroy */
 		struct fsal_module *m =
 			glist_entry(mi, struct fsal_module, fsals);
@@ -157,8 +154,7 @@ void destroy_fsals(void)
 		LogEvent(COMPONENT_FSAL, "Shutting down exports for FSAL %s",
 			 m->name);
 
-		glist_for_each_safe(ei, en, &m->exports)
-		{
+		glist_for_each_safe(ei, en, &m->exports) {
 			/* The module to destroy */
 			struct fsal_export *e =
 				glist_entry(ei, struct fsal_export, exports);
@@ -211,8 +207,7 @@ void emergency_cleanup_fsals(void)
 	/* Next module */
 	struct glist_head *mn = NULL;
 
-	glist_for_each_safe(mi, mn, &fsal_list)
-	{
+	glist_for_each_safe(mi, mn, &fsal_list) {
 		/* The module to destroy */
 		struct fsal_module *m =
 			glist_entry(mi, struct fsal_module, fsals);

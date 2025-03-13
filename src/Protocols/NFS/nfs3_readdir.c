@@ -258,8 +258,9 @@ int nfs3_readdir(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 
 	/* Fills "."  */
 	if (cookie == 0) {
-		res->res_readdir3.status = nfs_readdir_dot_entry(
-			dir_obj, ".", 1, nfs3_readdir_callback, &tracker);
+		res->res_readdir3.status =
+			nfs_readdir_dot_entry(dir_obj, ".", 1,
+					      nfs3_readdir_callback, &tracker);
 
 		if (res->res_readdir3.status != NFS3_OK) {
 			rc = NFS_REQ_OK;

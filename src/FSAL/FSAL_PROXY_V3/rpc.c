@@ -143,8 +143,8 @@ static int proxyv3_openfd(const struct sockaddr *host, const socklen_t socklen,
 	}
 
 	bool ipv6 = host->sa_family == AF_INET6;
-	size_t expected_len = (ipv6) ? sizeof(struct sockaddr_in6) :
-				       sizeof(struct sockaddr_in);
+	size_t expected_len = (ipv6) ? sizeof(struct sockaddr_in6)
+				     : sizeof(struct sockaddr_in);
 	if (socklen != expected_len) {
 		LogCrit(COMPONENT_FSAL,
 			"Given an ipv%s sockaddr (%s) with len %u != %zu",
@@ -165,8 +165,8 @@ static int proxyv3_openfd(const struct sockaddr *host, const socklen_t socklen,
 	/* Check that the caller is letting us slip the port in. */
 	if ((ipv6 && hostv6->sin6_port != 0) ||
 	    (!ipv6 && hostv4->sin_port != 0)) {
-		unsigned int port = (ipv6) ? hostv6->sin6_port :
-					     hostv4->sin_port;
+		unsigned int port = (ipv6) ? hostv6->sin6_port
+					   : hostv4->sin_port;
 		LogCrit(COMPONENT_FSAL,
 			"passed an address (%s) with non-zero port %u",
 			addrForErrors, port);

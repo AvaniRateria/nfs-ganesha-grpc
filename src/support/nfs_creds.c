@@ -484,9 +484,9 @@ nfsstat4 nfs_req_creds(struct svc_req *req)
 			/* Creds are already loaded, get auth_label using
 			 * existing anon flag
 			 */
-			auth_label = (op_ctx->cred_flags & CREDS_ANON) ?
-					     "RPCSEC_GSS (no mapping)" :
-					     "RPCSEC_GSS";
+			auth_label = (op_ctx->cred_flags & CREDS_ANON)
+					     ? "RPCSEC_GSS (no mapping)"
+					     : "RPCSEC_GSS";
 			break;
 		}
 
@@ -549,13 +549,13 @@ nfsstat4 nfs_req_creds(struct svc_req *req)
 		op_ctx->creds.caller_gid,
 		(op_ctx->cred_flags & GID_SQUASHED) != 0 ? " (squashed)" : "",
 		op_ctx->creds.caller_glen,
-		(op_ctx->cred_flags & MANAGED_GIDS) != 0 ?
-			((op_ctx->cred_flags & GARRAY_SQUASHED) != 0 ?
-				 " (managed and squashed)" :
-				 " (managed)") :
-			((op_ctx->cred_flags & GARRAY_SQUASHED) != 0 ?
-				 " (squashed)" :
-				 ""));
+		(op_ctx->cred_flags & MANAGED_GIDS) != 0
+			? ((op_ctx->cred_flags & GARRAY_SQUASHED) != 0
+				   ? " (managed and squashed)"
+				   : " (managed)")
+			: ((op_ctx->cred_flags & GARRAY_SQUASHED) != 0
+				   ? " (squashed)"
+				   : ""));
 
 	return NFS4_OK;
 }
@@ -621,8 +621,8 @@ nfsstat4 nfs4_export_check_access(struct svc_req *req)
 			COMPONENT_NFS_V4, COMPONENT_EXPORT,
 			"Access not allowed on Export_Id %d %s for client %s",
 			op_ctx->ctx_export->export_id, CTX_PSEUDOPATH(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		return NFS4ERR_ACCESS;
 	}
 
@@ -632,8 +632,8 @@ nfsstat4 nfs4_export_check_access(struct svc_req *req)
 			   "NFS4 not allowed on Export_Id %d %s for client %s",
 			   op_ctx->ctx_export->export_id,
 			   CTX_PSEUDOPATH(op_ctx),
-			   op_ctx->client ? op_ctx->client->hostaddr_str :
-					    "unknown client");
+			   op_ctx->client ? op_ctx->client->hostaddr_str
+					  : "unknown client");
 		return NFS4ERR_ACCESS;
 	}
 
@@ -647,8 +647,8 @@ nfsstat4 nfs4_export_check_access(struct svc_req *req)
 			"NFS4 over %s not allowed on Export_Id %d %s for client %s",
 			xprt_type_to_str(xprt_type),
 			op_ctx->ctx_export->export_id, CTX_PSEUDOPATH(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		return NFS4ERR_ACCESS;
 	}
 
@@ -661,8 +661,8 @@ nfsstat4 nfs4_export_check_access(struct svc_req *req)
 			"Non-reserved Port %d is not allowed on Export_Id %d %s for client %s",
 			port, op_ctx->ctx_export->export_id,
 			CTX_PSEUDOPATH(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		return NFS4ERR_ACCESS;
 	}
 
@@ -672,8 +672,8 @@ nfsstat4 nfs4_export_check_access(struct svc_req *req)
 			COMPONENT_NFS_V4, COMPONENT_EXPORT,
 			"NFS4 auth not allowed on Export_Id %d %s for client %s",
 			op_ctx->ctx_export->export_id, CTX_PSEUDOPATH(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		return NFS4ERR_WRONGSEC;
 	}
 
@@ -714,20 +714,21 @@ fsal_status_t nfs_access_op(struct fsal_obj_handle *obj,
 	access_mask = 0;
 	*granted_access = 0;
 
-	LogDebugAlt(
-		COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
-		"Requested ACCESS=%s,%s,%s,%s,%s,%s",
-		FSAL_TEST_MASK(requested_access, ACCESS3_READ) ? "READ" : "-",
-		FSAL_TEST_MASK(requested_access, ACCESS3_LOOKUP) ? "LOOKUP" :
-								   "-",
-		FSAL_TEST_MASK(requested_access, ACCESS3_MODIFY) ? "MODIFY" :
-								   "-",
-		FSAL_TEST_MASK(requested_access, ACCESS3_EXTEND) ? "EXTEND" :
-								   "-",
-		FSAL_TEST_MASK(requested_access, ACCESS3_DELETE) ? "DELETE" :
-								   "-",
-		FSAL_TEST_MASK(requested_access, ACCESS3_EXECUTE) ? "EXECUTE" :
-								    "-");
+	LogDebugAlt(COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
+		    "Requested ACCESS=%s,%s,%s,%s,%s,%s",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_READ) ? "READ"
+								   : "-",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_LOOKUP) ? "LOOKUP"
+								     : "-",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_MODIFY) ? "MODIFY"
+								     : "-",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_EXTEND) ? "EXTEND"
+								     : "-",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_DELETE) ? "DELETE"
+								     : "-",
+		    FSAL_TEST_MASK(requested_access, ACCESS3_EXECUTE)
+			    ? "EXECUTE"
+			    : "-");
 
 	/* Set mode for read.
 	 * NOTE: FSAL_ACE_PERM_LIST_DIR and FSAL_ACE_PERM_READ_DATA have
@@ -776,29 +777,30 @@ fsal_status_t nfs_access_op(struct fsal_obj_handle *obj,
 		access_mask |= FSAL_MODE_MASK_FLAG | FSAL_ACE4_MASK_FLAG |
 			       FSAL_ACE4_PERM_CONTINUE;
 
-	LogDebugAlt(
-		COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
-		"access_mask = mode(%c%c%c) ACL(%s,%s,%s,%s,%s)",
-		FSAL_TEST_MASK(access_mask, FSAL_R_OK) ? 'r' : '-',
-		FSAL_TEST_MASK(access_mask, FSAL_W_OK) ? 'w' : '-',
-		FSAL_TEST_MASK(access_mask, FSAL_X_OK) ? 'x' : '-',
-		FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_READ_DATA) ?
-			obj->type == DIRECTORY ? "list_dir" : "read_data" :
-			"-",
-		FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_WRITE_DATA) ?
-			obj->type == DIRECTORY ? "add_file" : "write_data" :
-			"-",
-		FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_EXECUTE) ? "execute" :
-								     "-",
-		FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_ADD_SUBDIRECTORY) ?
-			"add_subdirectory" :
-			"-",
-		FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_DELETE_CHILD) ?
-			"delete_child" :
-			"-");
+	LogDebugAlt(COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
+		    "access_mask = mode(%c%c%c) ACL(%s,%s,%s,%s,%s)",
+		    FSAL_TEST_MASK(access_mask, FSAL_R_OK) ? 'r' : '-',
+		    FSAL_TEST_MASK(access_mask, FSAL_W_OK) ? 'w' : '-',
+		    FSAL_TEST_MASK(access_mask, FSAL_X_OK) ? 'x' : '-',
+		    FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_READ_DATA)
+			    ? obj->type == DIRECTORY ? "list_dir" : "read_data"
+			    : "-",
+		    FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_WRITE_DATA)
+			    ? obj->type == DIRECTORY ? "add_file" : "write_data"
+			    : "-",
+		    FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_EXECUTE)
+			    ? "execute"
+			    : "-",
+		    FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_ADD_SUBDIRECTORY)
+			    ? "add_subdirectory"
+			    : "-",
+		    FSAL_TEST_MASK(access_mask, FSAL_ACE_PERM_DELETE_CHILD)
+			    ? "delete_child"
+			    : "-");
 
-	fsal_status = obj->obj_ops->test_access(
-		obj, access_mask, &access_allowed, &access_denied, false);
+	fsal_status = obj->obj_ops->test_access(obj, access_mask,
+						&access_allowed, &access_denied,
+						false);
 	if (fsal_status.major == ERR_FSAL_NO_ERROR ||
 	    fsal_status.major == ERR_FSAL_ACCESS) {
 		/* Define granted access based on granted mode bits. */
@@ -862,47 +864,43 @@ fsal_status_t nfs_access_op(struct fsal_obj_handle *obj,
 		if (supported_access != NULL)
 			*supported_access = granted_mask;
 
-		LogDebugAlt(COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
-			    "Supported ACCESS=%s,%s,%s,%s,%s,%s",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_READ) ?
-				    "READ" :
-				    "-",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_LOOKUP) ?
-				    "LOOKUP" :
-				    "-",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_MODIFY) ?
-				    "MODIFY" :
-				    "-",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_EXTEND) ?
-				    "EXTEND" :
-				    "-",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_DELETE) ?
-				    "DELETE" :
-				    "-",
-			    FSAL_TEST_MASK(granted_mask, ACCESS3_EXECUTE) ?
-				    "EXECUTE" :
-				    "-");
+		LogDebugAlt(
+			COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
+			"Supported ACCESS=%s,%s,%s,%s,%s,%s",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_READ) ? "READ"
+								   : "-",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_LOOKUP) ? "LOOKUP"
+								     : "-",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_MODIFY) ? "MODIFY"
+								     : "-",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_EXTEND) ? "EXTEND"
+								     : "-",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_DELETE) ? "DELETE"
+								     : "-",
+			FSAL_TEST_MASK(granted_mask, ACCESS3_EXECUTE)
+				? "EXECUTE"
+				: "-");
 
 		LogDebugAlt(COMPONENT_NFSPROTO, COMPONENT_NFS_V4_ACL,
 			    "Granted ACCESS=%s,%s,%s,%s,%s,%s",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_READ) ?
-				    "READ" :
-				    "-",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_LOOKUP) ?
-				    "LOOKUP" :
-				    "-",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_MODIFY) ?
-				    "MODIFY" :
-				    "-",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_EXTEND) ?
-				    "EXTEND" :
-				    "-",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_DELETE) ?
-				    "DELETE" :
-				    "-",
-			    FSAL_TEST_MASK(*granted_access, ACCESS3_EXECUTE) ?
-				    "EXECUTE" :
-				    "-");
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_READ)
+				    ? "READ"
+				    : "-",
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_LOOKUP)
+				    ? "LOOKUP"
+				    : "-",
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_MODIFY)
+				    ? "MODIFY"
+				    : "-",
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_EXTEND)
+				    ? "EXTEND"
+				    : "-",
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_DELETE)
+				    ? "DELETE"
+				    : "-",
+			    FSAL_TEST_MASK(*granted_access, ACCESS3_EXECUTE)
+				    ? "EXECUTE"
+				    : "-");
 	}
 
 	return fsal_status;

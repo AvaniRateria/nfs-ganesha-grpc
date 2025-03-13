@@ -358,11 +358,10 @@ int nfs3_read(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 			     offset, size, MaxOffsetRead);
 
 		if ((offset + size) > MaxOffsetRead) {
-			LogEvent(
-				COMPONENT_NFSPROTO,
-				"A client tried to violate max file size %" PRIu64
-				" for exportid #%hu",
-				MaxOffsetRead, op_ctx->ctx_export->export_id);
+			LogEvent(COMPONENT_NFSPROTO,
+				 "A client tried to violate max file size %" PRIu64
+				 " for exportid #%hu",
+				 MaxOffsetRead, op_ctx->ctx_export->export_id);
 
 			res->res_read3.status = NFS3ERR_FBIG;
 

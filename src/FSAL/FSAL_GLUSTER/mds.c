@@ -144,8 +144,9 @@ static nfsstat4 pnfs_layout_get(struct fsal_obj_handle *obj_pub, XDR *loc_body,
 				const struct fsal_layoutget_arg *arg,
 				struct fsal_layoutget_res *res)
 {
-	struct glusterfs_export *export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *export = container_of(op_ctx->fsal_export,
+						       struct glusterfs_export,
+						       export);
 
 	struct glusterfs_handle *handle =
 		container_of(obj_pub, struct glusterfs_handle, handle);
@@ -289,8 +290,9 @@ static nfsstat4 pnfs_layout_commit(struct fsal_obj_handle *obj_pub,
 	struct stat old_stat;
 	/* new stat to set time and size */
 	struct stat new_stat;
-	struct glusterfs_export *glfs_export = container_of(
-		op_ctx->fsal_export, struct glusterfs_export, export);
+	struct glusterfs_export *glfs_export =
+		container_of(op_ctx->fsal_export, struct glusterfs_export,
+			     export);
 	struct glusterfs_handle *objhandle =
 		container_of(obj_pub, struct glusterfs_handle, handle);
 	/* Mask to determine exactly what gets set */
@@ -388,11 +390,10 @@ nfsstat4 getdeviceinfo(struct fsal_module *fsal_hdl, XDR *da_addr_body,
 	}
 
 	if (!inline_xdr_u_int32_t(da_addr_body, &stripes)) {
-		LogMajor(
-			COMPONENT_PNFS,
-			"Failed to encode length of stripe_indices array: %" PRIu32
-			".",
-			stripes);
+		LogMajor(COMPONENT_PNFS,
+			 "Failed to encode length of stripe_indices array: %" PRIu32
+			 ".",
+			 stripes);
 		return NFS4ERR_SERVERFAULT;
 	}
 

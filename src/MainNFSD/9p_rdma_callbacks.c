@@ -160,9 +160,10 @@ void _9p_rdma_process_request(struct _9p_request_data *req9p)
 
 		/* If earlier processing succeeded, post it */
 		if (rc == 1) {
-			if (0 != msk_post_send(
-					 trans, dataout, _9p_rdma_callback_send,
-					 _9p_rdma_callback_send_err, NULL))
+			if (0 != msk_post_send(trans, dataout,
+					       _9p_rdma_callback_send,
+					       _9p_rdma_callback_send_err,
+					       NULL))
 				rc = -1;
 		}
 

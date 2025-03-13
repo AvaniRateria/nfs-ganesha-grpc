@@ -155,10 +155,9 @@ static struct config_block lzfs_fsal_export_param_block = {
 	.blk_desc.u.blk.commit = noop_conf_commit
 };
 
-static fsal_status_t
-lzfs_fsal_create_export(struct fsal_module *fsal_hdl, void *parse_node,
-			struct config_error_type *err_type,
-			const struct fsal_up_vector *up_ops)
+static fsal_status_t lzfs_fsal_create_export(
+	struct fsal_module *fsal_hdl, void *parse_node,
+	struct config_error_type *err_type, const struct fsal_up_vector *up_ops)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	fsal_status_t status = fsalstat(ERR_FSAL_NO_ERROR, 0);
@@ -208,8 +207,9 @@ lzfs_fsal_create_export(struct fsal_module *fsal_hdl, void *parse_node,
 	lzfs_export->export.fsal = fsal_hdl;
 	lzfs_export->export.up_ops = up_ops;
 
-	lzfs_export->pnfs_ds_enabled = lzfs_export->export.exp_ops.fs_supports(
-		&lzfs_export->export, fso_pnfs_ds_supported);
+	lzfs_export->pnfs_ds_enabled =
+		lzfs_export->export.exp_ops.fs_supports(&lzfs_export->export,
+							fso_pnfs_ds_supported);
 	if (lzfs_export->pnfs_ds_enabled) {
 		lzfs_export->fileinfo_cache = liz_create_fileinfo_cache(
 			lzfs_export->fileinfo_cache_max_size,
@@ -248,8 +248,9 @@ lzfs_fsal_create_export(struct fsal_module *fsal_hdl, void *parse_node,
 			 CTX_FULLPATH(op_ctx));
 	}
 
-	lzfs_export->pnfs_mds_enabled = lzfs_export->export.exp_ops.fs_supports(
-		&lzfs_export->export, fso_pnfs_mds_supported);
+	lzfs_export->pnfs_mds_enabled =
+		lzfs_export->export.exp_ops.fs_supports(&lzfs_export->export,
+							fso_pnfs_mds_supported);
 	if (lzfs_export->pnfs_mds_enabled) {
 		LogDebug(COMPONENT_PNFS, "pnfs mds was enabled for [%s]",
 			 CTX_FULLPATH(op_ctx));

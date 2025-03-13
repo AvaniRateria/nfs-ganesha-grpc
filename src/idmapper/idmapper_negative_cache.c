@@ -263,8 +263,9 @@ static void idmapper_negative_cache_add_entity_by_name(
 
 	/* Unlikely that the node already exists. If it does, we update it */
 	if (unlikely(old_node)) {
-		old_entity = avltree_container_of(
-			old_node, negative_cache_entity_t, name_node);
+		old_entity = avltree_container_of(old_node,
+						  negative_cache_entity_t,
+						  name_node);
 		old_entity->epoch = time(NULL);
 		/* Move entity to the tail of the queue */
 		TAILQ_REMOVE(cache_queue, old_entity, queue_entry);

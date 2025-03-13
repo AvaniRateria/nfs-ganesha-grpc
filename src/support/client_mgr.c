@@ -215,8 +215,8 @@ out:
 
 void put_gsh_client(struct gsh_client *client)
 {
-	int64_t __attribute__((unused)) new_refcnt =
-		atomic_dec_int64_t(&client->refcnt);
+	int64_t __attribute__((unused))
+	new_refcnt = atomic_dec_int64_t(&client->refcnt);
 	assert(new_refcnt >= 0);
 }
 
@@ -1302,8 +1302,7 @@ void FreeClientList(struct glist_head *clients, client_free_func free_func)
 	struct glist_head *glist;
 	struct glist_head *glistn;
 
-	glist_for_each_safe(glist, glistn, clients)
-	{
+	glist_for_each_safe(glist, glistn, clients) {
 		struct base_client_entry *client;
 
 		client = glist_entry(glist, struct base_client_entry, cle_list);
@@ -1583,8 +1582,7 @@ client_match(enum log_components component, const char *str,
 			    str ? str : "");
 	}
 
-	glist_for_each(glist, clients)
-	{
+	glist_for_each(glist, clients) {
 		client = glist_entry(glist, struct base_client_entry, cle_list);
 		LogMidDebug_ClientListEntry(component, "Match V4: ", client);
 		if (client_predicate != NULL && !client_predicate(client)) {

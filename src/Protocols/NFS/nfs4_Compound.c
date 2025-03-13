@@ -713,12 +713,11 @@ enum nfs_req_result complete_op(compound_data_t *data, nfsstat4 *status,
 
 	data->resp_size += sizeof(nfs_opnum4) + data->op_resp_size;
 
-	LogDebug(
-		COMPONENT_NFS_V4,
-		"Status of %s in position %d = %s, op response size is %" PRIu32
-		" total response size is %" PRIu32,
-		data->opname, data->oppos, nfsstat4_to_str(*status),
-		data->op_resp_size, data->resp_size);
+	LogDebug(COMPONENT_NFS_V4,
+		 "Status of %s in position %d = %s, op response size is %" PRIu32
+		 " total response size is %" PRIu32,
+		 data->opname, data->oppos, nfsstat4_to_str(*status),
+		 data->op_resp_size, data->resp_size);
 
 	if (result == NFS_REQ_ERROR) {
 		/* An error occurred, we do not manage the other requests
@@ -806,8 +805,8 @@ enum nfs_req_result process_one_op(compound_data_t *data, nfsstat4 *status)
 			   "DESTROY_SESSION in position %u out of 0-%" PRIi32
 			   " %s is %s",
 			   data->oppos, data->argarray_len - 1,
-			   session_compare ? "same session as SEQUENCE" :
-					     "different session from SEQUENCE",
+			   session_compare ? "same session as SEQUENCE"
+					   : "different session from SEQUENCE",
 			   bad_pos ? "not last op in compound" : "opk");
 
 		if (bad_pos) {
@@ -918,8 +917,9 @@ void set_slot_last_req(compound_data_t *data)
 {
 	struct timespec curr_time;
 
-	data->slot->last_req.opcode_num = get_nfs4_opcodes(
-		data, data->slot->last_req.opcodes, NFS4_MAX_OPERATIONS);
+	data->slot->last_req.opcode_num =
+		get_nfs4_opcodes(data, data->slot->last_req.opcodes,
+				 NFS4_MAX_OPERATIONS);
 	data->slot->last_req.xid = data->req->rq_msg.rm_xid;
 	data->slot->last_req.seq_id = data->sequence;
 	now(&curr_time);
@@ -1282,10 +1282,9 @@ int nfs4_Compound(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 
 	/* Check for too long request */
 	if (argarray_len > NFS4_MAX_OPERATIONS) {
-		LogMajor(
-			COMPONENT_NFS_V4,
-			"A COMPOUND with too many operations (%d) was received",
-			argarray_len);
+		LogMajor(COMPONENT_NFS_V4,
+			 "A COMPOUND with too many operations (%d) was received",
+			 argarray_len);
 
 		res_compound4->status = NFS4ERR_RESOURCE;
 		res_compound4->resarray.resarray_len = 0;
@@ -1423,9 +1422,9 @@ void nfs4_Compound_FreeOne(nfs_resop4 *res)
 {
 	int opcode;
 
-	opcode = (res->resop != NFS4_OP_ILLEGAL) ?
-			 res->resop :
-			 0; /* opcode 0 for illegals */
+	opcode = (res->resop != NFS4_OP_ILLEGAL)
+			 ? res->resop
+			 : 0; /* opcode 0 for illegals */
 	optabv4[opcode].free_res(res);
 }
 

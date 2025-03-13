@@ -63,8 +63,8 @@ config_file_t config_ParseFile(char *file_path,
 	if (rc != 0)
 		config_proc_error(
 			root, err_type,
-			(rc == 1 ? "Configuration syntax errors found" :
-				   "Configuration parse ran out of memory"));
+			(rc == 1 ? "Configuration syntax errors found"
+				 : "Configuration parse ran out of memory"));
 #ifdef DUMP_PARSE_TREE
 	print_parse_tree(stderr, root);
 #endif
@@ -81,8 +81,7 @@ void *config_GetBlockNode(const char *block_name)
 	struct glist_head *glh;
 	struct config_node *node;
 
-	glist_for_each(glh, &all_blocks)
-	{
+	glist_for_each(glh, &all_blocks) {
 		node = glist_entry(glh, struct config_node, blocks);
 		if (!strcasecmp(node->u.nterm.name, block_name)) {
 			return node;
@@ -299,11 +298,11 @@ static bool convert_number(struct config_node *node, struct config_item *item,
 
 	if (node->type != TYPE_TERM) {
 		config_proc_error(node, err_type, "Expected a number, got a %s",
-				  (node->type == TYPE_ROOT ?
-					   "root node" :
-					   (node->type == TYPE_BLOCK ?
-						    "block" :
-						    "statement")));
+				  (node->type == TYPE_ROOT
+					   ? "root node"
+					   : (node->type == TYPE_BLOCK
+						      ? "block"
+						      : "statement")));
 		goto errout;
 	} else if (node->u.term.type == TERM_DECNUM) {
 		base = 10;
@@ -466,11 +465,11 @@ static bool convert_fsid(struct config_node *node, void *param,
 
 	if (node->type != TYPE_TERM) {
 		config_proc_error(node, err_type, "Expected an FSID, got a %s",
-				  (node->type == TYPE_ROOT ?
-					   "root node" :
-					   (node->type == TYPE_BLOCK ?
-						    "block" :
-						    "statement")));
+				  (node->type == TYPE_ROOT
+					   ? "root node"
+					   : (node->type == TYPE_BLOCK
+						      ? "block"
+						      : "statement")));
 		goto errout;
 	}
 	if (node->u.term.type != TERM_FSID) {
@@ -534,8 +533,7 @@ static bool convert_list(struct config_node *node, struct config_item *item,
 	int errors = 0;
 
 	*flags = 0;
-	glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes)
-	{
+	glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes) {
 		sub_node = glist_entry(nsi, struct config_node, node);
 		assert(sub_node->type == TYPE_TERM);
 		found = false;
@@ -648,8 +646,7 @@ static void do_proc(struct config_node *node, struct config_item *item,
 	int rc = 0;
 
 	assert(node->type == TYPE_STMT);
-	glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes)
-	{
+	glist_for_each_safe(nsi, nsn, &node->u.nterm.sub_nodes) {
 		term_node = glist_entry(nsi, struct config_node, node);
 		rc += item->u.proc.handler(term_node->u.term.varvalue,
 					   term_node->u.term.type, item,
@@ -673,8 +670,7 @@ static struct config_node *lookup_node(struct glist_head *list,
 	struct config_node *node;
 	struct glist_head *ns;
 
-	glist_for_each(ns, list)
-	{
+	glist_for_each(ns, list) {
 		node = glist_entry(ns, struct config_node, node);
 		assert(node->type == TYPE_BLOCK || node->type == TYPE_STMT);
 		if (strcasecmp(name, node->u.nterm.name) == 0) {
@@ -702,8 +698,7 @@ static struct config_node *lookup_next_node(struct glist_head *list,
 	struct config_node *node;
 	struct glist_head *ns;
 
-	glist_for_each_next(start, ns, list)
-	{
+	glist_for_each_next(start, ns, list) {
 		node = glist_entry(ns, struct config_node, node);
 		assert(node->type == TYPE_BLOCK || node->type == TYPE_STMT);
 		if (strcasecmp(name, node->u.nterm.name) == 0) {
@@ -1003,8 +998,8 @@ static int do_block_load(struct config_node *blk, struct config_item *params,
 				     config_type_str(item->type));
 			if (glist_empty(&node->u.nterm.sub_nodes)) {
 				LogInfo(COMPONENT_CONFIG, "%s %s is empty",
-					(node->type == TYPE_STMT ? "Statement" :
-								   "Block"),
+					(node->type == TYPE_STMT ? "Statement"
+								 : "Block"),
 					node->u.nterm.name);
 				node = next_node;
 				continue;
@@ -1226,9 +1221,9 @@ static int do_block_load(struct config_node *blk, struct config_item *params,
 					"Deprecated parameter (%s)%s%s",
 					item->name,
 					item->u.deprecated.message ? " - " : "",
-					item->u.deprecated.message ?
-						item->u.deprecated.message :
-						"");
+					item->u.deprecated.message
+						? item->u.deprecated.message
+						: "");
 				err_type->deprecated = true;
 				errors++;
 				break;
@@ -1260,8 +1255,7 @@ static int do_block_load(struct config_node *blk, struct config_item *params,
 	/* We've been marking config nodes as being "seen" during the
 	 * scans.  Report the bogus and typo inflicted bits.
 	 */
-	glist_for_each(ns, &blk->u.nterm.sub_nodes)
-	{
+	glist_for_each(ns, &blk->u.nterm.sub_nodes) {
 		node = glist_entry(ns, struct config_node, node);
 		if (node->found)
 			node->found = false;
@@ -1358,10 +1352,9 @@ static bool proc_block(struct config_node *node, struct config_item *item,
 			       (item->flags & CONFIG_RELAX) ? true : false,
 			       param_struct, err_type);
 	if (errors > 0 && !cur_exp_config_error_is_harmless(err_type)) {
-		config_proc_error(
-			node, err_type,
-			"%d errors while processing parameters for %s", errors,
-			item->name);
+		config_proc_error(node, err_type,
+				  "%d errors while processing parameters for %s",
+				  errors, item->name);
 		goto err_out;
 	}
 	if (item->u.blk.check && item->u.blk.check(param_struct, err_type)) {
@@ -1409,8 +1402,7 @@ void find_unused_blocks(config_file_t config,
 	/* We've been marking config nodes as being "seen" during the
 	 * scans.  Report the bogus and typo inflicted bits.
 	 */
-	glist_for_each(ns, &tree->root.u.nterm.sub_nodes)
-	{
+	glist_for_each(ns, &tree->root.u.nterm.sub_nodes) {
 		struct config_node *node;
 
 		node = glist_entry(ns, struct config_node, node);
@@ -1717,8 +1709,7 @@ static inline bool match_one_term(char *value, struct config_node *node)
 	struct config_node *term_node;
 	struct glist_head *ts;
 
-	glist_for_each(ts, &node->u.nterm.sub_nodes)
-	{
+	glist_for_each(ts, &node->u.nterm.sub_nodes) {
 		term_node = glist_entry(ts, struct config_node, node);
 		assert(term_node->type == TYPE_TERM);
 		if (strcasecmp(value, term_node->u.term.varvalue) == 0)
@@ -1749,8 +1740,7 @@ static bool match_block(struct config_node *blk, struct expr_parse *expr)
 
 	assert(blk->type == TYPE_BLOCK);
 	for (arg = expr->arg; arg != NULL; arg = arg->next) {
-		glist_for_each(ns, &blk->u.nterm.sub_nodes)
-		{
+		glist_for_each(ns, &blk->u.nterm.sub_nodes) {
 			sub_node = glist_entry(ns, struct config_node, node);
 			if (sub_node->type == TYPE_STMT &&
 			    strcasecmp(arg->name, sub_node->u.nterm.name) ==
@@ -1820,8 +1810,7 @@ int find_config_nodes(config_file_t config, char *expr_str,
 	expr = expr_head;
 	*node_list = NULL;
 again:
-	glist_for_each(ns, &top->u.nterm.sub_nodes)
-	{
+	glist_for_each(ns, &top->u.nterm.sub_nodes) {
 #ifdef DS_ONLY_WAS
 		/* recent changes to parsing may prevent this,
 		 * but retain code here for future reference.
@@ -1965,16 +1954,14 @@ int load_config_from_parse(config_file_t config, struct config_block *conf_blk,
 	if (param != NULL) {
 		blk_mem = conf_blk->blk_desc.u.blk.init(NULL, param);
 		if (blk_mem == NULL) {
-			config_proc_error(
-				&tree->root, err_type,
-				"Top level block init failed for (%s)",
-				blkname);
+			config_proc_error(&tree->root, err_type,
+					  "Top level block init failed for (%s)",
+					  blkname);
 			err_type->internal = true;
 			return -1;
 		}
 	}
-	glist_for_each(ns, &tree->root.u.nterm.sub_nodes)
-	{
+	glist_for_each(ns, &tree->root.u.nterm.sub_nodes) {
 		node = glist_entry(ns, struct config_node, node);
 		if (node->type == TYPE_BLOCK &&
 		    (strcasecmp(blkname, node->u.nterm.name) == 0 ||
@@ -2014,10 +2001,10 @@ int load_config_from_parse(config_file_t config, struct config_block *conf_blk,
 	if (found == 0 && (conf_blk->blk_desc.flags & CONFIG_NO_DEFAULT) == 0) {
 		/* Found nothing but we have to do the allocate and init
 		 * at least. Use a fake, not NULL link_mem */
-		blk_mem = param != NULL ?
-				  param :
-				  conf_blk->blk_desc.u.blk.init((void *)~0UL,
-								NULL);
+		blk_mem = param != NULL
+				  ? param
+				  : conf_blk->blk_desc.u.blk.init((void *)~0UL,
+								  NULL);
 		assert(blk_mem != NULL);
 		if (!do_block_init(&tree->root, conf_blk->blk_desc.u.blk.params,
 				   blk_mem, err_type)) {

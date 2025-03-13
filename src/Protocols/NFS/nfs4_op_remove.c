@@ -140,8 +140,8 @@ enum nfs_req_result nfs4_op_remove(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	res_REMOVE4->REMOVE4res_u.resok4.cinfo.atomic =
-		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE :
-									  FALSE;
+		is_parent_pre_attrs_valid && is_parent_post_attrs_valid ? TRUE
+									: FALSE;
 
 out_put_grace:
 	fsal_release_attrs(&parent_pre_attrs);

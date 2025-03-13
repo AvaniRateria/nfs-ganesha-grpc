@@ -129,9 +129,9 @@ fsal_acl_t *convertSaunafsACLToFsalACL(const sau_acl_t *saunafsACL)
 		fsalACE->type = saunafsACE.type;
 		fsalACE->flag = saunafsACE.flags & ByteMaxValue;
 		fsalACE->iflag =
-			(saunafsACE.flags & (unsigned int)SAU_ACL_SPECIAL_WHO) ?
-				FSAL_ACE_IFLAG_SPECIAL_ID :
-				0;
+			(saunafsACE.flags & (unsigned int)SAU_ACL_SPECIAL_WHO)
+				? FSAL_ACE_IFLAG_SPECIAL_ID
+				: 0;
 		fsalACE->perm = saunafsACE.mask;
 
 		if (IS_FSAL_ACE_GROUP_ID(*fsalACE))

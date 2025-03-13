@@ -94,8 +94,9 @@ enum nfs_req_result nfs4_op_getxattr(struct nfs_argop4 *op,
 		return NFS_REQ_ERROR;
 	}
 
-	fsal_status = obj_handle->obj_ops->getxattrs(
-		obj_handle, &arg_GETXATTR4->gxa_name, &gxr_value);
+	fsal_status = obj_handle->obj_ops->getxattrs(obj_handle,
+						     &arg_GETXATTR4->gxa_name,
+						     &gxr_value);
 	if (FSAL_IS_ERROR(fsal_status)) {
 		if (fsal_status.major == ERR_FSAL_XATTR2BIG) {
 			LogDebug(COMPONENT_NFS_V4,
@@ -310,8 +311,9 @@ enum nfs_req_result nfs4_op_listxattr(struct nfs_argop4 *op,
 	}
 
 	maxcount = arg_LISTXATTR4->lxa_maxcount - overhead;
-	fsal_status = obj_handle->obj_ops->listxattrs(
-		obj_handle, maxcount, &lxa_cookie, &lxr_eof, &list);
+	fsal_status = obj_handle->obj_ops->listxattrs(obj_handle, maxcount,
+						      &lxa_cookie, &lxr_eof,
+						      &list);
 	if (FSAL_IS_ERROR(fsal_status)) {
 		res_LISTXATTR4->status = nfs4_Errno_status(fsal_status);
 		res_LISTXATTR4->LISTXATTR4res_u.resok4.lxr_names.xl4_entries =
@@ -422,8 +424,9 @@ enum nfs_req_result nfs4_op_removexattr(struct nfs_argop4 *op,
 	res_REMOVEXATTR4->REMOVEXATTR4res_u.resok4.rxr_info.atomic = false;
 	res_REMOVEXATTR4->REMOVEXATTR4res_u.resok4.rxr_info.before =
 		fsal_get_changeid4(data->current_obj);
-	fsal_status = obj_handle->obj_ops->removexattrs(
-		obj_handle, &arg_REMOVEXATTR4->rxa_name);
+	fsal_status =
+		obj_handle->obj_ops->removexattrs(obj_handle,
+						  &arg_REMOVEXATTR4->rxa_name);
 	if (FSAL_IS_ERROR(fsal_status))
 		res_REMOVEXATTR4->status = nfs4_Errno_status(fsal_status);
 	else

@@ -266,8 +266,9 @@ static bool fridgethr_getwork(struct fridgethr *fr, struct fridgethr_entry *fe)
 	    glist_empty(&fr->work_q)) {
 		return false;
 	} else {
-		struct fridgethr_work *q = glist_first_entry(
-			&fr->work_q, struct fridgethr_work, link);
+		struct fridgethr_work *q =
+			glist_first_entry(&fr->work_q, struct fridgethr_work,
+					  link);
 		glist_del(&q->link);
 		fe->ctx.func = q->func;
 		fe->ctx.arg = q->arg;
@@ -637,8 +638,7 @@ static bool fridgethr_dispatch(struct fridgethr *fr,
 	bool dispatched = false;
 
 	/* Try to grab a thread */
-	glist_for_each_safe(g, n, &fr->idle_q)
-	{
+	glist_for_each_safe(g, n, &fr->idle_q) {
 		fe = container_of(g, struct fridgethr_entry, idle_link);
 		PTHREAD_MUTEX_lock(&fe->ctx.fre_mtx);
 		/* Get rid of a potential race condition
@@ -765,8 +765,7 @@ int fridgethr_wake(struct fridgethr *fr)
 	}
 
 	/* Wake the threads */
-	glist_for_each(g, &fr->idle_q)
-	{
+	glist_for_each(g, &fr->idle_q) {
 		/* The entry for the found thread */
 		struct fridgethr_entry *fe =
 			container_of(g, struct fridgethr_entry, idle_link);
@@ -931,8 +930,7 @@ int fridgethr_stop(struct fridgethr *fr, pthread_mutex_t *pmtx,
 		/* Iterator over the list */
 		struct glist_head *g = NULL;
 
-		glist_for_each(g, &fr->idle_q)
-		{
+		glist_for_each(g, &fr->idle_q) {
 			struct fridgethr_entry *fe;
 
 			fe = container_of(g, struct fridgethr_entry, idle_link);
@@ -952,8 +950,9 @@ int fridgethr_stop(struct fridgethr *fr, pthread_mutex_t *pmtx,
 		/* Well, this is embarrassing. */
 		assert(fr->p.deferment != fridgethr_defer_fail);
 		if (fr->p.deferment == fridgethr_defer_queue) {
-			struct fridgethr_work *q = glist_first_entry(
-				&fr->work_q, struct fridgethr_work, link);
+			struct fridgethr_work *q =
+				glist_first_entry(&fr->work_q,
+						  struct fridgethr_work, link);
 			glist_del(&q->link);
 			rc = fridgethr_spawn(fr, q->func, q->arg);
 			gsh_free(q);
@@ -1030,8 +1029,7 @@ int fridgethr_start(struct fridgethr *fr, pthread_mutex_t *pmtx,
 		/* Iterator over the list */
 		struct glist_head *g = NULL;
 
-		glist_for_each(g, &fr->idle_q)
-		{
+		glist_for_each(g, &fr->idle_q) {
 			struct fridgethr_entry *fe;
 
 			fe = container_of(g, struct fridgethr_entry, idle_link);
@@ -1049,8 +1047,9 @@ int fridgethr_start(struct fridgethr *fr, pthread_mutex_t *pmtx,
 	       ((fr->nthreads < fr->p.thr_max) || (fr->p.thr_max == 0))) {
 		/* Start some threads to finish the work */
 		if (fr->p.deferment == fridgethr_defer_queue) {
-			struct fridgethr_work *q = glist_first_entry(
-				&fr->work_q, struct fridgethr_work, link);
+			struct fridgethr_work *q =
+				glist_first_entry(&fr->work_q,
+						  struct fridgethr_work, link);
 			glist_del(&q->link);
 			rc = fridgethr_spawn(fr, q->func, q->arg);
 			gsh_free(q);
@@ -1322,8 +1321,7 @@ void fridgethr_cancel(struct fridgethr *fr)
 	PTHREAD_MUTEX_lock(&fr->frt_mtx);
 	LogEvent(COMPONENT_THREAD, "Cancelling %d threads from fridge %s.",
 		 fr->nthreads, fr->s);
-	glist_for_each_safe(ti, tn, &fr->thread_list)
-	{
+	glist_for_each_safe(ti, tn, &fr->thread_list) {
 		struct fridgethr_entry *t =
 			glist_entry(ti, struct fridgethr_entry, thread_link);
 		/* The only error we can get is no such thread.

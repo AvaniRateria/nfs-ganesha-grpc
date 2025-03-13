@@ -179,8 +179,9 @@ static void ng_add(const char *group, const char *host, bool negative)
 		 * entry, and free the current entry
 		 */
 		if (found_node) {
-			found_info = avltree_container_of(
-				found_node, struct ng_cache_info, ng_node);
+			found_info = avltree_container_of(found_node,
+							  struct ng_cache_info,
+							  ng_node);
 			found_info->ng_epoch = info->ng_epoch;
 			ng_free(info);
 		}
@@ -192,8 +193,9 @@ static void ng_add(const char *group, const char *host, bool negative)
 		 * entry, and free the current entry
 		 */
 		if (found_node) {
-			found_info = avltree_container_of(
-				found_node, struct ng_cache_info, ng_node);
+			found_info = avltree_container_of(found_node,
+							  struct ng_cache_info,
+							  ng_node);
 			ng_cache[ng_hash_key(found_info)] = found_node;
 			found_info->ng_epoch = info->ng_epoch;
 			ng_free(info);

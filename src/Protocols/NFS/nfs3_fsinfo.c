@@ -146,8 +146,9 @@ int nfs3_fsinfo(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 	FSINFO_FIELD->properties = FSF3_LINK | FSF3_SYMLINK | FSF3_HOMOGENEOUS |
 				   FSF3_CANSETTIME;
 
-	nfs_SetPostOpAttr(
-		obj, &res->res_fsinfo3.FSINFO3res_u.resok.obj_attributes, NULL);
+	nfs_SetPostOpAttr(obj,
+			  &res->res_fsinfo3.FSINFO3res_u.resok.obj_attributes,
+			  NULL);
 	res->res_fsinfo3.status = NFS3_OK;
 
 out:

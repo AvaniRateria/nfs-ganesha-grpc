@@ -146,9 +146,8 @@ void lzfs_fsal_export_ops_pnfs(struct export_ops *ops);
 
 void lzfs_fsal_ops_pnfs(struct fsal_ops *ops);
 
-struct lzfs_fsal_handle *
-lzfs_fsal_new_handle(const struct stat *attr,
-		     struct lzfs_fsal_export *lzfs_export);
+struct lzfs_fsal_handle *lzfs_fsal_new_handle(
+	const struct stat *attr, struct lzfs_fsal_export *lzfs_export);
 
 void lzfs_fsal_delete_handle(struct lzfs_fsal_handle *obj);
 

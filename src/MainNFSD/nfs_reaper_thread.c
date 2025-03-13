@@ -132,10 +132,9 @@ restart:
 						"Reaper, Parked for later cleanup {%s}",
 						str);
 				} else {
-					LogFullDebug(
-						COMPONENT_CLIENTID,
-						"Reaper done, expired {%s}",
-						str);
+					LogFullDebug(COMPONENT_CLIENTID,
+						     "Reaper done, expired {%s}",
+						     str);
 				}
 			}
 
@@ -165,9 +164,8 @@ static int reap_expired_open_owners(void)
 	 * process, and thus prevent them from expiring.
 	 */
 	while (true) {
-		owner = glist_first_entry(
-			&cached_open_owners, state_owner_t,
-			so_owner.so_nfs4_owner.so_cache_entry);
+		owner = glist_first_entry(&cached_open_owners, state_owner_t,
+					  so_owner.so_nfs4_owner.so_cache_entry);
 
 		if (owner == NULL)
 			break;

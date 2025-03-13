@@ -132,8 +132,8 @@ int mnt_Mnt(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 			COMPONENT_NFSPROTO, COMPONENT_EXPORT,
 			"MOUNT: Export entry %s does not support NFS v3 for client %s",
 			ctx_export_path(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		res->res_mnt3.fhs_status = MNT3ERR_ACCES;
 		goto out;
 	}
@@ -143,8 +143,8 @@ int mnt_Mnt(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 			COMPONENT_NFSPROTO, COMPONENT_EXPORT,
 			"MOUNT: Export entry %s does not allow access for client %s",
 			ctx_export_path(op_ctx),
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 		res->res_mnt3.fhs_status = MNT3ERR_ACCES;
 		goto out;
 	}
@@ -215,8 +215,8 @@ int mnt_Mnt(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 			COMPONENT_NFSPROTO,
 			"MOUNT: Entry supports %d different flavours handle=%s for client %s",
 			index_auth, str,
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 	}
 
 	RES_MOUNTINFO->auth_flavors.auth_flavors_val =

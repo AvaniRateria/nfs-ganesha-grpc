@@ -208,9 +208,10 @@ bool dbus_proc_property(const char *method, DBusMessage *msg,
 		    (*prop)->access == DBUS_PROP_READWRITE) {
 			DBusMessageIter variant_iter;
 
-			if (!dbus_message_iter_open_container(
-				    &reply_iter, DBUS_TYPE_VARIANT,
-				    (*prop)->type, &variant_iter)) {
+			if (!dbus_message_iter_open_container(&reply_iter,
+							      DBUS_TYPE_VARIANT,
+							      (*prop)->type,
+							      &variant_iter)) {
 				dbus_set_error_const(
 					error, DBUS_ERROR_FAILED,
 					"Couldn't open Get container");

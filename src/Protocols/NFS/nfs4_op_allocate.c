@@ -176,11 +176,10 @@ static enum nfs_req_result allocate_deallocate(compound_data_t *data,
 			     offset, size, MaxOffsetWrite);
 
 		if ((offset + size) > MaxOffsetWrite) {
-			LogEvent(
-				COMPONENT_NFS_V4,
-				"A client tried to violate max file size %" PRIu64
-				" for exportid #%hu",
-				MaxOffsetWrite, op_ctx->ctx_export->export_id);
+			LogEvent(COMPONENT_NFS_V4,
+				 "A client tried to violate max file size %" PRIu64
+				 " for exportid #%hu",
+				 MaxOffsetWrite, op_ctx->ctx_export->export_id);
 			*status = NFS4ERR_FBIG;
 			goto out;
 		}

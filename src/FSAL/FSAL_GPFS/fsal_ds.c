@@ -99,8 +99,9 @@ static nfsstat4 ds_read(struct fsal_ds_handle *const ds_pub,
 	struct dsread_arg rarg;
 	unsigned int *fh;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	fh = (int *)&(gpfs_handle->f_handle);
@@ -173,8 +174,9 @@ static nfsstat4 ds_read_plus(struct fsal_ds_handle *const ds_pub,
 	unsigned int *fh;
 	uint64_t filesize;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	fh = (int *)&(gpfs_handle->f_handle);
@@ -253,11 +255,13 @@ static nfsstat4 ds_read_plus(struct fsal_ds_handle *const ds_pub,
  *
  * @return An NFSv4.1 status code.
  */
-static nfsstat4
-ds_write(struct fsal_ds_handle *const ds_pub, const stateid4 *stateid,
-	 const offset4 offset, const count4 write_length, const void *buffer,
-	 const stable_how4 stability_wanted, count4 *const written_length,
-	 verifier4 *const writeverf, stable_how4 *const stability_got)
+static nfsstat4 ds_write(struct fsal_ds_handle *const ds_pub,
+			 const stateid4 *stateid, const offset4 offset,
+			 const count4 write_length, const void *buffer,
+			 const stable_how4 stability_wanted,
+			 count4 *const written_length,
+			 verifier4 *const writeverf,
+			 stable_how4 *const stability_got)
 {
 	/* The private 'full' DS handle */
 	struct gpfs_ds *ds = container_of(ds_pub, struct gpfs_ds, ds);
@@ -268,8 +272,9 @@ ds_write(struct fsal_ds_handle *const ds_pub, const stateid4 *stateid,
 	unsigned int *fh;
 	struct gsh_buffdesc key;
 	int errsv = 0;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	fh = (int *)&(gpfs_handle->f_handle);
@@ -342,8 +347,9 @@ static nfsstat4 ds_commit(struct fsal_ds_handle *const ds_pub,
 	struct fsync_arg arg = { 0 };
 	unsigned int *fh;
 	int retval;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	fh = (int *)&(gpfs_handle->f_handle);

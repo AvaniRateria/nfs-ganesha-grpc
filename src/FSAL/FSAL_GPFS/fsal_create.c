@@ -172,8 +172,9 @@ fsal_status_t GPFSFSAL_link(struct fsal_obj_handle *dir_hdl,
 {
 	fsal_status_t status;
 	struct gpfs_fsal_obj_handle *dest_dir;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	dest_dir =

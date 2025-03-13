@@ -769,9 +769,8 @@ bool xdr_READLINK3res(XDR *xdrs, READLINK3res *objp)
 bool xdr_READ3args(XDR *xdrs, READ3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_nfs_fh3(xdrs, &objp->file))
 		return (false);
@@ -831,9 +830,8 @@ bool xdr_stable_how(XDR *xdrs, stable_how *objp)
 bool xdr_WRITE3args(XDR *xdrs, WRITE3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_nfs_fh3(xdrs, &objp->file))
 		return (false);
@@ -917,9 +915,8 @@ bool xdr_createhow3(XDR *xdrs, createhow3 *objp)
 bool xdr_CREATE3args(XDR *xdrs, CREATE3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_diropargs3(xdrs, &objp->where))
 		return (false);
@@ -1139,9 +1136,8 @@ bool xdr_MKNOD3res(XDR *xdrs, MKNOD3res *objp)
 bool xdr_REMOVE3args(XDR *xdrs, REMOVE3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_diropargs3(xdrs, &objp->object))
 		return (false);
@@ -1221,9 +1217,8 @@ bool xdr_RMDIR3res(XDR *xdrs, RMDIR3res *objp)
 bool xdr_RENAME3args(XDR *xdrs, RENAME3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_diropargs3(xdrs, &objp->from))
 		return (false);
@@ -1315,9 +1310,8 @@ bool xdr_LINK3res(XDR *xdrs, LINK3res *objp)
 bool xdr_READDIR3args(XDR *xdrs, READDIR3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_nfs_fh3(xdrs, &objp->dir))
 		return (false);
@@ -1476,9 +1470,8 @@ bool xdr_READDIR3res(XDR *xdrs, READDIR3res *objp)
 bool xdr_READDIRPLUS3args(XDR *xdrs, READDIRPLUS3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_nfs_fh3(xdrs, &objp->dir))
 		return (false);
@@ -1812,9 +1805,8 @@ bool xdr_PATHCONF3res(XDR *xdrs, PATHCONF3res *objp)
 bool xdr_COMMIT3args(XDR *xdrs, COMMIT3args *objp)
 {
 	struct nfs_request_lookahead *lkhd =
-		xdrs->x_public ?
-			(struct nfs_request_lookahead *)xdrs->x_public :
-			&dummy_lookahead;
+		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
+			       : &dummy_lookahead;
 
 	if (!xdr_nfs_fh3(xdrs, &objp->file))
 		return (false);

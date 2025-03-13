@@ -100,8 +100,9 @@ int nlm4_Share(nfs_arg_t *args, struct svc_req *req, nfs_res_t *res)
 	 * Note: NLM_SHARE is indicated to be non-monitored, however, it does
 	 * have a reclaim flag, so we will honor the reclaim flag if used.
 	 */
-	grace_ref = !op_ctx->fsal_export->exp_ops.fs_supports(
-		op_ctx->fsal_export, fso_grace_method);
+	grace_ref =
+		!op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+							  fso_grace_method);
 	if (grace_ref) {
 		if (!nfs_get_grace_status(arg->reclaim)) {
 			res->res_nlm4share.stat = NLM4_DENIED_GRACE_PERIOD;

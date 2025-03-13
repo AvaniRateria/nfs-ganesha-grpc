@@ -555,9 +555,8 @@ void _state_del_locked(state_t *state, const char *func, int line)
 	 */
 	/* Mark in op_ctx for the last close of a file */
 	if (nfs_param.nfsv4_param.preserve_unlinked &&
-	    op_ctx->fsal_export->exp_ops.fs_supports(
-			op_ctx->fsal_export,
-			fso_preserve_unlinked) &&
+	    op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+						     fso_preserve_unlinked) &&
 	    !fsal_has_file_states(obj))
 		op_ctx->last_close = true;
 
@@ -703,8 +702,7 @@ void state_nfs4_state_wipe(struct state_hdl *ostate)
 	if (glist_empty(&ostate->file.list_of_states))
 		return;
 
-	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states)
-	{
+	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states) {
 		state = glist_entry(glist, state_t, state_list);
 		if (state->state_type > STATE_TYPE_LAYOUT)
 			continue;
@@ -717,8 +715,7 @@ void state_nfs4_state_wipe(struct state_hdl *ostate)
 	}
 
 	/* Loop over again to delete any STATE_TYPE_SHARE */
-	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states)
-	{
+	glist_for_each_safe(glist, glistn, &ostate->file.list_of_states) {
 		state = glist_entry(glist, state_t, state_list);
 		if (state->state_type > STATE_TYPE_LAYOUT)
 			continue;
@@ -973,9 +970,9 @@ again:
 	PTHREAD_MUTEX_lock(&client_owner->so_mutex);
 	so_mutex_held = true;
 
-	glist_for_each_safe(glist, glistn,
-			    &client_owner->so_owner.so_nfs4_owner.so_state_list)
-	{
+	glist_for_each_safe(
+		glist, glistn,
+		&client_owner->so_owner.so_nfs4_owner.so_state_list) {
 		state = glist_entry(glist, state_t, state_owner_list);
 
 		/* We set first to the first state we look in this iteration.
@@ -1057,8 +1054,8 @@ again:
 	PTHREAD_RWLOCK_wrlock(&op_ctx->ctx_export->exp_lock);
 	hold_export_lock = true;
 
-	glist_for_each_safe(glist, glistn, &op_ctx->ctx_export->exp_state_list)
-	{
+	glist_for_each_safe(glist, glistn,
+			    &op_ctx->ctx_export->exp_state_list) {
 		struct fsal_obj_handle *obj = NULL;
 		state_owner_t *owner = NULL;
 		bool deleted = false;
@@ -1182,8 +1179,7 @@ void dump_all_states(void)
 
 		LogFullDebug(COMPONENT_STATE, " =State List= ");
 
-		glist_for_each(glist, &state_v4_all)
-		{
+		glist_for_each(glist, &state_v4_all) {
 			char str1[LOG_BUFF_LEN / 2] = "\0";
 			char str2[LOG_BUFF_LEN / 2] = "\0";
 			struct display_buffer dspbuf1 = { sizeof(str1), str1,
@@ -1230,8 +1226,8 @@ bool check_and_remove_conflicting_client(struct state_hdl *file_state_hdl)
 		return isFoundAndCleaned;
 
 recheck_for_conflicting_entries:
-	glist_for_each_safe(glist, glistn, &file_state_hdl->file.list_of_states)
-	{
+	glist_for_each_safe(glist, glistn,
+			    &file_state_hdl->file.list_of_states) {
 		state_t *state = glist_entry(glist, state_t, state_list);
 		state_owner_t *owner = state->state_owner;
 

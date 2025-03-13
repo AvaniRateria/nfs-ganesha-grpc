@@ -509,8 +509,9 @@ void gsh_dbus_append_timestamp(DBusMessageIter *iterp,
 	dbus_message_iter_close_container(iterp, &ts_iter);
 }
 
-static DBusHandlerResult
-dbus_message_entrypoint(DBusConnection *conn, DBusMessage *msg, void *user_data)
+static DBusHandlerResult dbus_message_entrypoint(DBusConnection *conn,
+						 DBusMessage *msg,
+						 void *user_data)
 {
 	const char *interface = dbus_message_get_interface(msg);
 	const char *method = dbus_message_get_member(msg);
@@ -551,15 +552,15 @@ dbus_message_entrypoint(DBusConnection *conn, DBusMessage *msg, void *user_data)
 
 				for (m = (*iface)->methods; m && *m; m++) {
 					if (strcmp(method, (*m)->name) == 0) {
-						success = (*m)->method(
-							argsp, reply, &error);
+						success = (*m)->method(argsp,
+								       reply,
+								       &error);
 						goto done;
 					}
 				}
-				LogMajor(
-					COMPONENT_DBUS,
-					"Unknown method (%s) on interface (%s)",
-					method, interface);
+				LogMajor(COMPONENT_DBUS,
+					 "Unknown method (%s) on interface (%s)",
+					 method, interface);
 				result = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 				goto done;
 			}
@@ -668,8 +669,9 @@ void gsh_dbus_pkgshutdown(void)
 	node = avltree_first(&thread_state.callouts);
 	while (node) {
 		next_node = avltree_next(node);
-		handler = avltree_container_of(
-			node, struct ganesha_dbus_handler, node_k);
+		handler = avltree_container_of(node,
+					       struct ganesha_dbus_handler,
+					       node_k);
 		/* Unregister handler */
 		code = dbus_connection_unregister_object_path(
 			thread_state.dbus_conn, handler->name);
@@ -737,13 +739,14 @@ void *gsh_dbus_thread(void *arg)
 		LogFullDebug(COMPONENT_DBUS, "top of poll loop");
 
 		PTHREAD_MUTEX_lock(&dbus_bcast_lock);
-		glist_for_each_safe(glist, glistn, &dbus_broadcast_list)
-		{
-			struct dbus_bcast_item *bcast_item = glist_entry(
-				glist, struct dbus_bcast_item, dbus_bcast_q);
+		glist_for_each_safe(glist, glistn, &dbus_broadcast_list) {
+			struct dbus_bcast_item *bcast_item =
+				glist_entry(glist, struct dbus_bcast_item,
+					    dbus_bcast_q);
 			now(&current_time);
-			time_expired = gsh_time_cmp(
-				&current_time, &bcast_item->next_bcast_time);
+			time_expired =
+				gsh_time_cmp(&current_time,
+					     &bcast_item->next_bcast_time);
 
 			/*
 			 * list is sorted by soonest to latest

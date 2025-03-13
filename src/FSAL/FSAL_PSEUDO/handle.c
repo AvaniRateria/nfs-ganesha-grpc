@@ -77,9 +77,8 @@ static inline int pseudofs_i_cmpf(const struct avltree_node *lhs,
 	return 1;
 }
 
-static inline struct avltree_node *
-avltree_inline_name_lookup(const struct avltree_node *key,
-			   const struct avltree *tree)
+static inline struct avltree_node *avltree_inline_name_lookup(
+	const struct avltree_node *key, const struct avltree *tree)
 {
 	return avltree_inline_lookup(key, tree, pseudofs_n_cmpf);
 }
@@ -734,8 +733,9 @@ fsal_status_t pseudofs_lookup_path(struct fsal_export *exp_hdl,
 	attrs.mode = 0755;
 
 	if (myself->root_handle == NULL) {
-		myself->root_handle = alloc_directory_handle(
-			NULL, myself->export_path, exp_hdl, &attrs);
+		myself->root_handle =
+			alloc_directory_handle(NULL, myself->export_path,
+					       exp_hdl, &attrs);
 	}
 
 	*handle = &myself->root_handle->obj_handle;
@@ -779,8 +779,7 @@ fsal_status_t pseudofs_create_handle(struct fsal_export *exp_hdl,
 
 	PTHREAD_RWLOCK_rdlock(&exp_hdl->fsal->fsm_lock);
 
-	glist_for_each(glist, &exp_hdl->fsal->handles)
-	{
+	glist_for_each(glist, &exp_hdl->fsal->handles) {
 		hdl = glist_entry(glist, struct fsal_obj_handle, handles);
 
 		my_hdl = container_of(hdl, struct pseudo_fsal_obj_handle,

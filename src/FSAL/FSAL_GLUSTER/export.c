@@ -603,8 +603,7 @@ struct glusterfs_fs *glusterfs_get_fs(struct glexport_params params,
 
 	PTHREAD_MUTEX_lock(&GlusterFS.glfs_lock);
 
-	glist_for_each_safe(glist, glistn, &GlusterFS.fs_obj)
-	{
+	glist_for_each_safe(glist, glistn, &GlusterFS.fs_obj) {
 		gl_fs = glist_entry(glist, struct glusterfs_fs, fs_obj);
 		if (!strcmp(params.glvolname, gl_fs->volname)) {
 			goto found;
@@ -767,8 +766,9 @@ fsal_status_t glusterfs_create_export(struct fsal_module *fsal_hdl,
 
 	op_ctx->fsal_export = &glfsexport->export;
 
-	glfsexport->pnfs_ds_enabled = glfsexport->export.exp_ops.fs_supports(
-		&glfsexport->export, fso_pnfs_ds_supported);
+	glfsexport->pnfs_ds_enabled =
+		glfsexport->export.exp_ops.fs_supports(&glfsexport->export,
+						       fso_pnfs_ds_supported);
 	if (glfsexport->pnfs_ds_enabled) {
 		struct fsal_pnfs_ds *pds = NULL;
 
@@ -799,8 +799,9 @@ fsal_status_t glusterfs_create_export(struct fsal_module *fsal_hdl,
 			 CTX_FULLPATH(op_ctx));
 	}
 
-	glfsexport->pnfs_mds_enabled = glfsexport->export.exp_ops.fs_supports(
-		&glfsexport->export, fso_pnfs_mds_supported);
+	glfsexport->pnfs_mds_enabled =
+		glfsexport->export.exp_ops.fs_supports(&glfsexport->export,
+						       fso_pnfs_mds_supported);
 	if (glfsexport->pnfs_mds_enabled) {
 		LogDebug(COMPONENT_PNFS,
 			 "glusterfs_fsal_create: pnfs mds was enabled for [%s]",

@@ -62,10 +62,9 @@
  *
  * @return The new handle, or NULL if the allocation failed.
  */
-static struct nullfs_fsal_obj_handle *
-nullfs_alloc_handle(struct nullfs_fsal_export *export,
-		    struct fsal_obj_handle *sub_handle,
-		    struct fsal_filesystem *fs)
+static struct nullfs_fsal_obj_handle *nullfs_alloc_handle(
+	struct nullfs_fsal_export *export, struct fsal_obj_handle *sub_handle,
+	struct fsal_filesystem *fs)
 {
 	struct nullfs_fsal_obj_handle *result;
 
@@ -141,8 +140,9 @@ static fsal_status_t lookup(struct fsal_obj_handle *parent, const char *path,
 	/* call to subfsal lookup with the good context. */
 	fsal_status_t status;
 	/** Current nullfs export. */
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 	op_ctx->fsal_export = export->export.sub_export;
 	status = null_parent->sub_handle->obj_ops->lookup(
 		null_parent->sub_handle, path, &sub_handle, attrs_out);
@@ -162,11 +162,13 @@ static fsal_status_t makedir(struct fsal_obj_handle *dir_hdl, const char *name,
 {
 	*new_obj = NULL;
 	/** Parent directory nullfs handle. */
-	struct nullfs_fsal_obj_handle *parent_hdl = container_of(
-		dir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *parent_hdl =
+		container_of(dir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 	/** Current nullfs export. */
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/** Subfsal handle of the new directory.*/
 	struct fsal_obj_handle *sub_handle;
@@ -192,11 +194,13 @@ static fsal_status_t makenode(struct fsal_obj_handle *dir_hdl, const char *name,
 			      struct fsal_attrlist *parent_post_attrs_out)
 {
 	/** Parent directory nullfs handle. */
-	struct nullfs_fsal_obj_handle *nullfs_dir = container_of(
-		dir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_dir =
+		container_of(dir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 	/** Current nullfs export. */
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/** Subfsal handle of the new node.*/
 	struct fsal_obj_handle *sub_handle;
@@ -230,11 +234,13 @@ static fsal_status_t makesymlink(struct fsal_obj_handle *dir_hdl,
 				 struct fsal_attrlist *parent_post_attrs_out)
 {
 	/** Parent directory nullfs handle. */
-	struct nullfs_fsal_obj_handle *nullfs_dir = container_of(
-		dir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_dir =
+		container_of(dir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 	/** Current nullfs export. */
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/** Subfsal handle of the new link.*/
 	struct fsal_obj_handle *sub_handle;
@@ -259,13 +265,15 @@ static fsal_status_t readsymlink(struct fsal_obj_handle *obj_hdl,
 {
 	struct nullfs_fsal_obj_handle *handle =
 		(struct nullfs_fsal_obj_handle *)obj_hdl;
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
-	fsal_status_t status = handle->sub_handle->obj_ops->readlink(
-		handle->sub_handle, link_content, refresh);
+	fsal_status_t status =
+		handle->sub_handle->obj_ops->readlink(handle->sub_handle,
+						      link_content, refresh);
 	op_ctx->fsal_export = &export->export;
 
 	return status;
@@ -281,8 +289,9 @@ static fsal_status_t linkfile(struct fsal_obj_handle *obj_hdl,
 		(struct nullfs_fsal_obj_handle *)obj_hdl;
 	struct nullfs_fsal_obj_handle *nullfs_dir =
 		(struct nullfs_fsal_obj_handle *)destdir_hdl;
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -307,10 +316,9 @@ static fsal_status_t linkfile(struct fsal_obj_handle *obj_hdl,
  *
  * @return Result coming from the upper layer.
  */
-static enum fsal_dir_result
-nullfs_readdir_cb(const char *name, struct fsal_obj_handle *sub_handle,
-		  struct fsal_attrlist *attrs, void *dir_state,
-		  fsal_cookie_t cookie)
+static enum fsal_dir_result nullfs_readdir_cb(
+	const char *name, struct fsal_obj_handle *sub_handle,
+	struct fsal_attrlist *attrs, void *dir_state, fsal_cookie_t cookie)
 {
 	struct nullfs_readdir_state *state =
 		(struct nullfs_readdir_state *)dir_state;
@@ -347,11 +355,13 @@ static fsal_status_t read_dirents(struct fsal_obj_handle *dir_hdl,
 				  fsal_readdir_cb cb, attrmask_t attrmask,
 				  bool *eof)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		dir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(dir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	struct nullfs_readdir_state cb_state = { .cb = cb,
 						 .dir_state = dir_state,
@@ -394,8 +404,9 @@ fsal_cookie_t compute_readdir_cookie(struct fsal_obj_handle *parent,
 	struct nullfs_fsal_obj_handle *handle =
 		container_of(parent, struct nullfs_fsal_obj_handle, obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -434,8 +445,9 @@ int dirent_cmp(struct fsal_obj_handle *parent, const char *name1,
 	struct nullfs_fsal_obj_handle *handle =
 		container_of(parent, struct nullfs_fsal_obj_handle, obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -445,23 +457,29 @@ int dirent_cmp(struct fsal_obj_handle *parent, const char *name1,
 	return rc;
 }
 
-static fsal_status_t
-renamefile(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
-	   const char *old_name, struct fsal_obj_handle *newdir_hdl,
-	   const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
-	   struct fsal_attrlist *olddir_post_attrs_out,
-	   struct fsal_attrlist *newdir_pre_attrs_out,
-	   struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t renamefile(struct fsal_obj_handle *obj_hdl,
+				struct fsal_obj_handle *olddir_hdl,
+				const char *old_name,
+				struct fsal_obj_handle *newdir_hdl,
+				const char *new_name,
+				struct fsal_attrlist *olddir_pre_attrs_out,
+				struct fsal_attrlist *olddir_post_attrs_out,
+				struct fsal_attrlist *newdir_pre_attrs_out,
+				struct fsal_attrlist *newdir_post_attrs_out)
 {
-	struct nullfs_fsal_obj_handle *nullfs_olddir = container_of(
-		olddir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
-	struct nullfs_fsal_obj_handle *nullfs_newdir = container_of(
-		newdir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
-	struct nullfs_fsal_obj_handle *nullfs_obj = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_olddir =
+		container_of(olddir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_newdir =
+		container_of(newdir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_obj =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -478,16 +496,19 @@ renamefile(struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
 static fsal_status_t getattrs(struct fsal_obj_handle *obj_hdl,
 			      struct fsal_attrlist *attrib_get)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
-	fsal_status_t status = handle->sub_handle->obj_ops->getattrs(
-		handle->sub_handle, attrib_get);
+	fsal_status_t status =
+		handle->sub_handle->obj_ops->getattrs(handle->sub_handle,
+						      attrib_get);
 	op_ctx->fsal_export = &export->export;
 
 	return status;
@@ -497,16 +518,19 @@ static fsal_status_t nullfs_setattr2(struct fsal_obj_handle *obj_hdl,
 				     bool bypass, struct state_t *state,
 				     struct fsal_attrlist *attrs)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
-	fsal_status_t status = handle->sub_handle->obj_ops->setattr2(
-		handle->sub_handle, bypass, state, attrs);
+	fsal_status_t status =
+		handle->sub_handle->obj_ops->setattr2(handle->sub_handle,
+						      bypass, state, attrs);
 	op_ctx->fsal_export = &export->export;
 
 	return status;
@@ -522,12 +546,15 @@ static fsal_status_t file_unlink(struct fsal_obj_handle *dir_hdl,
 				 struct fsal_attrlist *parent_pre_attrs_out,
 				 struct fsal_attrlist *parent_post_attrs_out)
 {
-	struct nullfs_fsal_obj_handle *nullfs_dir = container_of(
-		dir_hdl, struct nullfs_fsal_obj_handle, obj_handle);
-	struct nullfs_fsal_obj_handle *nullfs_obj = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_obj_handle *nullfs_dir =
+		container_of(dir_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
+	struct nullfs_fsal_obj_handle *nullfs_obj =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -550,11 +577,13 @@ static fsal_status_t handle_to_wire(const struct fsal_obj_handle *obj_hdl,
 				    fsal_digesttype_t output_type,
 				    struct gsh_buffdesc *fh_desc)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -575,11 +604,13 @@ static fsal_status_t handle_to_wire(const struct fsal_obj_handle *obj_hdl,
 static void handle_to_key(struct fsal_obj_handle *obj_hdl,
 			  struct gsh_buffdesc *fh_desc)
 {
-	struct nullfs_fsal_obj_handle *handle = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *handle =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -595,11 +626,13 @@ static void handle_to_key(struct fsal_obj_handle *obj_hdl,
 
 static void release(struct fsal_obj_handle *obj_hdl)
 {
-	struct nullfs_fsal_obj_handle *hdl = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *hdl =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 
 	/* calling subfsal method */
 	op_ctx->fsal_export = export->export.sub_export;
@@ -614,11 +647,13 @@ static void release(struct fsal_obj_handle *obj_hdl)
 static bool nullfs_is_referral(struct fsal_obj_handle *obj_hdl,
 			       struct fsal_attrlist *attrs, bool cache_attrs)
 {
-	struct nullfs_fsal_obj_handle *hdl = container_of(
-		obj_hdl, struct nullfs_fsal_obj_handle, obj_handle);
+	struct nullfs_fsal_obj_handle *hdl =
+		container_of(obj_hdl, struct nullfs_fsal_obj_handle,
+			     obj_handle);
 
-	struct nullfs_fsal_export *export = container_of(
-		op_ctx->fsal_export, struct nullfs_fsal_export, export);
+	struct nullfs_fsal_export *export =
+		container_of(op_ctx->fsal_export, struct nullfs_fsal_export,
+			     export);
 	bool result;
 
 	/* calling subfsal method */

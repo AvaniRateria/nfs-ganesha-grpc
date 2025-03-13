@@ -133,8 +133,9 @@ struct config_block proxyv3_export_param = {
  */
 const struct sockaddr *proxyv3_sockaddr(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.sockaddr;
 }
@@ -144,8 +145,9 @@ const struct sockaddr *proxyv3_sockaddr(void)
  */
 const socklen_t proxyv3_socklen(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.socklen;
 }
@@ -155,8 +157,9 @@ const socklen_t proxyv3_socklen(void)
  */
 static const char *proxyv3_sockname(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.sockname;
 }
@@ -166,8 +169,9 @@ static const char *proxyv3_sockname(void)
  */
 static const uint proxyv3_mountd_port(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.mountd_port;
 }
@@ -177,8 +181,9 @@ static const uint proxyv3_mountd_port(void)
  */
 static const uint proxyv3_nfsd_port(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.nfsd_port;
 }
@@ -189,8 +194,9 @@ static const uint proxyv3_nfsd_port(void)
 
 const uint proxyv3_nlm_port(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	return export->params.nlm_port;
 }
@@ -211,8 +217,9 @@ const struct user_cred *proxyv3_creds(void)
 
 const uint proxyv3_readdir_preferred(void)
 {
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 	fsal_staticfsinfo_t *fsinfo = &PROXY_V3.module.fs_info;
 
 	uint preferred = export->params.readdir_preferred;
@@ -284,11 +291,10 @@ static fsal_status_t proxyv3_init_config(struct fsal_module *fsal_handle,
  * @returns - A new proxyv3_obj_handle on success, NULL otherwise.
  */
 
-static struct proxyv3_obj_handle *
-proxyv3_alloc_handle(struct fsal_export *export_handle, const nfs_fh3 *fh3,
-		     const fattr3 *attrs,
-		     const struct proxyv3_obj_handle *parent,
-		     struct fsal_attrlist *fsal_attrs_out)
+static struct proxyv3_obj_handle *proxyv3_alloc_handle(
+	struct fsal_export *export_handle, const nfs_fh3 *fh3,
+	const fattr3 *attrs, const struct proxyv3_obj_handle *parent,
+	struct fsal_attrlist *fsal_attrs_out)
 {
 	/* Fill the attributes first to avoid an alloc on failure. */
 	struct fsal_attrlist local_attributes;
@@ -470,9 +476,10 @@ static fsal_status_t proxyv3_lookup_internal(struct fsal_export *export_handle,
 		}
 
 		/* Make a copy for the result. */
-		struct proxyv3_obj_handle *result_handle = proxyv3_alloc_handle(
-			export_handle, &which_dir->fh3, &which_dir->attrs,
-			which_dir->parent, attrs_out);
+		struct proxyv3_obj_handle *result_handle =
+			proxyv3_alloc_handle(export_handle, &which_dir->fh3,
+					     &which_dir->attrs,
+					     which_dir->parent, attrs_out);
 
 		if (result_handle == NULL) {
 			return fsalstat(ERR_FSAL_FAULT, 0);
@@ -520,8 +527,9 @@ static fsal_status_t proxyv3_lookup_internal(struct fsal_export *export_handle,
 	const fattr3 *obj_attrs =
 		&resok->obj_attributes.post_op_attr_u.attributes;
 
-	struct proxyv3_obj_handle *result_handle = proxyv3_alloc_handle(
-		export_handle, obj_fh, obj_attrs, parent_obj, attrs_out);
+	struct proxyv3_obj_handle *result_handle =
+		proxyv3_alloc_handle(export_handle, obj_fh, obj_attrs,
+				     parent_obj, attrs_out);
 
 	/* At this point, we've copied out the result. Clean up. */
 	xdr_free((xdrproc_t)xdr_LOOKUP3res, &result);
@@ -858,8 +866,9 @@ static fsal_status_t proxyv3_issue_createlike(
 	const struct nfs_fh3 *obj_fh = &op_fh3->post_op_fh3_u.handle;
 	const fattr3 *obj_attrs = &op_attr->post_op_attr_u.attributes;
 
-	struct proxyv3_obj_handle *result_handle = proxyv3_alloc_handle(
-		op_ctx->fsal_export, obj_fh, obj_attrs, parent_obj, attrs_out);
+	struct proxyv3_obj_handle *result_handle =
+		proxyv3_alloc_handle(op_ctx->fsal_export, obj_fh, obj_attrs,
+				     parent_obj, attrs_out);
 
 	pre_attrs_to_fsalattr(&parent_wcc_data->before, parent_pre_attrs_out);
 	post_attrs_to_fsalattr(&parent_wcc_data->after, parent_post_attrs_out);
@@ -1040,13 +1049,12 @@ static fsal_status_t proxyv3_reopen2(struct fsal_obj_handle *obj_hdl,
  * @brief Make a new symlink from dir/name => link_path.
  */
 
-static fsal_status_t
-proxyv3_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
-		const char *link_path, struct fsal_attrlist *attrs_in,
-		struct fsal_obj_handle **new_obj,
-		struct fsal_attrlist *attrs_out,
-		struct fsal_attrlist *parent_pre_attrs_out,
-		struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t proxyv3_symlink(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	const char *link_path, struct fsal_attrlist *attrs_in,
+	struct fsal_obj_handle **new_obj, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	LogDebug(COMPONENT_FSAL, "symlink of parent %p, name %s to => %s",
 		 dir_hdl, name, link_path);
@@ -1095,11 +1103,10 @@ proxyv3_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
  * @brief Make a hardlink from obj => dir/name.
  */
 
-static fsal_status_t
-proxyv3_hardlink(struct fsal_obj_handle *obj_hdl,
-		 struct fsal_obj_handle *dir_hdl, const char *name,
-		 struct fsal_attrlist *destdir_pre_attrs_out,
-		 struct fsal_attrlist *destdir_post_attrs_out)
+static fsal_status_t proxyv3_hardlink(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *dir_hdl,
+	const char *name, struct fsal_attrlist *destdir_pre_attrs_out,
+	struct fsal_attrlist *destdir_post_attrs_out)
 {
 	LogDebug(COMPONENT_FSAL, "(hard)link of object %p to %p/%s", obj_hdl,
 		 dir_hdl, name);
@@ -1379,11 +1386,10 @@ static fsal_status_t proxyv3_mknode(struct fsal_obj_handle *dir_hdl,
  * @brief Process the entries from a READDIR3 response.
  */
 
-static fsal_status_t
-proxyv3_readdir_process_entries(entryplus3 *entry, cookie3 *cookie,
-				struct proxyv3_obj_handle *parent_dir,
-				fsal_readdir_cb cb, void *cbarg,
-				attrmask_t attrmask)
+static fsal_status_t proxyv3_readdir_process_entries(
+	entryplus3 *entry, cookie3 *cookie,
+	struct proxyv3_obj_handle *parent_dir, fsal_readdir_cb cb, void *cbarg,
+	attrmask_t attrmask)
 {
 	int count = 0;
 	bool readahead = false;
@@ -1448,8 +1454,9 @@ proxyv3_readdir_process_entries(entryplus3 *entry, cookie3 *cookie,
 			}
 
 			/* Pull the fh3 out of the lookup_handle */
-			lookup_obj = container_of(
-				lookup_handle, struct proxyv3_obj_handle, obj);
+			lookup_obj = container_of(lookup_handle,
+						  struct proxyv3_obj_handle,
+						  obj);
 
 			memcpy(fh3, &lookup_obj->fh3, sizeof(struct nfs_fh3));
 
@@ -1494,8 +1501,9 @@ proxyv3_readdir_process_entries(entryplus3 *entry, cookie3 *cookie,
 		memset(&cb_attrs, 0, sizeof(cb_attrs));
 		FSAL_SET_MASK(cb_attrs.request_mask, attrmask);
 
-		result_handle = proxyv3_alloc_handle(
-			op_ctx->fsal_export, fh3, attrs, parent_dir, &cb_attrs);
+		result_handle = proxyv3_alloc_handle(op_ctx->fsal_export, fh3,
+						     attrs, parent_dir,
+						     &cb_attrs);
 
 		if (result_handle == NULL) {
 			LogCrit(COMPONENT_FSAL,
@@ -1986,8 +1994,8 @@ static fsal_status_t proxyv3_unlink(struct fsal_obj_handle *dir_hdl,
 	RMDIR3args dir_args;
 	RMDIR3res dir_result;
 
-	diropargs3 *diropargs = (is_rmdir) ? &dir_args.object :
-					     &regular_args.object;
+	diropargs3 *diropargs = (is_rmdir) ? &dir_args.object
+					   : &regular_args.object;
 
 	memset(&regular_result, 0, sizeof(regular_result));
 	memset(&dir_result, 0, sizeof(dir_result));
@@ -1997,17 +2005,17 @@ static fsal_status_t proxyv3_unlink(struct fsal_obj_handle *dir_hdl,
 	diropargs->name = (char *)name;
 
 	rpcproc_t method = (is_rmdir) ? NFSPROC3_RMDIR : NFSPROC3_REMOVE;
-	xdrproc_t enc = (is_rmdir) ? (xdrproc_t)xdr_RMDIR3args :
-				     (xdrproc_t)xdr_REMOVE3args;
-	xdrproc_t dec = (is_rmdir) ? (xdrproc_t)xdr_RMDIR3res :
-				     (xdrproc_t)xdr_REMOVE3res;
+	xdrproc_t enc = (is_rmdir) ? (xdrproc_t)xdr_RMDIR3args
+				   : (xdrproc_t)xdr_REMOVE3args;
+	xdrproc_t dec = (is_rmdir) ? (xdrproc_t)xdr_RMDIR3res
+				   : (xdrproc_t)xdr_REMOVE3res;
 
 	void *args = (is_rmdir) ? (void *)&dir_args : (void *)&regular_args;
-	void *result = (is_rmdir) ? (void *)&dir_result :
-				    (void *)&regular_result;
+	void *result = (is_rmdir) ? (void *)&dir_result
+				  : (void *)&regular_result;
 
-	nfsstat3 *status = (is_rmdir) ? &dir_result.status :
-					&regular_result.status;
+	nfsstat3 *status = (is_rmdir) ? &dir_result.status
+				      : &regular_result.status;
 
 	/* Issue the REMOVE. */
 	if (!proxyv3_nfs_call(proxyv3_sockaddr(), proxyv3_socklen(),
@@ -2182,10 +2190,9 @@ static fsal_status_t proxyv3_get_dynamic_info(struct fsal_export *export_handle,
  * @return ERR_FSAL_NO_ERROR on success, an error code otherwise.
  */
 
-static fsal_status_t
-proxyv3_handle_to_wire(const struct fsal_obj_handle *obj_hdl,
-		       fsal_digesttype_t output_type,
-		       struct gsh_buffdesc *fh_desc)
+static fsal_status_t proxyv3_handle_to_wire(
+	const struct fsal_obj_handle *obj_hdl, fsal_digesttype_t output_type,
+	struct gsh_buffdesc *fh_desc)
 {
 	struct proxyv3_obj_handle *handle =
 		container_of(obj_hdl, struct proxyv3_obj_handle, obj);
@@ -2307,9 +2314,10 @@ static fsal_status_t proxyv3_create_handle(struct fsal_export *export_handle,
 	}
 
 	/* Bundle up the result into a new object handle. */
-	struct proxyv3_obj_handle *result_handle = proxyv3_alloc_handle(
-		export_handle, &fh3, &tmp_attrs,
-		NULL /* don't have parent info */, attrs_out);
+	struct proxyv3_obj_handle *result_handle =
+		proxyv3_alloc_handle(export_handle, &fh3, &tmp_attrs,
+				     NULL /* don't have parent info */,
+				     attrs_out);
 
 	/* If we couldn't allocate the handle, fail. */
 	if (result_handle == NULL) {
@@ -2389,8 +2397,9 @@ static fsal_status_t proxyv3_fill_fsinfo(nfs_fh3 *fh3)
 	FSINFO3res result;
 	FSINFO3resok *resok = &result.FSINFO3res_u.resok;
 	fsal_staticfsinfo_t *fsinfo = &PROXY_V3.module.fs_info;
-	struct proxyv3_export *export = container_of(
-		op_ctx->fsal_export, struct proxyv3_export, export);
+	struct proxyv3_export *export = container_of(op_ctx->fsal_export,
+						     struct proxyv3_export,
+						     export);
 
 	memcpy(&args.fsroot, fh3, sizeof(*fh3));
 	memset(&result, 0, sizeof(result));

@@ -148,8 +148,9 @@ static nfsstat4 getdeviceinfo(struct fsal_export *export_pub, XDR *da_addr_body,
 	}
 
 	for (stripe = 0; stripe < stripes; stripe++) {
-		uint32_t stripe_osd = stripe_osd = ceph_ll_get_stripe_osd(
-			export->cmount, vinode, stripe, &file_layout);
+		uint32_t stripe_osd = stripe_osd =
+			ceph_ll_get_stripe_osd(export->cmount, vinode, stripe,
+					       &file_layout);
 		if (stripe_osd < 0) {
 			LogCrit(COMPONENT_PNFS,
 				"Failed to retrieve OSD for stripe %lu of file %" PRIu64

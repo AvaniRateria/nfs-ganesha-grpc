@@ -271,9 +271,9 @@ static void update_attrs_change(struct fsal_attrlist *attrs_in_out)
 {
 	/* Same logic like in posix2fsal_attributes */
 	attrs_in_out->change =
-		gsh_time_cmp(&attrs_in_out->mtime, &attrs_in_out->ctime) > 0 ?
-			timespec_to_nsecs(&attrs_in_out->mtime) :
-			timespec_to_nsecs(&attrs_in_out->ctime);
+		gsh_time_cmp(&attrs_in_out->mtime, &attrs_in_out->ctime) > 0
+			? timespec_to_nsecs(&attrs_in_out->mtime)
+			: timespec_to_nsecs(&attrs_in_out->ctime);
 
 	attrs_in_out->valid_mask |= ATTR_CHANGE;
 }

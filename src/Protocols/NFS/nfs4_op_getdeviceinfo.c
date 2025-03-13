@@ -156,9 +156,10 @@ enum nfs_req_result nfs4_op_getdeviceinfo(struct nfs_argop4 *op,
 
 	da_beginning = xdr_getpos(&da_addr_body);
 
-	nfs_status = fsal->m_ops.getdeviceinfo(
-		fsal, &da_addr_body, arg_GETDEVICEINFO4->gdia_layout_type,
-		deviceid);
+	nfs_status =
+		fsal->m_ops.getdeviceinfo(fsal, &da_addr_body,
+					  arg_GETDEVICEINFO4->gdia_layout_type,
+					  deviceid);
 
 	da_length = xdr_getpos(&da_addr_body) - da_beginning;
 

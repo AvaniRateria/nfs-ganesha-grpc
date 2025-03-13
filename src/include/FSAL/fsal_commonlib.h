@@ -143,11 +143,10 @@ static inline void update_share_counters_locked(struct fsal_obj_handle *obj_hdl,
 fsal_status_t check_share_conflict(struct fsal_share *share,
 				   fsal_openflags_t openflags, bool bypass);
 
-static inline fsal_status_t
-check_share_conflict_and_update(struct fsal_obj_handle *obj_hdl,
-				struct fsal_share *share,
-				fsal_openflags_t old_openflags,
-				fsal_openflags_t new_openflags, bool bypass)
+static inline fsal_status_t check_share_conflict_and_update(
+	struct fsal_obj_handle *obj_hdl, struct fsal_share *share,
+	fsal_openflags_t old_openflags, fsal_openflags_t new_openflags,
+	bool bypass)
 {
 	fsal_status_t status;
 

@@ -242,9 +242,9 @@ int nfs3_write(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 
 	LogNFS3_Operation(COMPONENT_NFSPROTO, req, &arg->arg_write3.file,
 			  " start: %" PRIx64 " len: %zu %s", offset, size,
-			  arg->arg_write3.stable == UNSTABLE ? "UNSTABLE" :
-			  arg->arg_write3.stable == UNSTABLE ? "DATA_SYNC" :
-							       "FILE_SYNC");
+			  arg->arg_write3.stable == UNSTABLE   ? "UNSTABLE"
+			  : arg->arg_write3.stable == UNSTABLE ? "DATA_SYNC"
+							       : "FILE_SYNC");
 
 	/* to avoid setting it on each error case */
 	resfail->file_wcc.before.attributes_follow = false;
@@ -302,11 +302,10 @@ int nfs3_write(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 			     offset, size, MaxOffsetWrite);
 
 		if ((offset + size) > MaxOffsetWrite) {
-			LogEvent(
-				COMPONENT_NFSPROTO,
-				"A client tried to violate max file size %" PRIu64
-				" for exportid #%hu",
-				MaxOffsetWrite, op_ctx->ctx_export->export_id);
+			LogEvent(COMPONENT_NFSPROTO,
+				 "A client tried to violate max file size %" PRIu64
+				 " for exportid #%hu",
+				 MaxOffsetWrite, op_ctx->ctx_export->export_id);
 
 			res->res_write3.status = NFS3ERR_FBIG;
 

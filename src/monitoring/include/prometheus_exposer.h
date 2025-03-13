@@ -55,7 +55,6 @@ void prometheus_exposer__start(uint16_t port,
 
 namespace ganesha_monitoring
 {
-
 using HistogramInt = prometheus::Histogram<int64_t>;
 
 class PrometheusExposer {

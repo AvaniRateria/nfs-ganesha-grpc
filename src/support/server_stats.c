@@ -420,8 +420,9 @@ static struct clnt_allops_v3_stats *get_v3_all(struct gsh_clnt_allops_stats *st,
 	if (unlikely(st->nfsv3 == NULL)) {
 		PTHREAD_RWLOCK_wrlock(lock);
 		if (st->nfsv3 == NULL)
-			st->nfsv3 = gsh_calloc(
-				1, sizeof(struct clnt_allops_v3_stats));
+			st->nfsv3 =
+				gsh_calloc(1,
+					   sizeof(struct clnt_allops_v3_stats));
 		PTHREAD_RWLOCK_unlock(lock);
 	}
 	return st->nfsv3;
@@ -527,8 +528,9 @@ get_v4_all(struct gsh_clnt_allops_stats *stats, pthread_rwlock_t *lock)
 	if (unlikely(stats->nfsv4 == NULL)) {
 		PTHREAD_RWLOCK_wrlock(lock);
 		if (stats->nfsv4 == NULL)
-			stats->nfsv4 = gsh_calloc(
-				1, sizeof(struct clnt_allops_v4_stats));
+			stats->nfsv4 =
+				gsh_calloc(1,
+					   sizeof(struct clnt_allops_v4_stats));
 		PTHREAD_RWLOCK_unlock(lock);
 	}
 	return stats->nfsv4;
@@ -1541,8 +1543,8 @@ void server_stats_io_done(size_t requested, size_t transferred, bool success,
 		uint16_t export_id = 0;
 		struct fsal_export *export = op_ctx->fsal_export;
 		struct gsh_client *client = op_ctx->client;
-		const char *client_ip = client == NULL ? "" :
-							 client->hostaddr_str;
+		const char *client_ip = client == NULL ? ""
+						       : client->hostaddr_str;
 
 		if (export != NULL)
 			export_id = export->export_id;
@@ -2182,9 +2184,8 @@ void server_dbus_total(struct export_stats *export_st, DBusMessageIter *iter)
 		dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT64,
 					       &total);
 	else
-		dbus_message_iter_append_basic(
-			&struct_iter, DBUS_TYPE_UINT64,
-			&export_st->st.nfsv3->cmds.total);
+		dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_UINT64,
+					       &export_st->st.nfsv3->cmds.total);
 #endif
 	version = "NFSv40";
 	dbus_message_iter_append_basic(&struct_iter, DBUS_TYPE_STRING,
@@ -2831,10 +2832,12 @@ void server_dbus_v3_full_stats(DBusMessageIter *iter)
 	for (op = 1; op < NFS_V3_NB_COMMAND; op++) {
 		if (v3_full_stats[op].total) {
 			op_name = (char *)nfsproc3_to_str(op);
-			dbus_message_iter_open_container(
-				&array_iter, DBUS_TYPE_STRUCT, NULL, &op_iter);
-			dbus_message_iter_append_basic(
-				&op_iter, DBUS_TYPE_STRING, &op_name);
+			dbus_message_iter_open_container(&array_iter,
+							 DBUS_TYPE_STRUCT, NULL,
+							 &op_iter);
+			dbus_message_iter_append_basic(&op_iter,
+						       DBUS_TYPE_STRING,
+						       &op_name);
 			dbus_message_iter_append_basic(
 				&op_iter, DBUS_TYPE_UINT64,
 				&v3_full_stats[op].total);
@@ -2904,10 +2907,12 @@ void server_dbus_v4_full_stats(DBusMessageIter *iter)
 	for (op = 1; op < NFS_V42_NB_OPERATION; op++) {
 		if (v4_full_stats[op].total) {
 			op_name = (char *)nfsop4_to_str(op);
-			dbus_message_iter_open_container(
-				&array_iter, DBUS_TYPE_STRUCT, NULL, &op_iter);
-			dbus_message_iter_append_basic(
-				&op_iter, DBUS_TYPE_STRING, &op_name);
+			dbus_message_iter_open_container(&array_iter,
+							 DBUS_TYPE_STRUCT, NULL,
+							 &op_iter);
+			dbus_message_iter_append_basic(&op_iter,
+						       DBUS_TYPE_STRING,
+						       &op_name);
 			dbus_message_iter_append_basic(
 				&op_iter, DBUS_TYPE_UINT64,
 				&v4_full_stats[op].total);
@@ -3056,8 +3061,8 @@ static void record_v3_full_stats(struct svc_req *req,
 		uint16_t export_id = 0;
 		struct fsal_export *export = op_ctx->fsal_export;
 		struct gsh_client *client = op_ctx->client;
-		const char *client_ip = client == NULL ? "" :
-							 client->hostaddr_str;
+		const char *client_ip = client == NULL ? ""
+						       : client->hostaddr_str;
 		if (export != NULL)
 			export_id = export->export_id;
 		nfs_metrics__nfs3_request(proc, request_time, status, export_id,

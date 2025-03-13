@@ -65,9 +65,8 @@ void mdcache_avl_init(mdcache_entry_t *entry)
 		     0 /* flags */);
 }
 
-static inline struct avltree_node *
-avltree_inline_lookup_hk(const struct avltree_node *key,
-			 const struct avltree *tree)
+static inline struct avltree_node *avltree_inline_lookup_hk(
+	const struct avltree_node *key, const struct avltree *tree)
 {
 	return avltree_inline_lookup(key, tree, avl_dirent_name_cmpf);
 }

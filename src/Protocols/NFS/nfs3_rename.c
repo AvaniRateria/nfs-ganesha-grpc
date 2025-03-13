@@ -105,8 +105,8 @@ int nfs3_rename(nfs_arg_t *arg, struct svc_req *req, nfs_res_t *res)
 		LogInfo(COMPONENT_DISPATCH,
 			"NFS%d RENAME Request from client %s has badly formed handle for to dir",
 			req->rq_msg.cb_vers,
-			op_ctx->client ? op_ctx->client->hostaddr_str :
-					 "unknown client");
+			op_ctx->client ? op_ctx->client->hostaddr_str
+				       : "unknown client");
 
 		/* Bad handle, report to client */
 		res->res_rename3.status = NFS3ERR_BADHANDLE;

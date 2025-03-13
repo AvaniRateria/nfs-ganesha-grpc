@@ -154,9 +154,9 @@ enum nfs_req_result nfs4_op_link(struct nfs_argop4 *op, compound_data_t *data,
 	}
 
 	res_LINK4->LINK4res_u.resok4.cinfo.atomic =
-		is_destdir_pre_attrs_valid && is_destdir_post_attrs_valid ?
-			TRUE :
-			FALSE;
+		is_destdir_pre_attrs_valid && is_destdir_post_attrs_valid
+			? TRUE
+			: FALSE;
 
 	res_LINK4->status = NFS4_OK;
 

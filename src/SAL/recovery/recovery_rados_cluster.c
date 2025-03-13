@@ -547,7 +547,8 @@ static void rados_cluster_maybe_start_grace(void)
 		gsh_refstr_put(old_oid);
 
 	/* Populate key/val/len arrays from confirmed client hash */
-	hashtable_for_each(ht_confirmed_client_id, rados_set_client_cb, &kvp);
+	hashtable_for_each(ht_confirmed_client_id, rados_set_client_cb, &kvp)
+		;
 
 	/* Create new write op and package it up for callback */
 	wop = rados_create_write_op();

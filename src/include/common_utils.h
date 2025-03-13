@@ -134,6 +134,8 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 	return pthread_create(thread, pattr, start_routine, arg);
 }
 
+/* clang-format off */
+
 /**
  * @brief Logging pthread attribute initialization
  *
@@ -142,7 +144,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_ATTR_init(_attr)                                           \
 	do {                                                               \
 		int rc;                                                    \
-                                                                           \
+									   \
 		rc = pthread_attr_init(_attr);                             \
 		if (rc == 0) {                                             \
 			LogFullDebug(COMPONENT_RW_LOCK,                    \
@@ -165,7 +167,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_ATTR_destroy(_attr)                                           \
 	do {                                                                  \
 		int rc;                                                       \
-                                                                              \
+									      \
 		rc = pthread_attr_destroy(_attr);                             \
 		if (rc == 0) {                                                \
 			LogFullDebug(COMPONENT_RW_LOCK,                       \
@@ -189,7 +191,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_ATTR_setscope(_attr, _scope)                                   \
 	do {                                                                   \
 		int rc;                                                        \
-                                                                               \
+									       \
 		rc = pthread_attr_setscope(_attr, _scope);                     \
 		if (rc == 0) {                                                 \
 			LogFullDebug(COMPONENT_RW_LOCK,                        \
@@ -210,23 +212,23 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
  * @param[in,out] _attr    The attributes to update
  * @param[in]     _detach  The detach type to set
  */
-#define PTHREAD_ATTR_setdetachstate(_attr, _detach)                              \
-	do {                                                                     \
-		int rc;                                                          \
-                                                                                 \
-		rc = pthread_attr_setdetachstate(_attr, _detach);                \
-		if (rc == 0) {                                                   \
-			LogFullDebug(                                            \
-				COMPONENT_RW_LOCK,                               \
-				"pthread_attr_setdetachstate %p (%s) at %s:%d",  \
-				_attr, #_attr, __FILE__, __LINE__);              \
-		} else {                                                         \
-			LogCrit(COMPONENT_RW_LOCK,                               \
-				"Error %d, pthread_attr_setdetachstate %p (%s) " \
-				"at %s:%d",                                      \
-				rc, _attr, #_attr, __FILE__, __LINE__);          \
-			abort();                                                 \
-		}                                                                \
+#define PTHREAD_ATTR_setdetachstate(_attr, _detach)                            \
+	do {                                                                   \
+		int rc;                                                        \
+									       \
+		rc = pthread_attr_setdetachstate(_attr, _detach);              \
+		if (rc == 0) {                                                 \
+			LogFullDebug(                                          \
+			      COMPONENT_RW_LOCK,                               \
+			      "pthread_attr_setdetachstate %p (%s) at %s:%d",  \
+			      _attr, #_attr, __FILE__, __LINE__);              \
+		} else {                                                       \
+			LogCrit(COMPONENT_RW_LOCK,                             \
+			      "Error %d, pthread_attr_setdetachstate %p (%s) " \
+			      "at %s:%d",                                      \
+			      rc, _attr, #_attr, __FILE__, __LINE__);          \
+			abort();                                               \
+		}                                                              \
 	} while (0)
 
 /**
@@ -238,7 +240,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_ATTR_setstacksize(_attr, _detach)                              \
 	do {                                                                   \
 		int rc;                                                        \
-                                                                               \
+									       \
 		rc = pthread_attr_setstacksize(_attr, _detach);                \
 		if (rc == 0) {                                                 \
 			LogFullDebug(                                          \
@@ -262,7 +264,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCKATTR_init(_attr)                                   \
 	do {                                                             \
 		int rc;                                                  \
-                                                                         \
+									 \
 		rc = pthread_rwlockattr_init(_attr);                     \
 		if (rc == 0) {                                           \
 			LogFullDebug(COMPONENT_RW_LOCK,                  \
@@ -284,23 +286,22 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
  * @param[in]     _kind The kind to set
  */
 #if __GLIBC__
-#define PTHREAD_RWLOCKATTR_setkind_np(_attr, _kind)                               \
-	do {                                                                      \
-		int rc;                                                           \
-                                                                                  \
-		rc = pthread_rwlockattr_setkind_np(_attr, _kind);                 \
-		if (rc == 0) {                                                    \
-			LogFullDebug(                                             \
-				COMPONENT_RW_LOCK,                                \
-				"pthread_rwlockattr_setkind_np %p (%s) at %s:%d", \
-				_attr, #_attr, __FILE__, __LINE__);               \
-		} else {                                                          \
-			LogCrit(COMPONENT_RW_LOCK,                                \
-				"Error %d, rwlockattr setkind_np %p (%s) "        \
-				"at %s:%d",                                       \
-				rc, _attr, #_attr, __FILE__, __LINE__);           \
-			abort();                                                  \
-		}                                                                 \
+#define PTHREAD_RWLOCKATTR_setkind_np(_attr, _kind)                            \
+	do {                                                                   \
+		int rc;                                                        \
+									       \
+		rc = pthread_rwlockattr_setkind_np(_attr, _kind);              \
+		if (rc == 0) {                                                 \
+			LogFullDebug(                                          \
+			     COMPONENT_RW_LOCK,                                \
+			     "pthread_rwlockattr_setkind_np %p (%s) at %s:%d", \
+			     _attr, #_attr, __FILE__, __LINE__);               \
+		} else {                                                       \
+			LogCrit(COMPONENT_RW_LOCK,                             \
+			   "Error %d, rwlockattr setkind_np %p (%s) at %s:%d", \
+			   rc, _attr, #_attr, __FILE__, __LINE__);             \
+			abort();                                               \
+		}                                                              \
 	} while (0)
 #else
 #define PTHREAD_RWLOCKATTR_setkind_np(_attr, _kind) /**/
@@ -314,7 +315,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCKATTR_destroy(_attr)                                   \
 	do {                                                                \
 		int rc;                                                     \
-                                                                            \
+									    \
 		rc = pthread_rwlockattr_destroy(_attr);                     \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -339,10 +340,10 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 	do {                                                                \
 		int rc;                                                     \
 		pthread_rwlockattr_t *attr = _attr;                         \
-                                                                            \
+									    \
 		if (attr == NULL)                                           \
 			attr = &default_rwlock_attr;                        \
-                                                                            \
+									    \
 		rc = pthread_rwlock_init(_lock, attr);                      \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -365,7 +366,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCK_destroy(_lock)                                         \
 	do {                                                                  \
 		int rc;                                                       \
-                                                                              \
+									      \
 		rc = pthread_rwlock_destroy(_lock);                           \
 		if (rc == 0) {                                                \
 			LogFullDebug(COMPONENT_RW_LOCK,                       \
@@ -389,7 +390,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCK_wrlock(_lock)                                     \
 	do {                                                             \
 		int rc;                                                  \
-                                                                         \
+									 \
 		rc = pthread_rwlock_wrlock(_lock);                       \
 		if (rc == 0) {                                           \
 			LogFullDebug(COMPONENT_RW_LOCK,                  \
@@ -414,7 +415,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCK_rdlock(_lock)                                     \
 	do {                                                             \
 		int rc;                                                  \
-                                                                         \
+									 \
 		rc = pthread_rwlock_rdlock(_lock);                       \
 		if (rc == 0) {                                           \
 			LogFullDebug(COMPONENT_RW_LOCK,                  \
@@ -439,7 +440,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_RWLOCK_unlock(_lock)                                        \
 	do {                                                                \
 		int rc;                                                     \
-                                                                            \
+									    \
 		rc = pthread_rwlock_unlock(_lock);                          \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -461,7 +462,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_MUTEXATTR_init(_attr)                                          \
 	do {                                                                   \
 		int rc;                                                        \
-                                                                               \
+									       \
 		rc = pthread_mutexattr_init(_attr);                            \
 		if (rc == 0) {                                                 \
 			LogFullDebug(COMPONENT_RW_LOCK,                        \
@@ -485,7 +486,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_MUTEXATTR_settype(_attr, _type)                               \
 	do {                                                                  \
 		int rc;                                                       \
-                                                                              \
+									      \
 		rc = pthread_mutexattr_settype(_attr, _type);                 \
 		if (rc == 0) {                                                \
 			LogFullDebug(                                         \
@@ -509,7 +510,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_MUTEXATTR_destroy(_attr)                                   \
 	do {                                                               \
 		int rc;                                                    \
-                                                                           \
+									   \
 		rc = pthread_mutexattr_destroy(_attr);                     \
 		if (rc == 0) {                                             \
 			LogFullDebug(COMPONENT_RW_LOCK,                    \
@@ -533,7 +534,7 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 #define PTHREAD_MUTEX_lock(_mtx)                                              \
 	do {                                                                  \
 		int rc;                                                       \
-                                                                              \
+									      \
 		rc = pthread_mutex_lock(_mtx);                                \
 		if (rc == 0) {                                                \
 			LogFullDebug(COMPONENT_RW_LOCK,                       \
@@ -547,6 +548,8 @@ static inline int PTHREAD_create(pthread_t *thread, pthread_attr_t *attr,
 			abort();                                              \
 		}                                                             \
 	} while (0)
+
+/* clang-format on */
 
 static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 					const char *mtx_name)
@@ -579,10 +582,12 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
  * @param[in,out] _mtx The mutex to relinquish
  */
 
+/* clang-format off */
+
 #define PTHREAD_MUTEX_unlock(_mtx)                                            \
 	do {                                                                  \
 		int rc;                                                       \
-                                                                              \
+									      \
 		rc = pthread_mutex_unlock(_mtx);                              \
 		if (rc == 0) {                                                \
 			LogFullDebug(COMPONENT_RW_LOCK,                       \
@@ -607,12 +612,12 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 	do {                                                              \
 		int rc;                                                   \
 		pthread_mutexattr_t *attr = _attr;                        \
-                                                                          \
+									  \
 		if (attr == NULL)                                         \
 			attr = &default_mutex_attr;                       \
-                                                                          \
+									  \
 		rc = pthread_mutex_init(_mtx, attr);                      \
-                                                                          \
+									  \
 		if (rc == 0) {                                            \
 			LogFullDebug(COMPONENT_RW_LOCK,                   \
 				     "Init mutex %p (%s) at %s:%d", _mtx, \
@@ -635,7 +640,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_MUTEX_destroy(_mtx)                                          \
 	do {                                                                 \
 		int rc;                                                      \
-                                                                             \
+									     \
 		rc = pthread_mutex_destroy(_mtx);                            \
 		if (rc == 0) {                                               \
 			LogFullDebug(COMPONENT_RW_LOCK,                      \
@@ -659,7 +664,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_SPIN_lock(_spin)                                            \
 	do {                                                                \
 		int rc;                                                     \
-                                                                            \
+									    \
 		rc = pthread_spin_lock(_spin);                              \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -677,7 +682,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_SPIN_unlock(_spin)                                          \
 	do {                                                                \
 		int rc;                                                     \
-                                                                            \
+									    \
 		rc = pthread_spin_unlock(_spin);                            \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -701,7 +706,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_SPIN_init(_spin, _pshared)                                     \
 	do {                                                                   \
 		int rc;                                                        \
-                                                                               \
+									       \
 		rc = pthread_spin_init(_spin, _pshared);                       \
 		if (rc == 0) {                                                 \
 			LogFullDebug(COMPONENT_RW_LOCK,                        \
@@ -725,7 +730,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_SPIN_destroy(_spin)                                        \
 	do {                                                               \
 		int rc;                                                    \
-                                                                           \
+									   \
 		rc = pthread_spin_destroy(_spin);                          \
 		if (rc == 0) {                                             \
 			LogFullDebug(COMPONENT_RW_LOCK,                    \
@@ -750,7 +755,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_COND_init(_cond, _attr)                                   \
 	do {                                                              \
 		int rc;                                                   \
-                                                                          \
+									  \
 		rc = pthread_cond_init(_cond, _attr);                     \
 		if (rc == 0) {                                            \
 			LogFullDebug(COMPONENT_RW_LOCK,                   \
@@ -774,7 +779,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_COND_destroy(_cond)                                          \
 	do {                                                                 \
 		int rc;                                                      \
-                                                                             \
+									     \
 		rc = pthread_cond_destroy(_cond);                            \
 		if (rc == 0) {                                               \
 			LogFullDebug(COMPONENT_RW_LOCK,                      \
@@ -799,7 +804,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_COND_wait(_cond, _mutex)                                  \
 	do {                                                              \
 		int rc;                                                   \
-                                                                          \
+									  \
 		rc = pthread_cond_wait(_cond, _mutex);                    \
 		if (rc == 0) {                                            \
 			LogFullDebug(COMPONENT_RW_LOCK,                   \
@@ -826,7 +831,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_COND_signal(_cond)                                          \
 	do {                                                                \
 		int rc;                                                     \
-                                                                            \
+									    \
 		rc = pthread_cond_signal(_cond);                            \
 		if (rc == 0) {                                              \
 			LogFullDebug(COMPONENT_RW_LOCK,                     \
@@ -853,7 +858,7 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 #define PTHREAD_COND_broadcast(_cond)                                          \
 	do {                                                                   \
 		int rc;                                                        \
-                                                                               \
+									       \
 		rc = pthread_cond_broadcast(_cond);                            \
 		if (rc == 0) {                                                 \
 			LogFullDebug(COMPONENT_RW_LOCK,                        \
@@ -867,6 +872,8 @@ static inline int PTHREAD_mutex_trylock(pthread_mutex_t *mtx,
 			abort();                                               \
 		}                                                              \
 	} while (0)
+
+/* clang-format on */
 
 /**
  * @brief Inline functions for timespec math

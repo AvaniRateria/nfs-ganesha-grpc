@@ -153,8 +153,7 @@ struct mem_fsal_obj_handle *mem_rand_obj(struct mem_fsal_export *mfe)
 		return NULL;
 
 	PTHREAD_RWLOCK_rdlock(&mfe->mfe_exp_lock);
-	glist_for_each_safe(glist, glistn, &mfe->mfe_objs)
-	{
+	glist_for_each_safe(glist, glistn, &mfe->mfe_objs) {
 		if (res == NULL) {
 			/* Grab first entry */
 			res = glist_entry(glist, struct mem_fsal_obj_handle,
@@ -189,8 +188,7 @@ static void mem_up_run(struct fridgethr_context *ctx)
 {
 	struct glist_head *glist, *glistn;
 
-	glist_for_each_safe(glist, glistn, &MEM.mem_exports)
-	{
+	glist_for_each_safe(glist, glistn, &MEM.mem_exports) {
 		struct mem_fsal_export *mfe;
 		struct mem_fsal_obj_handle *hdl;
 

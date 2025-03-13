@@ -338,8 +338,9 @@ nfsstat4 FSAL_encode_v4_multipath(XDR *xdrs, const uint32_t num_hosts,
 	}
 
 	for (i = 0; i < num_hosts; i++) {
-		nfs_status = FSAL_encode_ipv4_netaddr(
-			xdrs, hosts[i].proto, hosts[i].addr, hosts[i].port);
+		nfs_status = FSAL_encode_ipv4_netaddr(xdrs, hosts[i].proto,
+						      hosts[i].addr,
+						      hosts[i].port);
 		if (nfs_status != NFS4_OK)
 			return nfs_status;
 	}
@@ -549,8 +550,9 @@ nfsstat4 FSAL_encode_ff_device_versions4(
 	}
 
 	for (i = 0; i < multipath_list4_len; i++) {
-		nfs_status = FSAL_encode_ipv4_netaddr(
-			xdrs, hosts[i].proto, hosts[i].addr, hosts[i].port);
+		nfs_status = FSAL_encode_ipv4_netaddr(xdrs, hosts[i].proto,
+						      hosts[i].addr,
+						      hosts[i].port);
 		if (nfs_status != NFS4_OK)
 			return nfs_status;
 	}

@@ -53,8 +53,9 @@ fsal_status_t GPFSFSAL_readlink(struct fsal_obj_handle *dir_hdl,
 				char *link_content, size_t link_len)
 {
 	struct gpfs_fsal_obj_handle *gpfs_hdl;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	gpfs_hdl =
@@ -96,8 +97,9 @@ fsal_status_t GPFSFSAL_symlink(struct fsal_obj_handle *dir_hdl,
 	int fd;
 	struct gpfs_fsal_obj_handle *gpfs_hdl;
 	struct gpfs_filesystem *gpfs_fs;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	gpfs_hdl =

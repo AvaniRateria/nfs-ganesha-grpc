@@ -145,10 +145,10 @@ int main(int argc, char *const *argv)
 			node_names = calloc(nodes, sizeof(char *));
 			/* create the node names */
 			for (i = 0; i < nodes; ++i) {
-				len = 6 + strlen(argv[optind+i]);
+				len = 6 + strlen(argv[optind + i]);
 				node_names[i] = calloc(1, len);
 				snprintf(node_names[i], len, "node%s",
-						argv[optind+i]);
+					 argv[optind + i]);
 			}
 		}
 	}
@@ -178,30 +178,36 @@ int main(int argc, char *const *argv)
 			return 1;
 		}
 		ret = rados_grace_add(io_ctx, oid, nodes,
-				(const char *const *)node_names);
+				      (const char *const *)node_names);
 	} else if (!strcmp(cmd, "start")) {
 		ret = rados_grace_join_bulk(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, true);
+					    (const char *const *)node_names,
+					    &cur, &rec, true);
 	} else if (!strcmp(cmd, "join")) {
 		uint64_t cur, rec;
 
 		ret = rados_grace_join_bulk(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, false);
+					    (const char *const *)node_names,
+					    &cur, &rec, false);
 	} else if (!strcmp(cmd, "lift")) {
 		ret = rados_grace_lift_bulk(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, false);
+					    (const char *const *)node_names,
+					    &cur, &rec, false);
 	} else if (!strcmp(cmd, "remove")) {
 		ret = rados_grace_lift_bulk(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, true);
+					    (const char *const *)node_names,
+					    &cur, &rec, true);
 	} else if (!strcmp(cmd, "enforce")) {
-		ret = rados_grace_enforcing_toggle(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, true);
+		ret = rados_grace_enforcing_toggle(
+			io_ctx, oid, nodes, (const char *const *)node_names,
+			&cur, &rec, true);
 	} else if (!strcmp(cmd, "noenforce")) {
-		ret = rados_grace_enforcing_toggle(io_ctx, oid, nodes,
-			(const char *const *)node_names, &cur, &rec, false);
+		ret = rados_grace_enforcing_toggle(
+			io_ctx, oid, nodes, (const char *const *)node_names,
+			&cur, &rec, false);
 	} else if (!strcmp(cmd, "member")) {
 		ret = rados_grace_member_bulk(io_ctx, oid, nodes,
-				(const char *const *)node_names);
+					      (const char *const *)node_names);
 	} else {
 		usage(argv);
 		ret = -EINVAL;

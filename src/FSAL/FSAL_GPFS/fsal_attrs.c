@@ -66,8 +66,9 @@ fsal_status_t GPFSFSAL_fs_loc(struct fsal_export *export,
 	char server[MAXHOSTNAMELEN];
 	int errsv, rc;
 	struct fs_loc_arg loc_arg;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	loc_arg.fs_root = root;
@@ -127,8 +128,9 @@ fsal_status_t GPFSFSAL_getattrs(struct fsal_export *export,
 	unsigned int acl_buflen;
 	bool use_acl;
 	int retry;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	/* Initialize fsal_fsid to 0.0 in case older GPFS */
@@ -269,8 +271,9 @@ fsal_status_t GPFSFSAL_setattrs(struct fsal_obj_handle *dir_hdl,
 	gpfs_acl_t *acl_buf = NULL;
 	unsigned int acl_buflen = 0;
 	bool use_acl;
-	struct gpfs_fsal_export *exp = container_of(
-		op_ctx->fsal_export, struct gpfs_fsal_export, export);
+	struct gpfs_fsal_export *exp = container_of(op_ctx->fsal_export,
+						    struct gpfs_fsal_export,
+						    export);
 	int export_fd = exp->export_fd;
 
 	/* Indicate if stat or acl or both should be changed. */

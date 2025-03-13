@@ -89,8 +89,9 @@ int nlm4_Lock(nfs_arg_t *args, struct svc_req *req, nfs_res_t *res)
 
 	copy_netobj(&res->res_nlm4.cookie, &arg->cookie);
 
-	grace_ref = !op_ctx->fsal_export->exp_ops.fs_supports(
-		op_ctx->fsal_export, fso_grace_method);
+	grace_ref =
+		!op_ctx->fsal_export->exp_ops.fs_supports(op_ctx->fsal_export,
+							  fso_grace_method);
 	if (grace_ref) {
 		if (!nfs_get_grace_status(arg->reclaim)) {
 			grace_ref = false;

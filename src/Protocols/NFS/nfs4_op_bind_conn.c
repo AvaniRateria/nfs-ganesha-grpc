@@ -195,8 +195,9 @@ enum nfs_req_result nfs4_op_bind_conn(struct nfs_argop4 *op,
 	case CDFC4_BACK:
 	case CDFC4_FORE_OR_BOTH:
 	case CDFC4_BACK_OR_BOTH:
-		bind_to_backchannel = bind_conn_to_session_backchannel(
-			data->req->rq_xprt, session);
+		bind_to_backchannel =
+			bind_conn_to_session_backchannel(data->req->rq_xprt,
+							 session);
 
 		if (bind_to_backchannel != NFS4_OK) {
 			if (client_channel_dir == CDFC4_FORE_OR_BOTH) {

@@ -570,10 +570,11 @@ void Create_udp(protos prot)
 
 void Create_tcp(protos prot)
 {
-	tcp_xprt[prot] = svc_vc_ncreatef(
-		tcp_socket[prot], nfs_param.core_param.rpc.max_send_buffer_size,
-		nfs_param.core_param.rpc.max_recv_buffer_size,
-		SVC_CREATE_FLAG_CLOSE | SVC_CREATE_FLAG_LISTEN);
+	tcp_xprt[prot] =
+		svc_vc_ncreatef(tcp_socket[prot],
+				nfs_param.core_param.rpc.max_send_buffer_size,
+				nfs_param.core_param.rpc.max_recv_buffer_size,
+				SVC_CREATE_FLAG_CLOSE | SVC_CREATE_FLAG_LISTEN);
 	if (tcp_xprt[prot] == NULL)
 		LogFatal(COMPONENT_DISPATCH, "Cannot allocate %s/TCP SVCXPRT",
 			 tags[prot]);
@@ -613,9 +614,10 @@ void Create_RDMA(protos prot)
 	rpc_rdma_xa.credits = nfs_param.core_param.rpc.rdma_credits;
 
 	/* This has elements of both UDP and TCP setup */
-	tcp_xprt[prot] = svc_rdma_create(
-		&rpc_rdma_xa, nfs_param.core_param.rpc.max_send_buffer_size,
-		nfs_param.core_param.rpc.max_recv_buffer_size);
+	tcp_xprt[prot] =
+		svc_rdma_create(&rpc_rdma_xa,
+				nfs_param.core_param.rpc.max_send_buffer_size,
+				nfs_param.core_param.rpc.max_recv_buffer_size);
 	if (tcp_xprt[prot] == NULL)
 		LogFatal(COMPONENT_DISPATCH, "Cannot allocate RPC/%s SVCXPRT",
 			 tags[prot]);

@@ -452,8 +452,7 @@ struct fsal_module *lookup_fsal(const char *name)
 	struct glist_head *entry;
 
 	PTHREAD_MUTEX_lock(&fsal_lock);
-	glist_for_each(entry, &fsal_list)
-	{
+	glist_for_each(entry, &fsal_list) {
 		fsal = glist_entry(entry, struct fsal_module, fsals);
 		if (strcasecmp(name, fsal->name) == 0) {
 			fsal_get(fsal);
@@ -650,10 +649,9 @@ int fsal_load_init(void *node, const char *name, struct fsal_module **fsal_hdl,
 
 		retval = load_fsal(name, fsal_hdl);
 		if (retval != 0) {
-			config_proc_error(
-				node, err_type,
-				"Failed to load FSAL (%s) because: %s", name,
-				strerror(retval));
+			config_proc_error(node, err_type,
+					  "Failed to load FSAL (%s) because: %s",
+					  name, strerror(retval));
 			err_type->fsal = true;
 			return 1;
 		}
@@ -668,10 +666,10 @@ int fsal_load_init(void *node, const char *name, struct fsal_module **fsal_hdl,
 					  name);
 			fsal_put(*fsal_hdl);
 			err_type->fsal = true;
-			LogFullDebug(
-				COMPONENT_FSAL,
-				"FSAL %s fsal_refcount %" PRIu32, name,
-				atomic_fetch_int32_t(&(*fsal_hdl)->refcount));
+			LogFullDebug(COMPONENT_FSAL,
+				     "FSAL %s fsal_refcount %" PRIu32, name,
+				     atomic_fetch_int32_t(
+					     &(*fsal_hdl)->refcount));
 			return 1;
 		}
 	} else {
@@ -679,13 +677,15 @@ int fsal_load_init(void *node, const char *name, struct fsal_module **fsal_hdl,
 
 		myconfig = get_parse_root(node);
 		if ((*fsal_hdl)->is_configured) {
-			status = (*fsal_hdl)->m_ops.update_config(
-				*fsal_hdl, myconfig, err_type);
+			status = (*fsal_hdl)->m_ops.update_config(*fsal_hdl,
+								  myconfig,
+								  err_type);
 		} else {
 			/* Static fsals might not be configured */
 			(*fsal_hdl)->is_configured = true;
-			status = (*fsal_hdl)->m_ops.init_config(
-				*fsal_hdl, myconfig, err_type);
+			status = (*fsal_hdl)->m_ops.init_config(*fsal_hdl,
+								myconfig,
+								err_type);
 		}
 
 		if (FSAL_IS_ERROR(status)) {

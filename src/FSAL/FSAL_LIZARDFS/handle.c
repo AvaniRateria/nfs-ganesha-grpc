@@ -129,8 +129,9 @@ static fsal_status_t lzfs_fsal_readdir(struct fsal_obj_handle *dir_hdl,
 				   export);
 	lzfs_dir = container_of(dir_hdl, struct lzfs_fsal_handle, handle);
 
-	liz_context_t *ctx = lzfs_fsal_create_context(
-		lzfs_export->lzfs_instance, &op_ctx->creds);
+	liz_context_t *ctx =
+		lzfs_fsal_create_context(lzfs_export->lzfs_instance,
+					 &op_ctx->creds);
 	dir_desc =
 		liz_opendir(lzfs_export->lzfs_instance, ctx, lzfs_dir->inode);
 	if (!dir_desc) {
@@ -259,13 +260,12 @@ lzfs_fsal_mkdir(struct fsal_obj_handle *dir_hdl, const char *name,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
-		 object_file_type_t nodetype, struct fsal_attrlist *attrib,
-		 struct fsal_obj_handle **new_obj,
-		 struct fsal_attrlist *attrs_out,
-		 struct fsal_attrlist *parent_pre_attrs_out,
-		 struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t lzfs_fsal_mknode(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	object_file_type_t nodetype, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **new_obj, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *lzfs_dir, *lzfs_obj;
@@ -322,8 +322,9 @@ lzfs_fsal_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
 	FSAL_UNSET_MASK(attrib->valid_mask, ATTR_MODE);
 
 	if (attrib->valid_mask) {
-		fsal_status_t status = (*new_obj)->obj_ops->setattr2(
-			*new_obj, false, NULL, attrib);
+		fsal_status_t status =
+			(*new_obj)->obj_ops->setattr2(*new_obj, false, NULL,
+						      attrib);
 		if (FSAL_IS_ERROR(status)) {
 			LogFullDebug(COMPONENT_FSAL, "setattr2 status=%s",
 				     fsal_err_txt(status));
@@ -345,13 +346,12 @@ lzfs_fsal_mknode(struct fsal_obj_handle *dir_hdl, const char *name,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
-		  const char *link_path, struct fsal_attrlist *attrib,
-		  struct fsal_obj_handle **new_obj,
-		  struct fsal_attrlist *attrs_out,
-		  struct fsal_attrlist *parent_pre_attrs_out,
-		  struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t lzfs_fsal_symlink(
+	struct fsal_obj_handle *dir_hdl, const char *name,
+	const char *link_path, struct fsal_attrlist *attrib,
+	struct fsal_obj_handle **new_obj, struct fsal_attrlist *attrs_out,
+	struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *lzfs_dir, *lzfs_obj;
@@ -378,8 +378,9 @@ lzfs_fsal_symlink(struct fsal_obj_handle *dir_hdl, const char *name,
 	FSAL_UNSET_MASK(attrib->valid_mask, ATTR_MODE);
 
 	if (attrib->valid_mask) {
-		fsal_status_t status = (*new_obj)->obj_ops->setattr2(
-			*new_obj, false, NULL, attrib);
+		fsal_status_t status =
+			(*new_obj)->obj_ops->setattr2(*new_obj, false, NULL,
+						      attrib);
 		if (FSAL_IS_ERROR(status)) {
 			LogFullDebug(COMPONENT_FSAL, "setattr2 status=%s",
 				     fsal_err_txt(status));
@@ -478,14 +479,13 @@ static fsal_status_t lzfs_fsal_getattrs(struct fsal_obj_handle *obj_hdl,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_rename(struct fsal_obj_handle *obj_hdl,
-		 struct fsal_obj_handle *olddir_hdl, const char *old_name,
-		 struct fsal_obj_handle *newdir_hdl, const char *new_name,
-		 struct fsal_attrlist *olddir_pre_attrs_out,
-		 struct fsal_attrlist *olddir_post_attrs_out,
-		 struct fsal_attrlist *newdir_pre_attrs_out,
-		 struct fsal_attrlist *newdir_post_attrs_out)
+static fsal_status_t lzfs_fsal_rename(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *olddir_hdl,
+	const char *old_name, struct fsal_obj_handle *newdir_hdl,
+	const char *new_name, struct fsal_attrlist *olddir_pre_attrs_out,
+	struct fsal_attrlist *olddir_post_attrs_out,
+	struct fsal_attrlist *newdir_pre_attrs_out,
+	struct fsal_attrlist *newdir_post_attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *lzfs_olddir, *lzfs_newdir;
@@ -517,11 +517,10 @@ lzfs_fsal_rename(struct fsal_obj_handle *obj_hdl,
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_unlink(struct fsal_obj_handle *dir_hdl,
-		 struct fsal_obj_handle *obj_hdl, const char *name,
-		 struct fsal_attrlist *parent_pre_attrs_out,
-		 struct fsal_attrlist *parent_post_attrs_out)
+static fsal_status_t lzfs_fsal_unlink(
+	struct fsal_obj_handle *dir_hdl, struct fsal_obj_handle *obj_hdl,
+	const char *name, struct fsal_attrlist *parent_pre_attrs_out,
+	struct fsal_attrlist *parent_post_attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *lzfs_dir;
@@ -863,10 +862,12 @@ exit:
 	return status;
 }
 
-static fsal_status_t
-lzfs_int_open_by_name(struct fsal_obj_handle *obj_hdl, struct state_t *state,
-		      fsal_openflags_t openflags, const char *name,
-		      fsal_verifier_t verifier, struct fsal_attrlist *attrs_out)
+static fsal_status_t lzfs_int_open_by_name(struct fsal_obj_handle *obj_hdl,
+					   struct state_t *state,
+					   fsal_openflags_t openflags,
+					   const char *name,
+					   fsal_verifier_t verifier,
+					   struct fsal_attrlist *attrs_out)
 {
 	struct fsal_obj_handle *temp = NULL;
 	fsal_status_t status;
@@ -1608,11 +1609,10 @@ exit:
  *
  * \see fsal_api.h for more information
  */
-static fsal_status_t
-lzfs_fsal_link(struct fsal_obj_handle *obj_hdl,
-	       struct fsal_obj_handle *destdir_hdl, const char *name,
-	       struct fsal_attrlist *destdir_pre_attrs_out,
-	       struct fsal_attrlist *destdir_post_attrs_out)
+static fsal_status_t lzfs_fsal_link(
+	struct fsal_obj_handle *obj_hdl, struct fsal_obj_handle *destdir_hdl,
+	const char *name, struct fsal_attrlist *destdir_pre_attrs_out,
+	struct fsal_attrlist *destdir_post_attrs_out)
 {
 	struct lzfs_fsal_export *lzfs_export;
 	struct lzfs_fsal_handle *lzfs_obj, *lzfs_destdir;

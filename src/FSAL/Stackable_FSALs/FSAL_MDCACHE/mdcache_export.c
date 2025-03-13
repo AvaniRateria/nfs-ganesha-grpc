@@ -219,8 +219,7 @@ static void mdcache_unmount(struct fsal_export *parent_exp_hdl,
 	PTHREAD_RWLOCK_wrlock(&entry->attr_lock);
 	PTHREAD_MUTEX_lock(&exp->mdc_exp_lock);
 
-	glist_for_each(glist, &entry->export_list)
-	{
+	glist_for_each(glist, &entry->export_list) {
 		expmap = glist_entry(glist, struct entry_export_map,
 				     export_per_entry);
 
@@ -616,9 +615,10 @@ static fsal_status_t mdcache_get_quota(struct fsal_export *exp_hdl,
 	struct fsal_export *sub_export = exp->mfe_exp.sub_export;
 	fsal_status_t status;
 
-	subcall_raw(exp, status = sub_export->exp_ops.get_quota(
-				 sub_export, filepath, quota_type, quota_id,
-				 pquota));
+	subcall_raw(exp,
+		    status = sub_export->exp_ops.get_quota(sub_export, filepath,
+							   quota_type, quota_id,
+							   pquota));
 
 	return status;
 }
@@ -645,9 +645,10 @@ static fsal_status_t mdcache_set_quota(struct fsal_export *exp_hdl,
 	struct fsal_export *sub_export = exp->mfe_exp.sub_export;
 	fsal_status_t status;
 
-	subcall_raw(exp, status = sub_export->exp_ops.set_quota(
-				 sub_export, filepath, quota_type, quota_id,
-				 pquota, presquota));
+	subcall_raw(exp,
+		    status = sub_export->exp_ops.set_quota(sub_export, filepath,
+							   quota_type, quota_id,
+							   pquota, presquota));
 
 	return status;
 }
@@ -663,10 +664,11 @@ static fsal_status_t mdcache_set_quota(struct fsal_export *exp_hdl,
  * @param[in] res	Devicelist result
  * @return NFSv4 Status
  */
-static nfsstat4
-mdcache_getdevicelist(struct fsal_export *exp_hdl, layouttype4 type,
-		      void *opaque, bool (*cb)(void *opaque, const uint64_t id),
-		      struct fsal_getdevicelist_res *res)
+static nfsstat4 mdcache_getdevicelist(struct fsal_export *exp_hdl,
+				      layouttype4 type, void *opaque,
+				      bool (*cb)(void *opaque,
+						 const uint64_t id),
+				      struct fsal_getdevicelist_res *res)
 {
 	struct mdcache_fsal_export *exp = mdc_export(exp_hdl);
 	struct fsal_export *sub_export = exp->mfe_exp.sub_export;

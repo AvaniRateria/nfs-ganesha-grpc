@@ -141,33 +141,33 @@ int _9p_getattr(struct _9p_request_data *req9p, u32 *plenout, char *preply)
 	/* rdev = (*request_mask & _9P_GETATTR_RDEV) ?
 	 *     (u64) attrs.rawdev.major :
 	 *     0LL; */
-	rdev = (*request_mask & _9P_GETATTR_RDEV) ?
-		       (u64)pfid->fid_export->filesystem_id.major :
-		       0LL;
+	rdev = (*request_mask & _9P_GETATTR_RDEV)
+		       ? (u64)pfid->fid_export->filesystem_id.major
+		       : 0LL;
 	size = (*request_mask & _9P_GETATTR_SIZE) ? (u64)attrs.filesize : 0LL;
-	blksize = (*request_mask & _9P_GETATTR_BLOCKS) ? (u64)_9P_BLK_SIZE :
-							 0LL;
-	blocks = (*request_mask & _9P_GETATTR_BLOCKS) ?
-			 (u64)(attrs.filesize / DEV_BSIZE) :
-			 0LL;
-	atime_sec = (*request_mask & _9P_GETATTR_ATIME) ?
-			    (u64)attrs.atime.tv_sec :
-			    0LL;
-	atime_nsec = (*request_mask & _9P_GETATTR_ATIME) ?
-			     (u64)attrs.atime.tv_nsec :
-			     0LL;
-	mtime_sec = (*request_mask & _9P_GETATTR_MTIME) ?
-			    (u64)attrs.mtime.tv_sec :
-			    0LL;
-	mtime_nsec = (*request_mask & _9P_GETATTR_MTIME) ?
-			     (u64)attrs.mtime.tv_nsec :
-			     0LL;
-	ctime_sec = (*request_mask & _9P_GETATTR_CTIME) ?
-			    (u64)attrs.ctime.tv_sec :
-			    0LL;
-	ctime_nsec = (*request_mask & _9P_GETATTR_CTIME) ?
-			     (u64)attrs.ctime.tv_nsec :
-			     0LL;
+	blksize = (*request_mask & _9P_GETATTR_BLOCKS) ? (u64)_9P_BLK_SIZE
+						       : 0LL;
+	blocks = (*request_mask & _9P_GETATTR_BLOCKS)
+			 ? (u64)(attrs.filesize / DEV_BSIZE)
+			 : 0LL;
+	atime_sec = (*request_mask & _9P_GETATTR_ATIME)
+			    ? (u64)attrs.atime.tv_sec
+			    : 0LL;
+	atime_nsec = (*request_mask & _9P_GETATTR_ATIME)
+			     ? (u64)attrs.atime.tv_nsec
+			     : 0LL;
+	mtime_sec = (*request_mask & _9P_GETATTR_MTIME)
+			    ? (u64)attrs.mtime.tv_sec
+			    : 0LL;
+	mtime_nsec = (*request_mask & _9P_GETATTR_MTIME)
+			     ? (u64)attrs.mtime.tv_nsec
+			     : 0LL;
+	ctime_sec = (*request_mask & _9P_GETATTR_CTIME)
+			    ? (u64)attrs.ctime.tv_sec
+			    : 0LL;
+	ctime_nsec = (*request_mask & _9P_GETATTR_CTIME)
+			     ? (u64)attrs.ctime.tv_nsec
+			     : 0LL;
 
 	/* Not yet supported attributes */
 	btime_sec = 0LL;
