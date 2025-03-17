@@ -96,6 +96,7 @@ class ClientMgr():
             [<client_ip>, [["NFSv3", <data>], ["MNT", <data>], ["NLMv4", <data>],
             ["RQUOTA", <data>], ["NFSv40", <data>], ["NFSv41", <data>],
             ["NFSv42", <data>], ["9P", <data>]],
+            <totalops>,
             ["Open", <data>, "Lock", <data>, "Delegation", <data>],
             [<lastime>, <nsecs>]]
             convert index:1 to dict and use it
@@ -107,7 +108,7 @@ class ClientMgr():
                 return False, e, []
 
             cl_ = dict(data[1])
-            lasttime = client[3]
+            lasttime = client[4]
             clt = Client(ClientIP=str(client[0]),
                          HasNFSv3=cl_.get('NFSv3', 0),
                          HasMNT=cl_.get('MNT', 0),
@@ -239,7 +240,8 @@ class ExportMgr():
             export format from ShowExports
             [exp_id, path, [["NFSv3", <data>], ["MNT", <data>], ["NLMv4", <data>],
             ["RQUOTA", <data>], ["NFSv40", <data>], ["NFSv41", <data>],
-            ["NFSv42", <data>], ["9P", <data>]], [<lastime>, <nsecs>]]
+            ["NFSv42", <data>], ["9P", <data>]], <totalops>,
+            [<lastime>, <nsecs>]]
             convert index:2 to dict and use it
             '''
             try:
@@ -249,7 +251,7 @@ class ExportMgr():
                 return False, e, []
 
             exp_stat = dict(data[2])
-            lasttime = export[3]
+            lasttime = export[4]
             exp = Export(ExportID=export[0],
                          ExportPath=str(export[1]),
                          HasNFSv3=exp_stat.get('NFSv3', 0),

@@ -119,7 +119,7 @@ class ExportMgr(QtDBus.QDBusAbstractInterface):
             exports = []
             for export in reply.argumentAt(1).toPyObject():
                 ex = export.toPyObject()
-                lasttime = ex[10].toPyObject()
+                lasttime = ex[11].toPyObject()
                 exp = Export(ExportID=ex[0].toInt()[0],
                              ExportPath=str(ex[1].toString()),
                              HasNFSv3=ex[2].toBool(),

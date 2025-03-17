@@ -1670,6 +1670,7 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	dbus_bool_t stats_available;
 	DBusMessageIter st_iter;
 	char *protocol;
+	uint64_t tot_ops = 0;
 
 	dbus_message_iter_open_container(iter, DBUS_TYPE_STRUCT, NULL,
 					 &st_iter);
@@ -1681,18 +1682,25 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "NFSv3";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->nfsv3->cmds.total + st->nfsv3->read.cmd.total +
+			   st->nfsv3->write.cmd.total;
 
 	stats_available = (st->mnt != 0 && (st->mnt->v1_ops.total != 0 ||
 					    st->mnt->v3_ops.total != 0));
 	protocol = "MNT";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->mnt->v1_ops.total + st->mnt->v3_ops.total;
 #endif
 #ifdef _USE_NLM
 	stats_available = (st->nlm4 != 0 && st->nlm4->ops.total != 0);
 	protocol = "NLMv4";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->nlm4->ops.total;
 #endif
 #ifdef _USE_RQUOTA
 	stats_available = (st->rquota != 0 && (st->rquota->ops.total != 0 ||
@@ -1700,6 +1708,8 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "RQUOTA";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->rquota->ops.total + st->rquota->ext_ops.total;
 
 #endif
 	stats_available =
@@ -1709,6 +1719,10 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "NFSv40";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->nfsv40->compounds.total +
+			   st->nfsv40->read.cmd.total +
+			   st->nfsv40->write.cmd.total;
 	stats_available =
 		(st->nfsv41 != 0 && (st->nfsv41->compounds.total != 0 ||
 				     st->nfsv41->read.cmd.total != 0 ||
@@ -1716,6 +1730,10 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "NFSv41";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->nfsv41->compounds.total +
+			   st->nfsv41->read.cmd.total +
+			   st->nfsv41->write.cmd.total;
 
 	stats_available =
 		(st->nfsv42 != 0 && (st->nfsv42->compounds.total != 0 ||
@@ -1724,6 +1742,10 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "NFSv42";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->nfsv42->compounds.total +
+			   st->nfsv42->read.cmd.total +
+			   st->nfsv42->write.cmd.total;
 #ifdef _USE_9P
 	stats_available = (st->_9p != 0 && (st->_9p->cmds.total != 0 ||
 					    st->_9p->read.cmd.total != 0 ||
@@ -1731,8 +1753,12 @@ void server_stats_summary(DBusMessageIter *iter, struct gsh_stats *st)
 	protocol = "9P";
 	dbus_message_iter_append_protocol_info(&st_iter, &protocol,
 					       &stats_available);
+	if (stats_available)
+		tot_ops += st->_9p->cmds.total + st->_9p->read.cmd.total +
+			   st->_9p->write.cmd.total;
 #endif
 	dbus_message_iter_close_container(iter, &st_iter);
+	dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT64, &tot_ops);
 }
 
 #ifdef _USE_9P
