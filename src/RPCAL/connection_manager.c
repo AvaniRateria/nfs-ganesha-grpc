@@ -225,11 +225,11 @@ static void callback_default_deregister_connection(
 			    TP_STR(client_address_str));
 }
 
-#define DEFAULT_CALLBACK_CONTEXT                               \
-	{ /*user_context=*/                                    \
-		NULL, callback_default_drain_other_servers,    \
-			callback_default_register_connection,  \
-			callback_default_deregister_connection \
+#define DEFAULT_CALLBACK_CONTEXT                      \
+	{ /*user_context=*/                           \
+	  NULL, callback_default_drain_other_servers, \
+	  callback_default_register_connection,       \
+	  callback_default_deregister_connection      \
 	}
 
 static pthread_rwlock_t callback_lock = RWLOCK_INITIALIZER;

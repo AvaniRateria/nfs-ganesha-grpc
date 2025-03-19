@@ -48,13 +48,13 @@
 	})
 #else
 #define bstree_container_of(node, type, member) \
-	((type *)((char *)(node)-offsetof(type, member)))
+	((type *)((char *)(node) - offsetof(type, member)))
 #define rbtree_container_of(node, type, member) \
-	((type *)((char *)(node)-offsetof(type, member)))
+	((type *)((char *)(node) - offsetof(type, member)))
 #define avltree_container_of(node, type, member) \
-	((type *)((char *)(node)-offsetof(type, member)))
+	((type *)((char *)(node) - offsetof(type, member)))
 #define splaytree_container_of(node, type, member) \
-	((type *)((char *)(node)-offsetof(type, member)))
+	((type *)((char *)(node) - offsetof(type, member)))
 #endif /* __GNUC__ */
 
 /*

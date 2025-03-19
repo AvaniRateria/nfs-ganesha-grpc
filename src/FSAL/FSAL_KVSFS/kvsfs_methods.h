@@ -86,10 +86,7 @@ struct kvsfs_fd {
 	kvsns_file_open_t fd;
 };
 
-#define KVSNS_FILE_OPEN_INIT   \
-	{                      \
-		0, { 0, 0 }, 0 \
-	}
+#define KVSNS_FILE_OPEN_INIT { 0, { 0, 0 }, 0 }
 
 struct kvsfs_state_fd {
 	/** state MUST be first to use default free_state */

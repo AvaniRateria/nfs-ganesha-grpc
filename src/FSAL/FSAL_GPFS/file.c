@@ -694,7 +694,7 @@ fsal_status_t gpfs_read_plus_fd(int my_fd, uint64_t offset, size_t buffer_size,
 		if (errsv != ENODATA)
 			return fsalstat(posix2fsal_error(errsv), errsv);
 
-			/* errsv == ENODATA */
+		/* errsv == ENODATA */
 #if 0
 		/** @todo FSF: figure out how to fix this... */
 		if ((buffer_size + offset) > myself->attributes.filesize) {

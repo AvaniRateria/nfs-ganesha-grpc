@@ -33,7 +33,7 @@
 
 #include "config.h"
 
-#include <libgen.h>		/* used for 'dirname' */
+#include <libgen.h> /* used for 'dirname' */
 #include <pthread.h>
 #include <string.h>
 #include <limits.h>
@@ -49,13 +49,12 @@
 
 /* defined the set of attributes supported with POSIX */
 #ifndef ENABLE_VFS_ACL
-#define VFS_SUPPORTED_ATTRIBUTES ((const attrmask_t) (ATTRS_POSIX | \
-						      ATTR4_XATTR | \
-						      ATTR4_FS_LOCATIONS))
+#define VFS_SUPPORTED_ATTRIBUTES \
+	((const attrmask_t)(ATTRS_POSIX | ATTR4_XATTR | ATTR4_FS_LOCATIONS))
 #else
-#define VFS_SUPPORTED_ATTRIBUTES ((const attrmask_t) (ATTRS_POSIX | ATTR_ACL | \
-						      ATTR4_XATTR | \
-						      ATTR4_FS_LOCATIONS))
+#define VFS_SUPPORTED_ATTRIBUTES                                   \
+	((const attrmask_t)(ATTRS_POSIX | ATTR_ACL | ATTR4_XATTR | \
+			    ATTR4_FS_LOCATIONS))
 #endif
 
 const char myname[] = "@FSAL_LUSTRE_VFS_NAME@";
@@ -102,23 +101,20 @@ static struct config_item vfs_params[] = {
 		       vfs_fsal_module, module.fs_info.maxread),
 	CONF_ITEM_UI64("maxwrite", 512, FSAL_MAXIOSIZE, FSAL_MAXIOSIZE,
 		       vfs_fsal_module, module.fs_info.maxwrite),
-	CONF_ITEM_MODE("umask", 0, vfs_fsal_module,
-		       module.fs_info.umask),
+	CONF_ITEM_MODE("umask", 0, vfs_fsal_module, module.fs_info.umask),
 	CONF_ITEM_BOOL("auth_xdev_export", false, vfs_fsal_module,
 		       module.fs_info.auth_exportpath_xdev),
-	CONF_ITEM_BOOL("only_one_user", false, vfs_fsal_module,
-		       only_one_user),
+	CONF_ITEM_BOOL("only_one_user", false, vfs_fsal_module, only_one_user),
 	CONFIG_EOL
 };
 
-struct config_block vfs_param = {
-	.dbus_interface_name = "org.ganesha.nfsd.config.fsal.vfs",
-	.blk_desc.name = "VFS",
-	.blk_desc.type = CONFIG_BLOCK,
-	.blk_desc.u.blk.init = noop_conf_init,
-	.blk_desc.u.blk.params = vfs_params,
-	.blk_desc.u.blk.commit = noop_conf_commit
-};
+struct config_block vfs_param = { .dbus_interface_name =
+					  "org.ganesha.nfsd.config.fsal.vfs",
+				  .blk_desc.name = "VFS",
+				  .blk_desc.type = CONFIG_BLOCK,
+				  .blk_desc.u.blk.init = noop_conf_init,
+				  .blk_desc.u.blk.params = vfs_params,
+				  .blk_desc.u.blk.commit = noop_conf_commit };
 
 /* Module methods
  */
@@ -132,7 +128,7 @@ static fsal_status_t init_config(struct fsal_module *vfs_fsal_module,
 				 struct config_error_type *err_type)
 {
 	struct vfs_fsal_module *vfs_module =
-	    container_of(vfs_fsal_module, struct vfs_fsal_module, module);
+		container_of(vfs_fsal_module, struct vfs_fsal_module, module);
 	int prev_errors = err_type->errors;
 
 #ifdef F_OFD_GETLK
@@ -178,13 +174,10 @@ static fsal_status_t init_config(struct fsal_module *vfs_fsal_module,
 		LogInfo(COMPONENT_FSAL, "FSAL_VFS disabling lock support");
 
 	LogFullDebug(COMPONENT_FSAL,
-		"Supported attributes default = 0x%" PRIx64,
-		vfs_module->module.fs_info.supported_attrs);
-	(void) load_config_from_parse(config_struct,
-				      &vfs_param,
-				      vfs_module,
-				      true,
-				      err_type);
+		     "Supported attributes default = 0x%" PRIx64,
+		     vfs_module->module.fs_info.supported_attrs);
+	(void)load_config_from_parse(config_struct, &vfs_param, vfs_module,
+				     true, err_type);
 
 	/* Check for actual errors in vfs_param parsing.
 	 * err_type could have errors from previous block

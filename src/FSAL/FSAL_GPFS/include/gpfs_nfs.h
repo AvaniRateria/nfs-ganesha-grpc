@@ -41,8 +41,7 @@ extern "C" {
 #endif
 
 #ifdef WIN32
-struct flock {
-};
+struct flock {};
 #endif
 
 /* GANESHA common information */

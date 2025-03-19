@@ -567,7 +567,7 @@ static fsal_status_t kvsfs_readdir(struct fsal_obj_handle *dir_hdl,
 	if (whence != NULL)
 		seekloc = (off_t)*whence;
 
-		/* Think about '.' and '..' */
+	/* Think about '.' and '..' */
 #define DOTS_OFFSET 2
 	if (seekloc > 0)
 		seekloc = seekloc - DOTS_OFFSET;
