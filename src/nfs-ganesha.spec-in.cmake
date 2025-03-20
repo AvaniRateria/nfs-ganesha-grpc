@@ -781,6 +781,7 @@ exit 0
 %if %{with monitoring}
 %files -n ganesha_monitoring
 %{_libdir}/libganesha_monitoring*
+%{_libdir}/libntirpcmonitoring*
 %endif
 
 %files vfs
