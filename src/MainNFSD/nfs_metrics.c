@@ -31,6 +31,7 @@
 #include "nfs_metrics.h"
 #include "common_utils.h"
 #include "nfs_convert.h"
+#include "nfs_proto_data.h"
 
 #define FOREACH_NFS_STAT4(X)                 \
 	X(NFS4_OK)                           \
@@ -332,12 +333,14 @@ void nfs_metrics__rpcs_in_flight(int64_t value)
 
 #ifdef _USE_NFS3
 void nfs_metrics__nfs3_request(uint32_t proc, nsecs_elapsed_t request_time,
-			       nfsstat3 nfs_status, export_id_t export_id,
-			       const char *client_ip)
+			       enum nfs_req_result result, nfsstat3 nfs_status,
+			       export_id_t export_id, const char *client_ip)
 {
 	const char *const version = "nfs3";
 	const char *const operation = nfsproc3_to_str(proc);
-	const char *const status_label = nfsstat3_to_str(nfs_status);
+	const char *const status_label = result == NFS_REQ_OK
+					 ? nfsstat3_to_str(nfs_status)
+					 : nfs_req_result_to_str(result);
 
 	dynamic_metrics__observe_nfs_request(operation, request_time, version,
 					     status_label, export_id,

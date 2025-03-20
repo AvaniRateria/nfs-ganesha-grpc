@@ -34,6 +34,7 @@
 #include "dynamic_metrics.h"
 #include "nfsv41.h"
 #include "nfs23.h"
+enum nfs_req_result;
 
 void nfs_metrics__nfs4_op_completed(nfs_opnum4, nfsstat4, nsecs_elapsed_t);
 void nfs_metrics__gss_request_dropped(void);
@@ -59,6 +60,7 @@ void nfs_metrics__init(void);
 
 void nfs_metrics__nfs3_request(const uint32_t proc,
 			       const nsecs_elapsed_t request_time,
+			       const enum nfs_req_result result,
 			       const nfsstat3 status,
 			       const export_id_t export_id,
 			       const char *client_ip);
