@@ -322,6 +322,9 @@ option(TIRPC_EPOLL "platform supports EPOLL or emulation" ON)
 # Build configure options
 goption(USE_DBUS "enable DBUS protocol support" ON)
 
+# Build gRPC
+goption(USE_GRPC "enable gRPC protocol support" OFF)
+
 # Various DBUS enabled features
 option(USE_CB_SIMULATOR "enable callback simulator thread" OFF)
 
@@ -987,6 +990,63 @@ if(USE_DBUS)
   endif(NOT DBUS_FOUND)
 endif(USE_DBUS)
 
+gopt_test(USE_GRPC)
+if(USE_GRPC)
+    find_package(Protobuf REQUIRED)
+if(NOT Protobuf_FOUND)
+	message(WARNING "Cannot find Protobuf libs. Disabling gRPC,protobuf support")
+	set(USE_GRPC OFF)
+else(NOT Protobuf_FOUND)
+	find_package(gRPC REQUIRED)
+	if(NOT gRPC_FOUND)
+		message(WARNING "Cannot find gRPC libs. Disabling gRPC support")
+		set(USE_GRPC OFF)
+    else(NOT gRPC_FOUND)
+        message(WARNING "generating grpc and cpp files")
+        message(WARNING "Running custom commad")
+        set(PROTOBUF_LIBRARIES libprotobuf)
+set(GRPC_LIBRARIES grpc++)
+set(GRPC_CPP_PLUGIN grpc_cpp_plugin)
+set(_PROTOBUF_PROTOC protoc)
+get_target_property(grpc_cpp_plugin_location gRPC::grpc_cpp_plugin LOCATION)
+
+get_filename_component(hw_proto ${CMAKE_SOURCE_DIR}/proto/nfsService.proto ABSOLUTE)
+get_filename_component(hw_proto_path "${hw_proto}" PATH)
+
+# Generated sources
+#get_filename_component(proto_gen_dir ${CMAKE_BINARY_DIR}/proto_generated_file ABSOLUTE)
+set(proto_gen_dir ${CMAKE_BINARY_DIR}/proto_generated_file)
+file(MAKE_DIRECTORY ${proto_gen_dir})
+set(hw_proto_srcs "${proto_gen_dir}/nfsService.pb.cc")
+set(hw_proto_hdrs "${proto_gen_dir}/nfsService.pb.h")
+set(hw_grpc_srcs "${proto_gen_dir}/nfsService.grpc.pb.cc")
+set(hw_grpc_hdrs "${proto_gen_dir}/nfsService.grpc.pb.h")
+message(WARNING "${grpc_cpp_plugin_location}")
+message(WARNING "${PROTOBUF_PROTOC_EXECUTABLE}")
+add_custom_command(
+      OUTPUT "${hw_proto_srcs}" "${hw_proto_hdrs}" "${hw_grpc_srcs}" "${hw_grpc_hdrs}"
+      COMMAND "${PROTOBUF_PROTOC_EXECUTABLE}"
+      ARGS --grpc_out "${proto_gen_dir}"
+        --cpp_out "${proto_gen_dir}"
+        -I "${hw_proto_path}"
+        --plugin=protoc-gen-grpc="${grpc_cpp_plugin_location}"
+        "${hw_proto}"
+      DEPENDS "${hw_proto}"
+    COMMENT "running custom made command")
+  add_library(protoLibrary SHARED ${CMAKE_SOURCE_DIR}/proto/nfsService.proto)
+  target_link_libraries(protoLibrary
+          PRIVATE
+          gRPC::grpc++
+          protobuf::libprotobuf
+          grpc++_reflection)
+  protobuf_generate(TARGET protoLibrary
+    LANGUAGE cpp
+    PROTOC_OUT_DIR "${proto_gen_dir}"
+    PROTOS "${hw_proto}")
+	endif(NOT gRPC_FOUND)
+endif(NOT Protobuf_FOUND)
+endif(USE_GRPC)
+
 if(USE_CB_SIMULATOR AND NOT USE_DBUS)
   message(WARNING "The callback simulator needs DBUS.  Disabling callback simulator")
   set(USE_CB_SIMULATOR OFF)
@@ -1337,6 +1397,11 @@ endif(USE_GTEST)
 if(USE_DBUS)
   add_subdirectory(dbus)
 endif(USE_DBUS)
+
+if(USE_GRPC)
+  add_subdirectory(grpc_server)
+  add_subdirectory(proto)
+endif(USE_GRPC)
 
 if(USE_LTTNG)
   add_subdirectory(tracing)

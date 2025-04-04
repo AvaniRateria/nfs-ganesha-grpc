@@ -84,6 +84,10 @@
 #include "nfs_metrics.h"
 #include "sal_metrics.h"
 
+#ifdef USE_GRPC
+#include "gRPC/GrpcServer.h"
+#endif /*USE_GRPC*/
+
 pthread_mutexattr_t default_mutex_attr;
 pthread_rwlockattr_t default_rwlock_attr;
 
@@ -1006,6 +1010,9 @@ static void nfs_Init(const nfs_start_info_t *p_start_info)
 	dbus_cache_init();
 #endif
 
+#ifdef USE_GRPC
+         grpc__init(nfs_param.core_param.grpc_port);
+#endif
 	/* initializing nfs ganesha metrics */
 	nfs_metrics__init();
 	sal_metrics__init();
